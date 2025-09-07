@@ -5,7 +5,7 @@ export const SiteHeader = () => {
   return (
     <header>
       <nav className={styles.siteNav}>
-        <Link href={"/website/public"} className={styles.siteNavLink}>Home</Link> |
+        <Link href={"/"} className={styles.siteNavLink}>Home</Link> |
         <Link href={"/calendar"} className={styles.siteNavLink}>Calendar</Link> |
         <Link href={"/events"} className={styles.siteNavLink}>Events</Link> |
         <Link href={"/volunteer"} className={styles.siteNavLink}>Volunteering</Link> |
