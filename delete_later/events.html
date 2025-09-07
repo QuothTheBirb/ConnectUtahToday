@@ -30,39 +30,39 @@
     <!-- Event Feed -->
     <div id="event-feed" style="margin-top: 20px;">
       <h2>Events</h2>
-      
+
       <!-- Date Filter Controls -->
       <div id="filter-controls" style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
         <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
           <label style="font-weight: bold;">Filter by:</label>
-          
+
           <div>
             <label>
               <input type="radio" name="filter-type" value="all" checked> All Events
             </label>
           </div>
-          
+
           <div>
             <label>
               <input type="radio" name="filter-type" value="month"> Month:
             </label>
             <input type="month" id="month-filter" style="margin-left: 5px;" disabled>
           </div>
-          
+
           <div>
             <label>
               <input type="radio" name="filter-type" value="week"> Week of:
             </label>
             <input type="date" id="week-filter" style="margin-left: 5px;" disabled>
           </div>
-          
+
           <div>
             <label>
               <input type="radio" name="filter-type" value="day"> Specific Day:
             </label>
             <input type="date" id="day-filter" style="margin-left: 5px;" disabled>
           </div>
-          
+
           <div>
             <label>
               <input type="radio" name="filter-type" value="range"> Date Range:
@@ -72,13 +72,13 @@
             <input type="date" id="end-date-filter" disabled>
           </div>
         </div>
-        
+
         <div style="margin-top: 10px;">
           <button id="apply-filter" style="padding: 8px 16px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer;">Apply Filter</button>
           <button id="clear-filter" style="padding: 8px 16px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Clear Filter</button>
         </div>
       </div>
-      
+
       <div id="event-list">Loading events...</div>
     </div>
   </main>

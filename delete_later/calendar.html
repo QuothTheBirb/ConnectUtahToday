@@ -8,7 +8,7 @@
 <body>
   <nav>
     <a href="index.html">Home</a> |
-    <a href="calendar.html">Event Calendar</a> |
+    <a href="calendar.html">Calendar</a> |
     <a href="events.html">Events</a> |
     <a href="volunteer.html">Volunteering</a> |
     <a href="support.html">Support a Cause</a> |
@@ -16,12 +16,28 @@
     <a href="activism.html">Activism</a>
   </nav>
 <main>
-  <h1>Event Calendar</h1>
+  <h1>Event Calendar??</h1>
+  <form id="calendar-filter-form" style="display:flex;gap:2em;align-items:center;margin:1em 0 2em 0;flex-wrap:wrap;">
+    <label>
+      <span style="font-weight:500;font-size:1em;margin-right:0.5em;">Organization:</span>
+      <select id="filter-org" style="padding:0.4em 1em;border:1.5px solid #dee2e6;border-radius:6px;min-width:120px;">
+        <option value="">Any</option>
+      </select>
+    </label>
+    <label>
+      <span style="font-weight:500;font-size:1em;margin-right:0.5em;">Date Range:</span>
+      <input type="date" id="filter-date-start" style="padding:0.4em 0.5em;border:1.5px solid #dee2e6;border-radius:6px;">
+      -
+      <input type="date" id="filter-date-end" style="padding:0.4em 0.5em;border:1.5px solid #dee2e6;border-radius:6px;">
+    </label>
+    <button type="submit" style="padding:0.5em 1.3em;background:#28a745;color:white;border:none;border-radius:6px;font-weight:500;cursor:pointer;">Apply Filter</button>
+    <button type="button" id="clear-calendar-filter" style="padding:0.5em 1em; background:#f8f9fa; color:#495057; border:1px solid #dee2e6; border-radius:6px; font-weight:500; cursor:pointer;">Clear</button>
+  </form>
+
   <div style="text-align:left; margin: 1.5em 0 0.5em 0;">
     <a href="#" id="calendar-disclaimer-link" style="font-size:0.92em;text-decoration:underline;cursor:pointer;">Disclaimer</a>
   </div>
-  
-  <!-- Simple Calendar Grid -->
+
   <div style="margin: 2em 0;">
     <div style="text-align: center; margin-bottom: 1em;">
       <button id="prev-cal-month" style="margin-right:1em;padding:0.5em 0.75em;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;">&#8592;</button>
@@ -31,10 +47,7 @@
     <div style="text-align: center; margin-bottom: 1em; font-size: 0.9em; color: #6c757d;">
       <span>Type month and year (e.g., "January 2025" or "1/2025") and press Enter</span>
     </div>
-    
-   
     <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; max-width: 600px; margin: 0 auto; background: #ddd; border: 1px solid #ddd;">
-      <!-- Day headers -->
       <div style="background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold;">Sun</div>
       <div style="background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold;">Mon</div>
       <div style="background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold;">Tue</div>
@@ -43,23 +56,20 @@
       <div style="background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold;">Fri</div>
       <div style="background: #f0f0f0; padding: 10px; text-align: center; font-weight: bold;">Sat</div>
       <div id="calendar-grid" style="grid-column: 1 / -1; display: contents;">
-        <!-- Days will be inserted here  -->
       </div>
     </div>
-    
     <div style="margin-top: 1em; text-align: center;">
       <p>Click on a day with events to see event details.</p>
     </div>
   </div>
 </main>
 
-  <div id="calendar-disclaimer-popover" style="display:none;position:fixed;top:22%;left:50%;transform:translate(-50%,0);background:#fff;border:1px solid #888;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:2em;max-width:520px;z-index:1000;border-radius:8px;font-size:0.97em; text-align:left;">
+  <div id="calendar-disclaimer-popover" style="display:none;position:fixed;top:22%;left:50%;transform:translate(-50%);background:#fff;border:1px solid #888;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:2em;max-width:520px;z-index:1000;border-radius:8px;font-size:0.97em; text-align:left;">
     <strong>Disclaimer:</strong> Connect Utah Today provides a list of events for informational purposes only. We do not organize, operate, or officially endorse any of the events listed on this website unless explicitly stated. Event details, dates, times, and locations are subject to change without notice. Connect Utah Today is not responsible for the accuracy, reliability, or completeness of the information provided, nor for any issues, injuries, or losses that may arise from your participation in any event. Please verify event details directly with the event organizer before attending. By using this website, you acknowledge and accept that Connect Utah Today is not liable for any consequences resulting from your participation in or reliance on any event listed.
     <br><br>
     <button id="close-calendar-disclaimer" style="margin-top:1em;padding:0.5em 1.5em;">Close</button>
   </div>
 
-  <!-- Event Details Popover -->
   <div id="event-details-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:998;"></div>
   <div id="event-details-popover" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.3);padding:0;max-width:850px;max-height:85vh;overflow-y:auto;z-index:999;border-radius:16px;min-width:600px;">
     <div style="padding:2em 2.5em;border-bottom:1px solid #eee;background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
@@ -70,82 +80,134 @@
     </div>
     <div style="padding:2em 2.5em;">
       <div id="event-details-content">
-        <!-- Event details will be populated here -->
       </div>
     </div>
   </div>
 
 <script>
-  // Simple Calendar Logic - same as local
   let currentCalDate = new Date();
   let calendarEvents = {};
+  let allFetchedEvents = [];
+  let orgOptionsSet = new Set();
+  let filterOrg = '';
+  let filterDateStart = '';
+  let filterDateEnd = '';
 
   const API_BASE =
     window.location.hostname === 'localhost'
       ? 'http://localhost:3000'
       : 'https://connectutahtoday-1.onrender.com';
 
+  function toIsoUtcZ(date) {
+    if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return date + "T00:00:00.000Z";
+    }
+    if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(date)) {
+      return date + "Z";
+    }
+    if (typeof date === "string" && date.endsWith("Z")) {
+      return date;
+    }
+    return new Date(date).toISOString();
+  }
+
+  function populateOrgDropdown() {
+    const select = document.getElementById('filter-org');
+    const selectedValue = select.value;
+    orgOptionsSet = new Set();
+    allFetchedEvents.forEach(ev => {
+      if (ev.org && ev.org.trim()) orgOptionsSet.add(ev.org.trim());
+    });
+    select.innerHTML = '<option value="">Any</option>';
+    Array.from(orgOptionsSet).sort((a, b) => a.localeCompare(b)).forEach(org => {
+      const opt = document.createElement('option');
+      opt.value = org;
+      opt.textContent = org;
+      if (org === selectedValue) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
   async function fetchEventsForCalendar() {
     try {
-      const year = currentCalDate.getFullYear();
-      const month = currentCalDate.getMonth();
-      const timeMin = `${year}-${String(month+1).padStart(2, '0')}-01T00:00:00Z`;
-      const lastDay = new Date(year, month+1, 0).getDate();
-      const timeMax = `${year}-${String(month+1).padStart(2, '0')}-${lastDay}T23:59:59Z`;
-
-      // Use your actual API base here in prod if needed
-      const response = await fetch(`${API_BASE}/api/all-events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}`);
+      let year = currentCalDate.getFullYear();
+      let month = currentCalDate.getMonth();
+      let start, end;
+      if (filterDateStart && filterDateEnd) {
+        start = new Date(toIsoUtcZ(filterDateStart));
+        end = new Date(toIsoUtcZ(filterDateEnd));
+        end.setHours(23,59,59,999);
+      } else {
+        start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
+        end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
+      }
+      const timeMin = encodeURIComponent(start.toISOString());
+      const timeMax = encodeURIComponent(end.toISOString());
+      const apiURL = `${API_BASE}/api/all-events?timeMin=${timeMin}&timeMax=${timeMax}`;
+      const response = await fetch(apiURL);
+      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       const data = await response.json();
-      const events = data.items || [];
-      
-      // Clear existing events for the month
-      calendarEvents = {};
-      
-      // Process each event
-      events.forEach(event => {
-        const eventDate = new Date(event.date);
-        if (isNaN(eventDate.getTime())) return;
-        
-        const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
-        if (!calendarEvents[dateKey]) {
-          calendarEvents[dateKey] = [];
-        }
-        calendarEvents[dateKey].push(event);
+      allFetchedEvents = (data.items || []).map(ev => {
+        return {
+          ...ev,
+          date: toIsoUtcZ(ev.date)
+        };
       });
-      
-      renderCalendar();
+      populateOrgDropdown();
+      applyFiltersAndRender();
     } catch (error) {
-      console.error('Error fetching events for calendar:', error);
-      renderCalendar();
+      allFetchedEvents = [];
+      populateOrgDropdown();
+      applyFiltersAndRender();
     }
   }
-  
+
+  function applyFiltersAndRender() {
+    let filteredEvents = allFetchedEvents;
+    if (filterOrg && filterOrg !== '') {
+      filteredEvents = filteredEvents.filter(ev =>
+        (ev.org || '').trim() === filterOrg
+      );
+    }
+    if (filterDateStart && filterDateEnd) {
+      const dateStart = new Date(toIsoUtcZ(filterDateStart));
+      const dateEnd = new Date(toIsoUtcZ(filterDateEnd));
+      dateEnd.setHours(23, 59, 59, 999);
+      filteredEvents = filteredEvents.filter(ev => {
+        const evDate = new Date(ev.date);
+        return evDate >= dateStart && evDate <= dateEnd;
+      });
+    }
+    calendarEvents = {};
+    filteredEvents.forEach(event => {
+      const eventDate = new Date(event.date);
+      if (isNaN(eventDate.getTime())) return;
+      const dateKey = `${eventDate.getUTCFullYear()}-${eventDate.getUTCMonth()}-${eventDate.getUTCDate()}`;
+      if (!calendarEvents[dateKey]) calendarEvents[dateKey] = [];
+      calendarEvents[dateKey].push(event);
+    });
+    renderCalendar();
+  }
+
   function renderCalendar() {
     const year = currentCalDate.getFullYear();
     const month = currentCalDate.getMonth();
     const monthNames = ["January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"];
     document.getElementById('current-cal-month').value = `${monthNames[month]} ${year}`;
-    
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
-    // Clear existing calendar
+    const firstDay = new Date(Date.UTC(year, month, 1)).getUTCDay();
+    const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = '';
-    
-    // Add empty cells for days before month starts
     for (let i = 0; i < firstDay; i++) {
       const cell = document.createElement('div');
       cell.style.cssText = 'background: #f9f9f9; padding: 10px; min-height: 60px; border: 1px solid #eee;';
       grid.appendChild(cell);
     }
-    
-    // Add days of month
     const today = new Date();
     for (let day = 1; day <= daysInMonth; day++) {
       const cell = document.createElement('div');
-      const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+      const isToday = year === today.getUTCFullYear() && month === today.getUTCMonth() && day === today.getUTCDate();
       const dateKey = `${year}-${month}-${day}`;
       const dayEvents = calendarEvents[dateKey] || [];
       const hasEvents = dayEvents.length > 0;
@@ -162,9 +224,13 @@
         cellHTML += `<div style="position: absolute; bottom: 4px; left: 4px; right: 4px;">`;
         for (let i = 0; i < Math.min(3, dayEvents.length); i++) {
           const event = dayEvents[i];
-          const eventTitle = event.title || 'Event';
-          const shortTitle = eventTitle.length > 12 ? eventTitle.substring(0, 12) + '...' : eventTitle;
-          cellHTML += `<div style="font-size: 9px; background: #1976d2; color: white; padding: 1px 3px; margin: 1px 0; border-radius: 2px; overflow: hidden;">${shortTitle}</div>`;
+          let orgSummary = '';
+          if (event.org) {
+            orgSummary += event.org + ': ';
+          }
+          orgSummary += event.summary || event.title || 'Event';
+          const shortLabel = orgSummary.length > 24 ? orgSummary.substring(0, 21) + '...' : orgSummary;
+          cellHTML += `<div style="font-size: 9px; background: #1976d2; color: white; padding: 1px 3px; margin: 1px 0; border-radius: 2px; overflow: hidden;">${shortLabel}</div>`;
         }
         if (dayEvents.length > 3) {
           cellHTML += `<div style="font-size: 10px; color: #1976d2; font-weight: bold;">+${dayEvents.length - 3}</div>`;
@@ -181,28 +247,23 @@
       grid.appendChild(cell);
     }
   }
-    
-    // Event details popover functions
     function showEventDetails(events, day, month, year) {
       const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
-      
       let popoverContent = `<div style="text-align:center;margin-bottom:2em;padding:1em;background:#f8f9fa;border-radius:8px;border-left:4px solid #007bff;">
         <h3 style="margin:0;color:#495057;font-size:1.3em;font-weight:500;">${monthNames[month]} ${day}, ${year}</h3>
         <p style="margin:0.5em 0 0 0;color:#6c757d;font-size:0.95em;">${events.length} event${events.length !== 1 ? 's' : ''} scheduled</p>
       </div>`;
-      
       events.forEach((event, index) => {
         if (index > 0) {
           popoverContent += '<div style="margin:2em 0;border-top:2px solid #e9ecef;"></div>';
         }
-        
-        // Determine image source
-        let eventImage = 'assets/placeholder.jpg'; // Default
-        if (event.source === 'mobilize' && event.featured_image_url) {
+        let eventImage = 'assets/placeholder.jpg';
+        if (event.image) {
+          eventImage = event.image;
+        } else if (event.source === 'mobilize' && event.featured_image_url) {
           eventImage = event.featured_image_url;
         } else if (event.source === 'google') {
-          // Map common organization names to asset images
           const orgImageMap = {
             'DSA': 'assets/DSA.jpg',
             'Democratic Socialists': 'assets/DSA.jpg',
@@ -216,12 +277,10 @@
             'Beehive Collective': 'assets/beehiveCollectivePlaceholder.jpg',
             'Bakers for Palestine': 'assets/bakers_for_palestine_SLC.jpg'
           };
-          
           const eventTitle = (event.title || '').toLowerCase();
           const eventLocation = (event.location || '').toLowerCase();
           const eventDescription = (event.description || '').toLowerCase();
           const searchText = `${eventTitle} ${eventLocation} ${eventDescription}`;
-          
           for (const [org, imagePath] of Object.entries(orgImageMap)) {
             if (searchText.includes(org.toLowerCase())) {
               eventImage = imagePath;
@@ -229,193 +288,152 @@
             }
           }
         }
-        
         popoverContent += `<div style="display:flex;gap:1.5em;margin-bottom:1.5em;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);overflow:hidden;border:1px solid #e9ecef;">`;
-        
-        // Event image
         popoverContent += `<div style="flex-shrink:0;width:200px;height:150px;overflow:hidden;">
           <img src="${eventImage}" alt="Event image" style="width:100%;height:100%;object-fit:cover;" onError="this.src='assets/placeholder.jpg';">
         </div>`;
-        
-        // Event content
         popoverContent += `<div style="flex:1;padding:1.5em;display:flex;flex-direction:column;">`;
-        
-        // Event title
-        popoverContent += `<h3 style="margin:0 0 0.75em 0;color:#212529;font-size:1.3em;font-weight:600;line-height:1.3;">${event.title || 'Untitled Event'}</h3>`;
-        
-        // Event details grid
+        if (event.org) {
+          popoverContent += `<div style="color:#007bff;font-weight:600;font-size:1.07em;margin-bottom:0.2em;">${event.org}</div>`;
+        }
+        popoverContent += `<h3 style="margin:0 0 0.75em 0;color:#212529;font-size:1.3em;font-weight:600;line-height:1.3;">${event.summary || event.title || 'Untitled Event'}</h3>`;
         popoverContent += `<div style="display:grid;grid-template-columns:auto 1fr;gap:0.5em 1em;margin-bottom:1em;font-size:0.95em;">`;
-        
-        // Date and time
         if (event.date) {
           const eventDate = new Date(event.date);
           const timeStr = eventDate.toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
-            hour12: true
+            hour12: true,
+            timeZone: 'UTC'
           });
           const dateStr = eventDate.toLocaleDateString('en-US', {
             weekday: 'long',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            timeZone: 'UTC'
           });
           popoverContent += `<span style="color:#6c757d;font-weight:500;">📅 Date:</span><span style="color:#495057;">${dateStr}</span>`;
-          popoverContent += `<span style="color:#6c757d;font-weight:500;">🕐 Time:</span><span style="color:#495057;">${timeStr}</span>`;
+          popoverContent += `<span style="color:#6c757d;font-weight:500;">🕐 Time:</span><span style="color:#495057;">${timeStr} UTC</span>`;
         }
-        
-        // Location
         if (event.location) {
           popoverContent += `<span style="color:#6c757d;font-weight:500;">📍 Location:</span><span style="color:#495057;">${event.location}</span>`;
         }
-        
-        // Source
         const source = event.source === 'google' ? 'Google Calendar' : 'Mobilize';
         const sourceIcon = event.source === 'google' ? '📅' : '📢';
         popoverContent += `<span style="color:#6c757d;font-weight:500;">${sourceIcon} Source:</span><span style="color:#495057;">${source}</span>`;
-        
         popoverContent += `</div>`;
-        
-        // Description
         if (event.description) {
-          const shortDesc = event.description.length > 300 
-            ? event.description.substring(0, 300) + '...' 
+          const shortDesc = event.description.length > 300
+            ? event.description.substring(0, 300) + '...'
             : event.description;
           popoverContent += `<div style="color:#495057;line-height:1.5;margin-bottom:1em;font-size:0.95em;background:#f8f9fa;padding:1em;border-radius:8px;border-left:3px solid #28a745;">${shortDesc}</div>`;
         }
-        
-        // Action buttons
         popoverContent += `<div style="margin-top:auto;display:flex;gap:0.75em;flex-wrap:wrap;">`;
-        
-        // Event URL
         if (event.url) {
           popoverContent += `<a href="${event.url}" target="_blank" rel="noopener" style="background:#007bff;color:white;padding:0.75em 1.5em;text-decoration:none;border-radius:6px;font-weight:500;font-size:0.9em;display:inline-flex;align-items:center;gap:0.5em;transition:background 0.2s ease;box-shadow:0 2px 4px rgba(0,123,255,0.2);">
             <span>View Details</span> <span style="font-size:1.1em;">→</span>
           </a>`;
         }
-        
-        // Additional mobilize-specific buttons
         if (event.source === 'mobilize') {
           if (event.event_type) {
             popoverContent += `<span style="background:#28a745;color:white;padding:0.5em 1em;border-radius:6px;font-size:0.85em;font-weight:500;">${event.event_type}</span>`;
           }
         }
-        
         popoverContent += `</div>`;
-        popoverContent += `</div>`; // Close content div
-        popoverContent += `</div>`; // Close event container
+        popoverContent += `</div>`;
+        popoverContent += `</div>`;
       });
-      
       document.getElementById('event-details-content').innerHTML = popoverContent;
       document.getElementById('event-details-overlay').style.display = 'block';
       document.getElementById('event-details-popover').style.display = 'block';
     }
-    
     function hideEventDetails() {
       document.getElementById('event-details-overlay').style.display = 'none';
       document.getElementById('event-details-popover').style.display = 'none';
     }
-    
-    // Parse month/year input from various formats
     function parseMonthYear(input) {
       const monthNames = ["january", "february", "march", "april", "may", "june",
         "july", "august", "september", "october", "november", "december"];
       const monthAbbrevs = ["jan", "feb", "mar", "apr", "may", "jun",
         "jul", "aug", "sep", "oct", "nov", "dec"];
-      
-      // Clean up input
       input = input.toLowerCase().trim();
-      
-      // Try different formats
       let month = -1;
       let year = -1;
-      
-      // Format: "January 2025" or "jan 2025"
       const monthYearMatch = input.match(/^(\w+)\s+(\d{4})$/);
       if (monthYearMatch) {
         const monthStr = monthYearMatch[1];
         year = parseInt(monthYearMatch[2]);
-        
-        // Check full month names
         month = monthNames.indexOf(monthStr);
         if (month === -1) {
-          // Check abbreviated month names
           month = monthAbbrevs.indexOf(monthStr);
         }
       }
-      
-      // Format: "1/2025" or "01/2025"
       const numericMatch = input.match(/^(\d{1,2})\/(\d{4})$/);
       if (numericMatch && month === -1) {
-        month = parseInt(numericMatch[1]) - 1; // Convert to 0-based
+        month = parseInt(numericMatch[1]) - 1;
         year = parseInt(numericMatch[2]);
-        
         if (month < 0 || month > 11) {
           month = -1;
         }
       }
-      
-      // Format: "2025-01" or "2025/01"
       const reverseMatch = input.match(/^(\d{4})[-\/](\d{1,2})$/);
       if (reverseMatch && month === -1) {
         year = parseInt(reverseMatch[1]);
-        month = parseInt(reverseMatch[2]) - 1; // Convert to 0-based
-        
+        month = parseInt(reverseMatch[2]) - 1;
         if (month < 0 || month > 11) {
           month = -1;
         }
       }
-      
-      // Validate year range
       if (year < 1900 || year > 2100) {
         year = -1;
       }
-      
       return { month, year };
     }
-    
     function navigateToDate(month, year) {
       if (month >= 0 && month <= 11 && year >= 1900 && year <= 2100) {
-        currentCalDate = new Date(year, month, 1);
+        currentCalDate = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
+        filterDateStart = '';
+        filterDateEnd = '';
+        document.getElementById('filter-date-start').value = '';
+        document.getElementById('filter-date-end').value = '';
         fetchEventsForCalendar();
         return true;
       }
       return false;
     }
-    
     document.getElementById('prev-cal-month').addEventListener('click', function() {
-      currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+      currentCalDate.setUTCMonth(currentCalDate.getUTCMonth() - 1);
+      filterDateStart = '';
+      filterDateEnd = '';
+      document.getElementById('filter-date-start').value = '';
+      document.getElementById('filter-date-end').value = '';
       fetchEventsForCalendar();
     });
-    
     document.getElementById('next-cal-month').addEventListener('click', function() {
-      currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+      currentCalDate.setUTCMonth(currentCalDate.getUTCMonth() + 1);
+      filterDateStart = '';
+      filterDateEnd = '';
+      document.getElementById('filter-date-start').value = '';
+      document.getElementById('filter-date-end').value = '';
       fetchEventsForCalendar();
     });
-    
-    // Handle month/year input field
     const monthInput = document.getElementById('current-cal-month');
     let originalValue = monthInput.value;
-    
-    // Handle Enter key and blur events
     monthInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.blur(); // Trigger blur event
+        this.blur();
       }
     });
-    
     monthInput.addEventListener('blur', function() {
       const inputValue = this.value.trim();
-      if (inputValue === originalValue) return; // No change
-      
+      if (inputValue === originalValue) return;
       const parsed = parseMonthYear(inputValue);
       if (parsed.month !== -1 && parsed.year !== -1) {
-        // Valid input - navigate to new date
         const success = navigateToDate(parsed.month, parsed.year);
         if (success) {
-          originalValue = this.value; // Update original value
+          originalValue = this.value;
         } else {
-          // Reset to original value if navigation failed
           this.value = originalValue;
           this.style.background = '#ffebee';
           setTimeout(() => {
@@ -423,17 +441,13 @@
           }, 1000);
         }
       } else {
-        // Invalid input - show error and reset
         this.style.background = '#ffebee';
         this.style.borderColor = '#f44336';
-        
-        // Show error message temporarily
         const errorMsg = document.createElement('div');
         errorMsg.textContent = 'Invalid format. Try "January 2025" or "1/2025"';
         errorMsg.style.cssText = 'position:absolute;background:#f44336;color:white;padding:0.5em 1em;border-radius:4px;font-size:0.85em;margin-top:0.5em;z-index:1000;left:50%;transform:translateX(-50%);';
         this.parentNode.style.position = 'relative';
         this.parentNode.appendChild(errorMsg);
-        
         setTimeout(() => {
           this.value = originalValue;
           this.style.background = '#f8f9fa';
@@ -443,18 +457,36 @@
           }
         }, 2000);
       }
+      filterDateStart = '';
+      filterDateEnd = '';
+      document.getElementById('filter-date-start').value = '';
+      document.getElementById('filter-date-end').value = '';
     });
-    
-    // Update original value when calendar changes via other means
     monthInput.addEventListener('focus', function() {
       originalValue = this.value;
-      this.select(); // Select all text for easy editing
+      this.select();
     });
-    
-    // Initialize calendar with events
+    document.getElementById('calendar-filter-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      filterOrg = document.getElementById('filter-org').value;
+      filterDateStart = document.getElementById('filter-date-start').value;
+      filterDateEnd = document.getElementById('filter-date-end').value;
+      fetchEventsForCalendar();
+    });
+    document.getElementById('filter-org').addEventListener('change', function(e) {
+      filterOrg = this.value;
+      applyFiltersAndRender();
+    });
+    document.getElementById('clear-calendar-filter').addEventListener('click', function() {
+      document.getElementById('filter-org').value = '';
+      document.getElementById('filter-date-start').value = '';
+      document.getElementById('filter-date-end').value = '';
+      filterOrg = '';
+      filterDateStart = '';
+      filterDateEnd = '';
+      fetchEventsForCalendar();
+    });
     fetchEventsForCalendar();
-
-    // Disclaimer popover logic
     const calDisclaimerLink = document.getElementById('calendar-disclaimer-link');
     const calDisclaimerPopover = document.getElementById('calendar-disclaimer-popover');
     const closeCalDisclaimer = document.getElementById('close-calendar-disclaimer');
@@ -470,12 +502,8 @@
         calDisclaimerPopover.style.display = 'none';
       }
     });
-
-    // Event details popover logic
     document.getElementById('close-event-details').addEventListener('click', hideEventDetails);
     document.getElementById('event-details-overlay').addEventListener('click', hideEventDetails);
-    
-    // Add hover effects to close button
     const closeBtn = document.getElementById('close-event-details');
     closeBtn.addEventListener('mouseenter', function() {
       this.style.background = '#f8f9fa';
@@ -487,13 +515,9 @@
       this.style.borderColor = '#dee2e6';
       this.style.transform = 'scale(1)';
     });
-    
-    // Prevent popover from closing when clicking inside it
     document.getElementById('event-details-popover').addEventListener('click', function(e) {
       e.stopPropagation();
     });
-    
-    // Close popover on Escape key
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         hideEventDetails();

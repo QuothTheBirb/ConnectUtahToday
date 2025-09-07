@@ -14,18 +14,18 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    
+
     .carousel-images {
       display: flex;
       transition: transform 0.5s ease;
     }
-    
+
     .carousel-image {
       min-width: 100%;
       height: 400px;
       object-fit: contain;
     }
-    
+
     .carousel-nav {
       position: absolute;
       top: 50%;
@@ -38,25 +38,25 @@
       font-size: 18px;
       border-radius: 5px;
     }
-    
+
     .carousel-nav:hover {
       background: rgba(0,0,0,0.7);
     }
-    
+
     .carousel-prev {
       left: 10px;
     }
-    
+
     .carousel-next {
       right: 10px;
     }
-    
+
     .carousel-dots {
       text-align: center;
       padding: 15px 0;
       background: rgba(0,0,0,0.05);
     }
-    
+
     .carousel-dot {
       display: inline-block;
       width: 12px;
@@ -67,7 +67,7 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    
+
     .carousel-dot.active {
       background: #007bff;
     }
@@ -81,11 +81,11 @@
     <a href="volunteer.html">Volunteering</a> |
     <a href="support.html">Support a Cause</a> |
     <a href="latest-updates.html">Latest Updates</a> |
-    <a href="activism.html">Activism</a> 
+    <a href="activism.html">Activism</a>
   </nav>
   <main>
     <h1>Local Activism Campaigns & Issues</h1>
-    
+
     <!-- Image Carousel -->
     <div class="carousel-container">
       <div class="carousel-images" id="carouselImages">
@@ -96,10 +96,10 @@
         <img src="assets/1000014847.png" alt="Activism Image 5" class="carousel-image">
         <img src="assets/1000014848.png" alt="Activism Image 6" class="carousel-image">
       </div>
-      
+
       <button class="carousel-nav carousel-prev" onclick="moveCarousel(-1)">❮</button>
       <button class="carousel-nav carousel-next" onclick="moveCarousel(1)">❯</button>
-      
+
       <div class="carousel-dots">
         <span class="carousel-dot active" onclick="currentSlide(1)"></span>
         <span class="carousel-dot" onclick="currentSlide(2)"></span>
@@ -110,37 +110,37 @@
       </div>
     </div>
   </main>
-  
+
   <script>
     let currentIndex = 0;
     const images = document.querySelectorAll('.carousel-image');
     const dots = document.querySelectorAll('.carousel-dot');
     const totalImages = images.length;
-    
+
     function showSlide(index) {
       // Ensure index is within bounds
       if (index >= totalImages) currentIndex = 0;
       else if (index < 0) currentIndex = totalImages - 1;
       else currentIndex = index;
-      
+
       // Move carousel
       const carouselImages = document.getElementById('carouselImages');
       carouselImages.style.transform = `translateX(-${currentIndex * 100}%)`;
-      
+
       // Update dots
       dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === currentIndex);
       });
     }
-    
+
     function moveCarousel(direction) {
       showSlide(currentIndex + direction);
     }
-    
+
     function currentSlide(index) {
       showSlide(index - 1);
     }
-    
+
     // Initialize carousel
     showSlide(0);
   </script>

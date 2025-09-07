@@ -80,10 +80,9 @@
       <form id="volunteer-filter-form">
         <fieldset style="margin-bottom:1.5em;">
           <legend><strong>Organization:</strong></legend>
-          <div id="org-dropdowns">
-            <!-- Org dropdown inputs will be inserted here -->
+          <div id="org-checkboxes">
+            <span style="color:#888;">Loading organizations...</span>
           </div>
-          <button type="button" id="add-org-dropdown" style="margin-top:0.8em;">+ Add another organization</button>
         </fieldset>
         <fieldset style="margin-bottom:1.5em;">
           <legend><strong>Activities:</strong></legend>
@@ -104,95 +103,29 @@
   </div>
   <script>
     // ---- Utility: Org Name to Asset Normalization ----
-    function normalize(name) {
-      return name
-        .toLowerCase()
-        .replace(/[\s\-]+/g, '_')
-        .replace(/[^a-z0-9_]/g, '')
-        .replace(/_+/g, '_')
-        .replace(/^_+|_+$/g, '');
+    function orgNameToAsset(orgName) {
+      return orgName.toLowerCase().replace(/\s+/g, '_');
     }
-
-    const assetFiles = [
-      '1000014843.png',
-      '1000014844.png',
-      '1000014845.png',
-      '1000014846.png',
-      '1000014847.png',
-      '1000014848.png',
-      'Armed Queers Salt Lake City.jpg',
-      'bakers_for_palestine.jpg',
-      'bakers_for_palestine.png',
-      'brown_berets.png',
-      'BTMC.jpg',
-      'Cache Valley Mutual Aid.jpg',
-      'Camping in Color SLC.jpg',
-      'Comunidades Unidas.jpg',
-      'CUT.png',
-      'description.png',
-      'dsa.jpg',
-      'dsa.png',
-      'Fish For Garbage.jpg',
-      'Green Wave Utah.jpg',
-      'ibikeutah.jpg',
-      'indivisible.png',
-      'Ken_Sanders_Rare_Books.jpg',
-      'MyUEA.jpg',
-      'placeholder.jpg',
-      'Project Rainbow.jpg',
-      'Salt Lake Area Queer Climbers.jpg',
-      'Salt Lake Harm Reduction Project.jpg',
-      'Sierra Club Utah.jpg',
-      'SLC Queer Latin Dance.jpg',
-      'SLCounty Community Exchange.jpg',
-      'slc_mutual_aid.png',
-      'uhwunited.jpg',
-      'Under the Umbrella Bookstore.jpg',
-      'United_Mountain_Workers.jpg',
-      'Urban Indian Center of Salt Lake.jpg',
-      'Utah Rivers Council.jpg',
-      'Utah State Progressive Caucus.jpg',
-      'Wasatch Community Gardens.jpg',
-      'Wasatch Food Co-op.jpg',
-      'Wasatch Trails Collective.jpg',
-      'WildUtah.png',
-    ];
-
     function getOrgImg(orgName) {
-      const nOrg = normalize(orgName);
-      const assetMap = {};
-      assetFiles.forEach(f => {
-        let stem = f.replace(/\.[^/.]+$/, '');
-        assetMap[normalize(stem)] = f;
-      });
-      if (assetMap[nOrg]) {
-        return `assets/${assetMap[nOrg]}`;
-      }
-      for (let [nAsset, fname] of Object.entries(assetMap)) {
-        if (nOrg.includes(nAsset) || nAsset.includes(nOrg)) {
-          return `assets/${fname}`;
-        }
-      }
-      return 'assets/placeholder.png';
+      return `assets/${orgNameToAsset(orgName)}.png`;
     }
 
+    // ---- State ----
     let allOrganizations = [];
     let allOpportunities = [];
     let allActivities = [];
 
-    // --- ADD THESE FUNCTIONS ---
+    // ---- Fetch data and initialize filters ----
     async function fetchOrganizations() {
       const res = await fetch('https://connectutahtoday-1.onrender.com/api/organizations');
       const data = await res.json();
-      return (data.organizations || []).map(org => ({
-        id: org.id,
-        name: org.name,
-        link: org.link
-      }));
+      return data.organizations || [];
     }
 
     async function fetchAllOpportunities() {
+      // 1. Fetch all organizations first to get their IDs
       const orgs = await fetchOrganizations();
+      // 2. For each org, fetch its opportunities
       const allOpps = [];
       for (let org of orgs) {
         const res = await fetch(`https://connectutahtoday-1.onrender.com/api/opportunities?organization_id=${org.id}`);
@@ -201,7 +134,6 @@
           allOpps.push({
             orgId: org.id,
             orgName: org.name,
-            orgLink: org.link,
             activity: opp
           });
         });
@@ -209,81 +141,35 @@
       return allOpps;
     }
 
-    // --- DROPDOWN AUTOCOMPLETE LOGIC ---
-    function createOrgDropdown(index = 0) {
-      // Create a text input with datalist for autocomplete
-      const wrapper = document.createElement('div');
-      wrapper.className = "org-dropdown-wrapper";
-      wrapper.style.marginBottom = "0.6em";
-      wrapper.innerHTML = `
-        <input type="text" class="org-dropdown-input" list="org-list" placeholder="Type or select an organization" autocomplete="off" data-index="${index}" style="min-width:220px;padding:0.4em;">
-        <button type="button" class="remove-org-dropdown" style="margin-left:0.6em;display:none;">Remove</button>
-      `;
-      return wrapper;
-    }
-
-    function renderOrgDropdowns(orgs) {
-      const orgDropdownsDiv = document.getElementById('org-dropdowns');
-      orgDropdownsDiv.innerHTML = '';
-      // Datalist for autofill
-      let datalist = document.getElementById('org-list');
-      if (!datalist) {
-        datalist = document.createElement('datalist');
-        datalist.id = "org-list";
-        document.body.appendChild(datalist);
-      }
-      datalist.innerHTML = orgs.map(org =>
-        `<option value="${org.name}"></option>`
-      ).join('');
-      // Place one dropdown initially
-      orgDropdownsDiv.appendChild(createOrgDropdown(0));
-    }
-
-    // --- Dynamic addition/removal of dropdowns ---
-    function setupOrgDropdownLogic() {
-      const orgDropdownsDiv = document.getElementById('org-dropdowns');
-      const addBtn = document.getElementById('add-org-dropdown');
-
-      addBtn.addEventListener('click', () => {
-        const dropdowns = orgDropdownsDiv.querySelectorAll('.org-dropdown-wrapper');
-        const newDropdown = createOrgDropdown(dropdowns.length);
-        newDropdown.querySelector('.remove-org-dropdown').style.display = 'inline-block';
-        orgDropdownsDiv.appendChild(newDropdown);
-      });
-
-      orgDropdownsDiv.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-org-dropdown')) {
-          e.target.parentElement.remove();
-          filterOpportunities();
-        }
-      });
-
-      orgDropdownsDiv.addEventListener('input', (e) => {
-        if (e.target.classList.contains('org-dropdown-input')) {
-          filterOpportunities();
-        }
+    // ---- Render filter checkboxes ----
+    function renderOrgCheckboxes(orgs) {
+      const container = document.getElementById('org-checkboxes');
+      container.innerHTML = '';
+      // "Any" checkbox
+      const anyId = 'org-any';
+      const anyBox = document.createElement('label');
+      anyBox.innerHTML = `<input type="checkbox" id="${anyId}" name="orgs" value="Any" checked> Any`;
+      container.appendChild(anyBox);
+      container.appendChild(document.createElement('br'));
+      // Each org
+      orgs.forEach(org => {
+        const id = `org-${org.id}`;
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" id="${id}" name="orgs" value="${org.name}" checked> ${org.name}`;
+        container.appendChild(label);
+        container.appendChild(document.createElement('br'));
       });
     }
-
-    function getSelectedOrgs() {
-      const orgDropdownsDiv = document.getElementById('org-dropdowns');
-      const inputs = orgDropdownsDiv.querySelectorAll('.org-dropdown-input');
-      let selected = [];
-      inputs.forEach(input => {
-        if (input.value.trim() !== "") selected.push(input.value.trim());
-      });
-      return selected.length ? selected : ["Any"];
-    }
-
-    // --- Activity checkbox logic ---
     function renderActivityCheckboxes(activities) {
       const container = document.getElementById('activity-checkboxes');
       container.innerHTML = '';
+      // "Any" checkbox
       const anyId = 'activity-any';
       const anyBox = document.createElement('label');
       anyBox.innerHTML = `<input type="checkbox" id="${anyId}" name="activities" value="Any" checked> Any`;
       container.appendChild(anyBox);
       container.appendChild(document.createElement('br'));
+      // Each activity
       activities.forEach(act => {
         const id = `activity-${act.replace(/\s+/g,'-').toLowerCase()}`;
         const label = document.createElement('label');
@@ -293,11 +179,7 @@
       });
     }
 
-    function getSelectedActivities() {
-      const checkboxes = document.querySelectorAll('input[name="activities"]:checked');
-      return Array.from(checkboxes).map(cb => cb.value);
-    }
-
+    // Render opportunity list
     function renderOpportunities(opps, orgs, activities) {
       const section = document.getElementById('opportunity-list');
       if (!opps.length) {
@@ -305,32 +187,36 @@
         return;
       }
       let html = '';
+      // Group by org for better UX
       const orgMap = {};
       opps.forEach(opp => {
-        if (!orgMap[opp.orgName]) orgMap[opp.orgName] = { activities: [], link: opp.orgLink };
-        orgMap[opp.orgName].activities.push(opp.activity);
+        if (!orgMap[opp.orgName]) orgMap[opp.orgName] = [];
+        orgMap[opp.orgName].push(opp.activity);
       });
       Object.keys(orgMap).forEach(orgName => {
-        const orgData = orgMap[orgName];
-        const hasLink = orgData.link && typeof orgData.link === 'string' && orgData.link.trim() !== '';
         html += `<div class="opportunity-item">
           <img src="${getOrgImg(orgName)}" alt="${orgName}" class="opportunity-img">
           <div>
             <div class="opportunity-org">${orgName}</div>
             <ul class="opportunity-activities">
-              ${orgData.activities.map(a => `<li>${a}</li>`).join('')}
+              ${orgMap[orgName].map(a => `<li>${a}</li>`).join('')}
             </ul>
-            ${
-              hasLink
-                ? `<a href="${orgData.link}" target="_blank" style="font-size:1em;display:inline-block;margin-top:0.5em;color:#0a7;">Sign Up / Learn More</a>`
-                : ''
-            }
+            <!-- Optionally add a Sign Up link if you have org URLs -->
           </div>
         </div>`;
       });
       section.innerHTML = html;
     }
 
+    // Filtering logic
+    function getSelectedOrgs() {
+      const checkboxes = document.querySelectorAll('input[name="orgs"]:checked');
+      return Array.from(checkboxes).map(cb => cb.value);
+    }
+    function getSelectedActivities() {
+      const checkboxes = document.querySelectorAll('input[name="activities"]:checked');
+      return Array.from(checkboxes).map(cb => cb.value);
+    }
     function filterOpportunities() {
       let orgs = getSelectedOrgs();
       let acts = getSelectedActivities();
@@ -344,8 +230,26 @@
       renderOpportunities(filtered, allOrganizations, allActivities);
     }
 
-    // Checkbox "Any" logic for activities only
-    function setupActivityAnyCheckboxLogic() {
+    // Checkbox "Any" logic
+    function setupAnyCheckboxLogic() {
+      // For orgs
+      const orgContainer = document.getElementById('org-checkboxes');
+      orgContainer.addEventListener('change', e => {
+        if (e.target.name === 'orgs') {
+          const anyBox = orgContainer.querySelector('input[value="Any"]');
+          const allBoxes = Array.from(orgContainer.querySelectorAll('input[type="checkbox"]:not([value="Any"])'));
+          if (e.target.value === 'Any') {
+            // Toggling Any: check/uncheck all
+            allBoxes.forEach(cb => cb.checked = anyBox.checked);
+          } else {
+            // Toggling an org: if any is unchecked, uncheck Any; if all orgs checked, check Any
+            if (!e.target.checked) anyBox.checked = false;
+            if (allBoxes.every(cb => cb.checked)) anyBox.checked = true;
+          }
+          filterOpportunities();
+        }
+      });
+      // For activities
       const actContainer = document.getElementById('activity-checkboxes');
       actContainer.addEventListener('change', e => {
         if (e.target.name === 'activities') {
@@ -363,42 +267,37 @@
     }
 
     // ---- Page initialization ----
-    document.addEventListener("DOMContentLoaded", function() {
-      async function initializeVolunteerPage() {
-        allOrganizations = await fetchOrganizations();
-        renderOrgDropdowns(allOrganizations);
+    async function initializeVolunteerPage() {
+      allOrganizations = await fetchOrganizations();
+      renderOrgCheckboxes(allOrganizations);
 
-        allOpportunities = await fetchAllOpportunities();
+      allOpportunities = await fetchAllOpportunities();
 
-        const actSet = new Set(allOpportunities.map(o => o.activity));
-        allActivities = Array.from(actSet).sort();
-        renderActivityCheckboxes(allActivities);
+      const actSet = new Set(allOpportunities.map(o => o.activity));
+      allActivities = Array.from(actSet).sort();
+      renderActivityCheckboxes(allActivities);
 
-        renderOpportunities(allOpportunities, allOrganizations, allActivities);
+      renderOpportunities(allOpportunities, allOrganizations, allActivities);
 
-        setupOrgDropdownLogic();
-        setupActivityAnyCheckboxLogic();
-      }
+      setupAnyCheckboxLogic();
+    }
 
-      initializeVolunteerPage();
+    initializeVolunteerPage();
 
-      // ---- Disclaimer popover logic ----
-      const disclaimerLink = document.getElementById('disclaimer-link');
-      const disclaimerPopover = document.getElementById('disclaimer-popover');
-      const closeDisclaimer = document.getElementById('close-disclaimer');
-      if(disclaimerLink && disclaimerPopover && closeDisclaimer){
-        disclaimerLink.addEventListener('click', function(e) {
-          e.preventDefault();
-          disclaimerPopover.style.display = 'block';
-        });
-        closeDisclaimer.addEventListener('click', function() {
-          disclaimerPopover.style.display = 'none';
-        });
-        window.addEventListener('click', function(e) {
-          if (disclaimerPopover.style.display === 'block' && !disclaimerPopover.contains(e.target) && e.target !== disclaimerLink) {
-            disclaimerPopover.style.display = 'none';
-          }
-        });
+    // ---- Disclaimer popover logic ----
+    const disclaimerLink = document.getElementById('disclaimer-link');
+    const disclaimerPopover = document.getElementById('disclaimer-popover');
+    const closeDisclaimer = document.getElementById('close-disclaimer');
+    disclaimerLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      disclaimerPopover.style.display = 'block';
+    });
+    closeDisclaimer.addEventListener('click', function() {
+      disclaimerPopover.style.display = 'none';
+    });
+    window.addEventListener('click', function(e) {
+      if (disclaimerPopover.style.display === 'block' && !disclaimerPopover.contains(e.target) && e.target !== disclaimerLink) {
+        disclaimerPopover.style.display = 'none';
       }
     });
   </script>
