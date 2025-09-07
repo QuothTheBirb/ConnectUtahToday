@@ -8,21 +8,27 @@ import {calendar_v3} from 'googleapis';
 import {Pool} from 'pg';
 
 import {CalendarEvent, EventsApiQueryParams, EventsApiResponse, MobilizeEvents} from "./types";
-import {googleCalendarDateToUtcIso, mobilizeTimestampToUtcIso} from "./src/utilities/toUtcIsoString";
-
-require('dotenv').config();
+import {googleCalendarDateToUtcIso, mobilizeTimestampToUtcIso} from "../utils/toUtcIsoString";
 
 const app = express();
 
 app.use(cors());
 //app.use(express.static('public'));
 // app.use(express.static('.'));
-app.use(express.static('dist'));
+// app.use(express.static('dist'));
 app.use(express.json());
 
 // Health check endpoint
 app.get('/', (req, res) => {
-  res.send('ConnectUtahToday API is running.');
+  try {
+    res.send('ConnectUtahToday API is running.');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error:', error.message);
+
+      throw new Error(`Internal Server Error: ${error.message}`);
+    }
+  }
 });
 
 // Database setup
@@ -379,5 +385,6 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
+console.log(PORT)
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

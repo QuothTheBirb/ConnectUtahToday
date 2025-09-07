@@ -1,0 +1,45 @@
+.logoContainer {
+  text-align: center;
+  margin: 1em 0 0.5em 0;
+}
+
+.logoImage {
+  max-width: 300px;
+  height: auto;
+}
+
+.objectives {
+  background: #f8f9fa;
+  padding: 2em;
+  margin: 2em 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.objectivesTitle {
+  color: #2c3e50;
+  margin: 0 0 1.5em 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.objectivesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1.8;
+  font-size: 1.05em;
+}
+
+.objectivesItem {
+  margin: 0 0 1.5em 0;
+  padding: 0 0 0 1.5em;
+  position: relative;
+}
+
+.objectivesBullet {
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-weight: bold;
+}
