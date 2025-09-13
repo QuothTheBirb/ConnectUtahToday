@@ -84,29 +84,29 @@ input[type="email"], select, textarea {
   transition: border 0.2s;
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent2);
-  outline: none;
-}
+/*input:focus, select:focus, textarea:focus {*/
+/*  border-color: var(--accent2);*/
+/*  outline: none;*/
+/*}*/
 
-button[type="submit"], .btn {
-  background: var(--accent1);
-  color: var(--accent2);
-  border: none;
-  border-radius: 6px;
-  padding: 0.9em 2.2em;
-  font-size: 1.08em;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 0.8em;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  transition: background 0.18s, color 0.18s;
-}
+/*button[type="submit"], .btn {*/
+/*  background: var(--accent1);*/
+/*  color: var(--accent2);*/
+/*  border: none;*/
+/*  border-radius: 6px;*/
+/*  padding: 0.9em 2.2em;*/
+/*  font-size: 1.08em;*/
+/*  font-weight: 700;*/
+/*  cursor: pointer;*/
+/*  margin-top: 0.8em;*/
+/*  box-shadow: 0 2px 8px rgba(0,0,0,0.10);*/
+/*  transition: background 0.18s, color 0.18s;*/
+/*}*/
 
-button[type="submit"]:hover, .btn:hover {
-  background: var(--accent3);
-  color: #fff;
-}
+/*button[type="submit"]:hover, .btn:hover {*/
+/*  background: var(--accent3);*/
+/*  color: #fff;*/
+/*}*/
 
 #thanks-message {
   color: var(--accent3);

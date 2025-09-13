@@ -1,0 +1,77 @@
+.filterForm {
+  display: flex;
+  gap: 2em;
+  align-items: center;
+  margin: 1em 0 2em 0;
+  flex-wrap: wrap;
+
+  .filterInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+
+    .filter {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 0.5rem;
+
+      .filterLabel {
+        width: 100%;
+        font-weight: 500;
+        font-size: 1em;
+        margin-right: 0.5em;
+      }
+
+      .filterDateRange {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        input[type=date].filterDateInput {
+          padding: 0.4em 1em;
+          border: 1.5px solid #dee2e6;
+          border-radius: 6px;
+          min-width: 120px;
+        }
+      }
+
+      select.filterOrgSelect {
+        padding: 0.4em 1em;
+        border: 1.5px solid #dee2e6;
+        border-radius: 6px;
+        min-width: 120px;
+      }
+    }
+  }
+
+  .controlButtons {
+    display: flex;
+    width: 100%;
+    gap: 1em;
+    align-items: center;
+
+    button.applyFiltersButton {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    button.clearFiltersButton {
+      background: #f8f9fa;
+      color: #495057;
+      border: 1px solid #dee2e6;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  }
+}

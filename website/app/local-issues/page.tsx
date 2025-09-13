@@ -1,5 +1,6 @@
 import {Metadata} from "next";
-import LocalIssuesCarousel from "@/components/LocalIssuesCarousel/localIssuesCarousel";
+
+import {LocalIssuesCarousel} from "@/components/LocalIssuesCarousel";
 
 export const metadata: Metadata = {
   title: "Local Activism Campaigns & Issues",
