@@ -13,10 +13,13 @@ import {googleCalendarDateToUtcIso, mobilizeTimestampToUtcIso} from "../utils/to
 const app = express();
 
 app.use(cors());
-//app.use(express.static('public'));
-// app.use(express.static('.'));
-// app.use(express.static('dist'));
 app.use(express.json());
+
+const apiBase = process.env.NODE_ENV === 'production'
+  ? 'https://connectutahtoday-1.onrender.com/api'
+  : `http://localhost:${process.env.PORT || 3001}`;
+
+// API route paths start with "/*" instead of "/api/*" as the base route, since it's separate from the website server now. This is to keep the server flexible in what routes it can be served at. The Next.js webserver routes "/api/*" requests to "/*" on this server.
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -43,7 +46,7 @@ pool.on('error', (err) => {
 });
 
 // API to verify org-signin password
-app.post('/api/org-signin', async (req, res) => {
+app.post('/org-signin', async (req, res) => {
   const { password } = req.body;
   try {
     const result = await pool.query('SELECT password_hash FROM password LIMIT 1');
@@ -67,9 +70,10 @@ app.post('/api/org-signin', async (req, res) => {
 });
 
 // API to get all organizations
-app.get('/api/organizations', async (req, res) => {
+app.get('/organizations', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name FROM organizations ORDER BY name');
+    const result = await pool.query(`SELECT id, name, link FROM organizations ORDER BY name`);
+    console.log('DEBUG organizations:', result.rows);
     res.json({ organizations: result.rows });
   } catch (error) {
     if (error instanceof Error) {
@@ -80,29 +84,28 @@ app.get('/api/organizations', async (req, res) => {
   }
 });
 
-// API to get volunteer opportunities for an organization by organization_id
-app.get('/api/opportunities', async (req, res) => {
-  const { organization_id } = req.query;
-  if (!organization_id) {
-    return res.status(400).json({ error: 'organization_id is required' });
+// API to add a new organization
+app.post('/organizations', async (req, res) => {
+  const { name, link } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: 'Organization name is required' });
   }
   try {
     const result = await pool.query(
-      'SELECT opportunity FROM opportunities WHERE organization_id = $1',
-      [organization_id]
-    );
-    res.json({ opportunities: result.rows.map(row => row.opportunity) });
+      'INSERT INTO organizations (name, link) VALUES ($1, $2) RETURNING id', [name, link || null]
+    )
+    res.json({ id: result.rows[0].id });
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Error fetching opportunities:', error.stack || error);
+      console.error('Error adding organization:', error.stack || error);
+      res.status(500).json({ error: 'Could not add organization' });
     }
-
-    res.status(500).json({ error: 'Failed to fetch opportunities' });
   }
 });
 
+
 // API to add a new opportunity for an organization
-app.post('/api/opportunities', async (req, res) => {
+app.post('/opportunities', async (req, res) => {
   const { organization_id, opportunity } = req.body;
   if (!organization_id || !opportunity) {
     return res.status(400).json({ error: 'organization_id and opportunity are required' });
@@ -122,56 +125,51 @@ app.post('/api/opportunities', async (req, res) => {
   }
 });
 
-/**
- * Mobilize Events API Proxy (production endpoint)
- * CHANGE TO PRODUCTION
- */
-/*
-async function fetchMobilizeEvents(reqQuery) {
-  const { timeMin, timeMax } = reqQuery;
-  const start = timeMin ? Math.floor(new Date(timeMin).getTime() / 1000) : undefined;
-  const end = timeMax ? Math.floor(new Date(timeMax).getTime() / 1000) : undefined;
+// remove opportunity for an organization
+app.delete('/opportunities', async (req, res) => {
+  const organization_id = req.body.organization_id || req.query.organization_id;
+  const opportunities = req.body.opportunities || req.query.opportunities;
 
-  // Filter events by org ids 50 - 57 REPLACE WITH ACTUAL ORGS
-  const orgIds = [50, 51, 52, 53, 54, 55, 56, 57];
-  let url = 'https://staging-api.mobilize.us/v1/events?';
-  orgIds.forEach(id => url += `organization_id=${id}&`);
-  if (start) url += `timeslot_start=gte_${start}&`;
-  if (end) url += `timeslot_start=lt_${end}&`;
+  // Ensure opportunities is an array
+  if (!organization_id || !Array.isArray(opportunities) || opportunities.length === 0) {
+    return res.status(400).json({ error: 'organization_id and opportunities array are required' });
+  }
 
   try {
-    const response = await axios.get(url);
-    console.log("Mobilize events fetched:", response.data);
-    const events = (response.data.data || [])
-      .map(event => {
-        const filteredTimeslots = (event.timeslots || []).filter(ts => {
-          if (!ts.start_date) return false;
-          return (!start || ts.start_date >= start) && (!end || ts.start_date < end);
-        });
-        if (filteredTimeslots.length === 0) return null;
-        return filteredTimeslots.map(timeslot => ({
-          id: event.id,
-          title: event.title,
-          description: event.description,
-          date: timeslot.start_date ? new Date(timeslot.start_date * 1000).toISOString() : null,
-          endDate: timeslot.end_date ? new Date(timeslot.end_date * 1000).toISOString() : null,
-          featured_image_url: event.featured_image_url,
-          org: event.sponsor && event.sponsor.name,
-          url: event.browser_url,
-          event_type: event.event_type,
-          source: 'mobilize'
-        }));
-      })
-      .flat()
-      .filter(Boolean);
-
-    return { items: events };
+    const result = await pool.query(
+      'DELETE FROM opportunities WHERE organization_id = $1 AND opportunity = ANY($2::text[])',
+      [organization_id, opportunities]
+    );
+    res.json({ success: true, deleted: result.rowCount });
   } catch (error) {
-    console.error('Error fetching Mobilize events:', error.message);
-    return { items: [] };
+    if (error instanceof Error) {
+      console.error('Error deleting opportunities:', error.stack || error);
+    }
+
+    res.status(500).json({ error: 'Failed to delete opportunities' });
   }
-}
-  */
+});
+
+// API to get volunteer opportunities for an organization by organization_id
+app.get('/opportunities', async (req, res) => {
+  const { organization_id } = req.query;
+  if (!organization_id) {
+    return res.status(400).json({ error: 'organization_id is required' });
+  }
+  try {
+    const result = await pool.query(
+      'SELECT opportunity FROM opportunities WHERE organization_id = $1',
+      [organization_id]
+    );
+    res.json({ opportunities: result.rows.map(row => row.opportunity) });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error fetching opportunities:', error.stack || error);
+    }
+
+    res.status(500).json({ error: 'Failed to fetch opportunities' });
+  }
+});
 
 /**
  * Google Calendar API Proxy (production)
@@ -202,7 +200,7 @@ async function fetchGoogleCalendarEvents(reqQuery: EventsApiQueryParams): Promis
 
       return {
         id: event.id,
-        summary: event.summary,
+        title: event.summary,
         description: event.description || undefined,
         date: date,
         endDate: endDate,
@@ -227,7 +225,7 @@ async function fetchGoogleCalendarEvents(reqQuery: EventsApiQueryParams): Promis
 /**
  * Mobilize Events API Proxy Endpoint
  */
-app.get('/api/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
+app.get('/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
   console.log('=== MOBILIZE API REQUEST ===');
   console.log('Query params:', req.query);
 
@@ -242,7 +240,7 @@ app.get('/api/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryPa
   // Use production or staging API based on environment
   const mobilizeApiBase = process.env.NODE_ENV === 'production'
     ? 'https://api.mobilize.us'
-    : 'https://staging-api.mobilize.us/v1/events?';
+    : 'https://staging-api.mobilize.us';
 
   let url = `${mobilizeApiBase}/v1/events?`;
   if (start) url += `timeslot_start=gte_${start}&`;
@@ -268,7 +266,7 @@ app.get('/api/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryPa
 
       return {
         id: event.id,
-        summary: event.title,
+        title: event.title,
         description: event.description,
         date: date,
         endDate: endDate,
@@ -296,7 +294,7 @@ app.get('/api/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryPa
 /**
  * Google Calendar API Proxy Endpoint
  */
-app.get('/api/google-calendar', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
+app.get('/google-calendar', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
   const result = await fetchGoogleCalendarEvents(req.query);
 
   res.json(result);
@@ -306,16 +304,13 @@ app.get('/api/google-calendar', async (req: Request<{}, {}, {}, EventsApiQueryPa
  * Combined Events API (aggregates Mobilize and Google Calendar events)
  * Uses internal function calls!
  */
-app.get('/api/all-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
+app.get('/all-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
   console.log('=== COMBINED EVENTS REQUEST ===');
   try {
-    // Use production API base for internal requests
-    const apiBase = 'https://connectutahtoday-1.onrender.com';
-
     // Fetch from both APIs in parallel using Promise.allSettled
     const [mobilizeResponse, googleResponse] = await Promise.allSettled([
-      axios.get<EventsApiResponse>(`${apiBase}/api/mobilize-events?${new URLSearchParams(req.query)}`),
-      axios.get<EventsApiResponse>(`${apiBase}/api/google-calendar?${new URLSearchParams(req.query)}`)
+      axios.get<EventsApiResponse>(`${apiBase}/mobilize-events?${new URLSearchParams(req.query)}`),
+      axios.get<EventsApiResponse>(`${apiBase}/google-calendar?${new URLSearchParams(req.query)}`)
     ]);
 
     let allEvents: CalendarEvent[] = [];
@@ -360,31 +355,11 @@ app.get('/api/all-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>
   }
 });
 
-// API to add a new organization
-app.post('/api/organizations', async (req, res) => {
-  const { name } = req.body;
-  if (!name) {
-    return res.status(400).json({ error: 'Organization name is required' });
-  }
-  try {
-    const result = await pool.query(
-      'INSERT INTO organizations (name) VALUES ($1) RETURNING id',
-      [name]
-    );
-    res.json({ id: result.rows[0].id });
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error adding organization:', error.stack || error);
-      res.status(500).json({ error: 'Could not add organization' });
-    }
-  }
-});
-
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
 const PORT = process.env.PORT || 3001;
-console.log(PORT)
+console.log(PORT);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

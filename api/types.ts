@@ -1,7 +1,6 @@
-// Mobilize API Event Types: https://github.com/mobilizeamerica/api?tab=readme-ov-file#events
+// Mobilize API Event Types
+// Reference: https://github.com/mobilizeamerica/api?tab=readme-ov-file#events
 type MobilizeEventType = "CANVASS" | "PHONE_BANK" | "TEXT_BANK" | "MEETING" | "COMMUNITY" | "FUNDRAISER" | "MEET_GREET" | "HOUSE_PARTY" | "VOTER_REG" | "TRAINING" | "FRIEND_TO_FRIEND_OUTREACH" | "DEBATE_WATCH_PARTY" | "ADVOCACY_CALL" | "RALLY" | "TOWN_HALL" | "OFFICE_OPENING" | "BARNSTORM" | "SOLIDARITY_EVENT" | "COMMUNITY_CANVASS" | "SIGNATURE_GATHERING" | "CARPOOL" | "WORKSHOP" | "PETITION" | "AUTOMATED_PHONE_BANK" | "LETTER_WRITING" | "LITERATURE_DROP_OFF" | "VISIBILITY_EVENT" | "OTHER";
-
-// Based on: https://github.com/mobilizeamerica/api
 export type MobilizeEvents = {
   data: {
     id: string;
@@ -25,7 +24,7 @@ export type MobilizeEvents = {
 
 type BaseEvent = {
   id: string;
-  summary: string;
+  title: string;
   description?: string;
   date: string;
   endDate?: string;
@@ -42,6 +41,7 @@ export type CalendarEvent = BaseEvent & ({
   org: 'Connect Utah Today';
   event_type: "CUTCOMMUNITY";
 })
+export type CalendarEvents = CalendarEvent[] | [];
 
 // Events API
 export type EventsApiQueryParams = {
@@ -49,5 +49,5 @@ export type EventsApiQueryParams = {
   timeMax?: string;
 }
 export type EventsApiResponse = {
-  items: CalendarEvent[] | [];
+  items: CalendarEvents;
 }

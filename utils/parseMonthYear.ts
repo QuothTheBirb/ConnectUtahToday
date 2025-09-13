@@ -1,11 +1,14 @@
-export const parseMonthYear = (input: string): { month: number; year: number } => {
+export const parseMonthYear = (input: string): { year: number, month: number } => {
   const monthNames = ["january", "february", "march", "april", "may", "june",
     "july", "august", "september", "october", "november", "december"];
   const monthAbbrevs = ["jan", "feb", "mar", "apr", "may", "jun",
     "jul", "aug", "sep", "oct", "nov", "dec"];
+
   input = input.toLowerCase().trim();
+
   let month = -1;
   let year = -1;
+
   const monthYearMatch = input.match(/^(\w+)\s+(\d{4})$/);
   if (monthYearMatch) {
     const monthStr = monthYearMatch[1];
@@ -15,6 +18,7 @@ export const parseMonthYear = (input: string): { month: number; year: number } =
       month = monthAbbrevs.indexOf(monthStr);
     }
   }
+
   const numericMatch = input.match(/^(\d{1,2})\/(\d{4})$/);
   if (numericMatch && month === -1) {
     month = parseInt(numericMatch[1]) - 1;
@@ -23,6 +27,7 @@ export const parseMonthYear = (input: string): { month: number; year: number } =
       month = -1;
     }
   }
+
   const reverseMatch = input.match(/^(\d{4})[-\/](\d{1,2})$/);
   if (reverseMatch && month === -1) {
     year = parseInt(reverseMatch[1]);
@@ -31,8 +36,10 @@ export const parseMonthYear = (input: string): { month: number; year: number } =
       month = -1;
     }
   }
+
   if (year < 1900 || year > 2100) {
     year = -1;
   }
+
   return {month, year};
 }
