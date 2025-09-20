@@ -3,10 +3,10 @@
 import {useCallback, useMemo, useState} from "react";
 
 import {CalendarEvent} from "@cut/api/types";
-import {EventsDisclaimer} from "@/components/Calendar/Disclaimer";
 import {EventDetailsPopover} from "@/components/Calendar/EventDetailsPopover";
 import {EventsFilter} from "@/components/Calendar/EventsFilter";
 import {Calendar} from "@/components/Calendar/CalendarView";
+import {EventsDisclaimer} from "@/components/EventsDisclaimer";
 
 export const EventCalendar = ({
   monthEvents,

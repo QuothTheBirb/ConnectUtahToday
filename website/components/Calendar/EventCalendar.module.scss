@@ -91,37 +91,3 @@
     text-align: center;
   }
 }
-
-.disclaimer {
-  .toggleDisclaimer {
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    color: #1976d2; // Or your link color
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 0.92em;
-  }
-
-  .disclaimerPopover {
-    position: fixed;
-    top: 22%;
-    left: 50%;
-    transform: translate(-50%,0);
-    background: #fff;
-    border: 1px solid #888;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-    padding: 2em;
-    max-width: 520px;
-    z-index: 1000;
-    border-radius: 8px;
-    font-size: 0.97em;
-    text-align: left;
-
-    .closeDisclaimer {
-      margin-top: 1em;
-      padding: 0.5em 1.5em;
-    }
-  }
-}

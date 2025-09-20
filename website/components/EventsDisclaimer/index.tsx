@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import styles from '../EventCalendar.module.scss';
+import styles from './EventsDisclaimer.module.scss';
 
 export const EventsDisclaimer = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
