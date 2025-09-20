@@ -1,3 +1,9 @@
+/**
+ * Parses a month/year string into a year and month object.
+ *
+ * @param input The month/year string to parse.
+ * @returns The parsed month and year as an object with year and month properties.
+ */
 export const parseMonthYear = (input: string): { year: number, month: number } => {
   const monthNames = ["january", "february", "march", "april", "may", "june",
     "july", "august", "september", "october", "november", "december"];
