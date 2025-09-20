@@ -4,10 +4,9 @@ import cors from 'cors';
 import 'dotenv/config';
 import type {Request, Response} from 'express';
 import express from 'express';
-import {calendar_v3} from 'googleapis';
 import {Pool} from 'pg';
 
-import {CalendarEvent, EventsApiQueryParams, EventsApiResponse, MobilizeEvents} from "./types";
+import {CalendarEvent, EventsApiQueryParams, EventsApiResponse, GoogleCalendarEvents, MobilizeEvents} from "./types";
 import {googleCalendarDateToUtcIso, mobilizeTimestampToUtcIso} from "../utils/toUtcIsoString";
 
 const app = express();
@@ -190,7 +189,7 @@ async function fetchGoogleCalendarEvents(reqQuery: EventsApiQueryParams): Promis
   url += '&singleEvents=true&orderBy=startTime';
 
   try {
-    const response: AxiosResponse<calendar_v3.Schema$Events> = await axios.get(url);
+    const response: AxiosResponse<GoogleCalendarEvents> = await axios.get(url);
 
     const events: CalendarEvent[] = response.data.items ? response.data.items.flatMap((event) => {
       const date = googleCalendarDateToUtcIso(event.start);
