@@ -5,45 +5,11 @@
   margin: 1em 0 2em 0;
   flex-wrap: wrap;
 
-  .filterInputs {
+  .filters {
     display: flex;
     flex-direction: column;
     gap: 1em;
     align-items: center;
-
-    .filter {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 0.5rem;
-
-      .filterLabel {
-        width: 100%;
-        font-weight: 500;
-        font-size: 1em;
-        margin-right: 0.5em;
-      }
-
-      .filterDateRange {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-
-        input[type=date].filterDateInput {
-          padding: 0.4em 1em;
-          border: 1.5px solid #dee2e6;
-          border-radius: 6px;
-          min-width: 120px;
-        }
-      }
-
-      select.filterOrgSelect {
-        padding: 0.4em 1em;
-        border: 1.5px solid #dee2e6;
-        border-radius: 6px;
-        min-width: 120px;
-      }
-    }
   }
 
   .controlButtons {

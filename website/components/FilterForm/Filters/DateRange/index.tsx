@@ -1,6 +1,7 @@
 import {Dispatch, SetStateAction} from "react";
 
-import styles from '../../EventsFilterForm.module.scss';
+import {FormInput} from "@/components/FormInput";
+import styles from './DateRange.module.scss';
 
 export const DateRangeFilter = (
   {
@@ -20,9 +21,8 @@ export const DateRangeFilter = (
   const { start, end } = dateRange;
 
   return (
-    <label className={styles.filter}>
-      <span className={styles.filterLabel}>Date Range:</span>
-      <div className={styles.filterDateRange}>
+    <FormInput label={"Date Range"}>
+      <div className={styles.dateRange}>
         <input
           type={"date"}
           value={start}
@@ -31,7 +31,7 @@ export const DateRangeFilter = (
               ...prevState,
               start: event.target.value
             }))}
-          className={styles.filterDateInput}
+          className={styles.dateInput}
         />
         –
         <input
@@ -42,9 +42,9 @@ export const DateRangeFilter = (
               ...prevState,
               end: event.target.value
             }))}
-          className={styles.filterDateInput}
+          className={styles.dateInput}
         />
       </div>
-    </label>
+    </FormInput>
   )
 }

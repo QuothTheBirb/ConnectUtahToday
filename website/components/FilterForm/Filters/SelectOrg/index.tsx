@@ -1,6 +1,7 @@
 import {Dispatch, SetStateAction} from "react";
 
-import styles from '../../EventsFilterForm.module.scss';
+import {FormInput} from "@/components/FormInput";
+import styles from './SelectOrg.module.scss';
 
 export const OrganizationFilter = ({
   orgOptions,
@@ -12,10 +13,9 @@ export const OrganizationFilter = ({
   setSelectedOrg: Dispatch<SetStateAction<string>>;
 }) => {
   return (
-    <label className={styles.filter}>
-      <span className={styles.filterLabel}>Organization:</span>
+    <FormInput label={"Organization"}>
       <select
-        className={styles.filterOrgSelect}
+        className={styles.orgSelect}
         value={selectedOrg}
         onChange={(event) => setSelectedOrg(event.target.value)}
       >
@@ -24,6 +24,6 @@ export const OrganizationFilter = ({
           <option key={index} value={org}>{org}</option>
         ))}
       </select>
-    </label>
+    </FormInput>
   )
 }

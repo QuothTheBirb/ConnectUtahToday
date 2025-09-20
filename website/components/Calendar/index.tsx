@@ -4,9 +4,11 @@ import {useCallback, useMemo, useState} from "react";
 
 import {CalendarEvent} from "@cut/api/types";
 import {EventDetailsPopover} from "@/components/Calendar/EventDetailsPopover";
-import {EventsFilter} from "@/components/Calendar/EventsFilter";
 import {Calendar} from "@/components/Calendar/CalendarView";
 import {EventsDisclaimer} from "@/components/EventsDisclaimer";
+import {FiltersForm} from "@/components/FilterForm";
+import {OrganizationFilter} from "@/components/FilterForm/Filters/SelectOrg";
+import {DateRangeFilter} from "@/components/FilterForm/Filters/DateRange";
 
 export const EventCalendar = ({
   monthEvents,
@@ -82,15 +84,17 @@ export const EventCalendar = ({
 
   return (
     <div>
-      <EventsFilter
-        orgOptions={orgOptions}
-        selectedOrg={selectedOrg}
-        setSelectedOrg={setSelectedOrg}
-        dateRange={dateRange}
-        setDateRange={setDateRange}
-        applyFilters={applyFilters}
-        clearFilters={clearFilters}
-      />
+      <FiltersForm applyFilters={applyFilters} clearFilters={clearFilters}>
+        <OrganizationFilter
+          orgOptions={orgOptions}
+          selectedOrg={selectedOrg}
+          setSelectedOrg={setSelectedOrg}
+        />
+        <DateRangeFilter
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
+      </FiltersForm>
       <EventsDisclaimer />
       <EventDetailsPopover
         eventDetails={eventDetails}
