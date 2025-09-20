@@ -83,7 +83,8 @@ export const EventCalendar = ({
   }, []);
 
   return (
-    <div>
+    <>
+      <EventsDisclaimer />
       <FiltersForm applyFilters={applyFilters} clearFilters={clearFilters}>
         <OrganizationFilter
           orgOptions={orgOptions}
@@ -95,7 +96,6 @@ export const EventCalendar = ({
           setDateRange={setDateRange}
         />
       </FiltersForm>
-      <EventsDisclaimer />
       <EventDetailsPopover
         eventDetails={eventDetails}
         setEventDetails={setEventDetails}
@@ -110,6 +110,6 @@ export const EventCalendar = ({
           setEventDetails({events: dayEvents, date});
         }}
       />
-    </div>
+    </>
   )
 }
