@@ -13,8 +13,8 @@ const Calendar = async ({ searchParams }: {
   const params = await searchParams;
 
   const now = new Date();
-  const year = Number(params?.year || now.getFullYear());
-  const month = Number(params?.month || now.getMonth());
+  const year = params.year ? Number(params.year) : now.getFullYear();
+  const month = params.month ? Number(params.month) - 1 : now.getMonth();
 
   const events = await fetchEventsForMonth({ year, month });
 

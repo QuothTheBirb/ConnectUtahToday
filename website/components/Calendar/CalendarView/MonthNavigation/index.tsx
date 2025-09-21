@@ -66,7 +66,7 @@ export const MonthNavigation = ({
     if (newYear === currentYear && newMonth === currentMonth) {
       router.push('/calendar');
     } else {
-      router.push(`/calendar?year=${newYear}&month=${newMonth}`);
+      router.push(`/calendar?year=${newYear}&month=${newMonth + 1}`);
     }
   };
 
