@@ -1,0 +1,24 @@
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 1em;
+  color: #222;
+  margin-bottom: 0.2em;
+}
+
+input[type="checkbox"] {
+  accent-color: #099;
+  margin-right: 0.45em;
+}
+
+span {
+  display: inline-block;
+}
+
+.loading {
+  color: #888;
+  font-size: 0.97em;
+}
