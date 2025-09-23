@@ -1,0 +1,133 @@
+.disclaimerLink {
+  font-size: 0.92em;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.monthNavigation {
+  margin: 2em 0;
+  text-align: left;
+  max-width: 700px;
+  button {
+    margin-right: 1em;
+    &:last-child {
+      margin-right: 0;
+      margin-left: 1em;
+    }
+  }
+  span {
+    font-weight: bold;
+  }
+}
+
+.eventFeed {
+  margin-top: 20px;
+}
+
+.filterControls {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+
+  .filterInputs {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="month"],
+    input[type="date"] {
+      margin-left: 5px;
+    }
+
+    .dateRangeSeparator {
+      margin: 0 5px;
+    }
+  }
+
+  .filterActions {
+    margin-top: 10px;
+    button {
+      padding: 8px 16px;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .applyFilter {
+      background: #007cba;
+    }
+    .clearFilter {
+      background: #666;
+      margin-left: 10px;
+    }
+  }
+}
+
+.eventList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.eventItem {
+  margin-bottom: 40px;
+  text-align: center;
+
+  .eventImageContainer {
+    margin-bottom: 15px;
+    img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  }
+
+  .eventDetails {
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto;
+    .eventSummary {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .eventMeta {
+      font-size: 15px;
+      color: #444;
+      margin-bottom: 6px;
+      a {
+        color: #1976d2;
+      }
+    }
+    .eventDescription {
+      margin-top: 18px;
+    }
+  }
+}
+
+.popover {
+  position: fixed;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: #fff;
+  border: 1px solid #888;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 2em;
+  max-width: 520px;
+  z-index: 1000;
+  border-radius: 8px;
+  font-size: 0.97em;
+  text-align: left;
+  button {
+    margin-top: 1em;
+    padding: 0.5em 1.5em;
+  }
+}
