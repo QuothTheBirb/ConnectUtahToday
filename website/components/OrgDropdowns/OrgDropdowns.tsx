@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import styles from './OrgDropdowns.module.scss'; 
-import type { Organization } from "../../app/volunteer/page";
+import styles from './OrgDropdowns.module.scss';
+import type {Organization} from "@/app/volunteer/page";
 
 interface OrgDropdownsProps {
   organizations: Organization[];

@@ -1,8 +1,9 @@
 import {Dispatch, SetStateAction} from "react";
 
 import {CalendarEvent} from "@cut/api/types";
-import {orgImageMap} from "./orgImageMap";
 import styles from './EventDetails.module.scss';
+import {getEventImage} from "@/lib/getEventImage";
+import {eventDateString, eventTimeString} from "../../../../../../utils/eventDateString";
 
 export const EventDetailsPopover = (
   { eventDetails, setEventDetails }:
@@ -22,25 +23,9 @@ export const EventDetailsPopover = (
   const { events, date } = eventDetails;
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  const getEventImage = (event: CalendarEvent) => {
-    if (event.image) return event.image;
-    if (event.source === 'mobilize' && event.image) return event.image;
-    if (event.source === 'google') {
-      const searchText = `${event.title} ${event.description || ''}`.toLowerCase();
-      for (const [org, imagePath] of Object.entries(orgImageMap)) {
-        if (searchText.includes(org.toLowerCase())) {
-          return imagePath;
-        }
-      }
-    }
-
-    return 'assets/placeholder.jpg';
-  };
-
   const onClose = () => {
     setEventDetails(null);
   };
-
 
   return (
     <>
@@ -58,7 +43,8 @@ export const EventDetailsPopover = (
               <p className={styles.dateHeaderSubtitle}>{`${events.length} event${events.length !== 1 ? 's' : ''} scheduled`}</p>
             </div>
             {events.map((event, index) => {
-              const eventDate = new Date(event.date);
+              const dateString = eventDateString(event.date, event.endDate);
+              const timeString = eventTimeString(event.date, event.endDate);
               const shortDesc = event.description && event.description.length > 300
                 ? event.description.substring(0, 300) + '...'
                 : event.description;
@@ -69,7 +55,7 @@ export const EventDetailsPopover = (
                   {index > 0 && <div className={styles.eventSeparator}></div>}
                   <div className={styles.eventCard}>
                     <div className={styles.eventImageContainer}>
-                      <img src={eventImage} alt="Event image" className={styles.eventImage} onError={(event) => (event.currentTarget.src = 'assets/placeholder.jpg')}/>
+                      <img src={eventImage} alt={"Event image"} className={styles.eventImage} onError={(event) => (event.currentTarget.src = 'assets/placeholder.jpg')}/>
                     </div>
                     <div className={styles.eventDetails}>
                       {event.org && <div className={styles.eventOrg}>{event.org}</div>}
@@ -78,16 +64,16 @@ export const EventDetailsPopover = (
                         {event.date && (
                           <>
                             <span className={styles.eventGridLabel}>📅 Date:</span>
-                            <span className={styles.eventGridValue}>{eventDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' })}</span>
+                            <span className={styles.eventGridValue}>{dateString}</span>
                             <span className={styles.eventGridLabel}>🕐 Time:</span>
-                            <span className={styles.eventGridValue}>{eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' })} UTC</span>
+                            <span className={styles.eventGridValue}>{timeString}</span>
                           </>
                         )}
                         {/* Location is not currently returned from the API, to be implemented later. */}
                         {/*{event.location && (*/}
                         {/*  <>*/}
-                        {/*    <span className={styles.eventGridLabel}>📍 Location:</span>*/}
-                        {/*    <span className={styles.eventGridValue}>{event.location}</span>*/}
+                        {/*    <span>📍 Location:</span>*/}
+                        {/*    <span>{event.location}</span>*/}
                         {/*  </>*/}
                         {/*)}*/}
                         <span className={styles.eventGridLabel}>{event.source === 'google' ? '📅' : '📢'} Source:</span>
@@ -96,7 +82,7 @@ export const EventDetailsPopover = (
                       {shortDesc && <div className={styles.eventDescription} dangerouslySetInnerHTML={{ __html: shortDesc }}></div>}
                       <div className={styles.eventActions}>
                         {event.url && (
-                          <a href={event.url} target="_blank" rel="noopener noreferrer" className={styles.viewDetailsButton}>
+                          <a href={event.url} target={"_blank"} rel={"noopener"} className={styles.viewDetailsButton}>
                             <span>View Details</span> <span style={{ fontSize: '1.1em' }}>→</span>
                           </a>
                         )}

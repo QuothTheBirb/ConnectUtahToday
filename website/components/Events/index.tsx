@@ -1,21 +1,22 @@
 "use client";
 
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {CalendarEvent} from "@cut/api/types";
-import {EventDetailsPopover} from "@/components/Calendar/EventDetailsPopover";
-import {Calendar} from "@/components/Calendar/CalendarView";
-import {EventsDisclaimer} from "@/components/EventsDisclaimer";
 import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/SelectOrg";
 import {DateRangeFilter} from "@/components/FilterForm/Filters/DateRange";
+import {EventsViews} from "@/components/Events/Views";
+import {EventsDisclaimer} from "@/components/Events/Disclaimer";
+import {EventsMonthSelect} from "@/components/Events/MonthSelect";
+import styles from './Events.module.scss';
 
-export const EventCalendar = ({
+export const Events = ({
   monthEvents,
-  date: {
-    year,
-    month
-  }
+    date: {
+      year,
+      month
+    },
 }: {
   monthEvents: CalendarEvent[];
   date: {
@@ -23,15 +24,16 @@ export const EventCalendar = ({
     month: number;
   }
 }) => {
-  const [eventDetails, setEventDetails] = useState<{events: CalendarEvent[]; date: Date} | null>(null);
-
-  const [ selectedOrg, setSelectedOrg ] = useState("");
+  const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
   const [ dateRange, setDateRange ] = useState({
     start: "",
     end: ""
   });
-  const [ appliedFilters, setAppliedFilters ] = useState({
-    org: "",
+  const [ appliedFilters, setAppliedFilters ] = useState<{
+    orgs: string[];
+    dateRange: { start: string; end: string; };
+  }>({
+    orgs: [],
     dateRange: { start: "", end: "" }
   });
 
@@ -52,12 +54,12 @@ export const EventCalendar = ({
   const events = useMemo(() => {
     return monthEvents.filter((event) => {
       // Filter by applied org
-      const matchesOrg = appliedFilters.org === "" || (event.org || '').trim() === appliedFilters.org;
+      const matchesOrg = appliedFilters.orgs.length < 1 || !!(event.org && appliedFilters.orgs.includes(event.org));
 
       // Filter by applied date range
       const start = appliedFilters.dateRange.start ? new Date(appliedFilters.dateRange.start) : undefined;
       const end = appliedFilters.dateRange.end ? new Date(appliedFilters.dateRange.end) : undefined;
-      if (end) end.setUTCHours(23, 59, 59, 999);
+      if (end) end.setHours(23, 59, 59, 999);
 
       const eventDate = new Date(event.date);
       const withinDateRange = (!start || eventDate >= start) && (!end || eventDate <= end);
@@ -66,50 +68,57 @@ export const EventCalendar = ({
     })
   }, [monthEvents, appliedFilters]);
 
+  useEffect(() => {
+    console.log(monthEvents);
+  }, [monthEvents]);
+
   const applyFilters = useCallback(() => {
     setAppliedFilters({
-      org: selectedOrg,
+      orgs: selectedOrgs,
       dateRange: dateRange,
     });
-  }, [selectedOrg, dateRange]);
+  }, [selectedOrgs, dateRange]);
 
   const clearFilters = useCallback(() => {
-    setSelectedOrg("");
+    setSelectedOrgs([]);
     setDateRange({ start: "", end: "" });
     setAppliedFilters({
-      org: "",
+      orgs: [],
       dateRange: { start: "", end: "" },
     });
   }, []);
 
+  const isClearable = useMemo(() =>
+      selectedOrgs.length > 0 ||
+      dateRange.start !== "" ||
+      dateRange.end !== "" ||
+      appliedFilters.orgs.length > 0 ||
+      appliedFilters.dateRange.start !== "" ||
+      appliedFilters.dateRange.end !== "",
+    [appliedFilters, dateRange, selectedOrgs]
+  );
+
   return (
-    <>
+    <div className={styles.events}>
       <EventsDisclaimer />
-      <FiltersForm applyFilters={applyFilters} clearFilters={clearFilters}>
+      <FiltersForm
+        applyFilters={applyFilters}
+        clearFilters={clearFilters}
+        showClearButton={isClearable}
+      >
         <OrganizationFilter
           orgOptions={orgOptions}
-          selectedOrg={selectedOrg}
-          setSelectedOrg={setSelectedOrg}
+          selectedOrgs={selectedOrgs}
+          setSelectedOrgs={setSelectedOrgs}
+          selectMany={true}
         />
         <DateRangeFilter
           dateRange={dateRange}
           setDateRange={setDateRange}
         />
       </FiltersForm>
-      <EventDetailsPopover
-        eventDetails={eventDetails}
-        setEventDetails={setEventDetails}
-      />
-      <Calendar
-        events={events}
-        date={{
-          year,
-          month
-        }}
-        onDayClick={(dayEvents, date) => {
-          setEventDetails({events: dayEvents, date});
-        }}
-      />
-    </>
+      <EventsMonthSelect date={{ year, month }} />
+      <EventsViews events={events} date={{year, month}} />
+    </div>
   )
 }

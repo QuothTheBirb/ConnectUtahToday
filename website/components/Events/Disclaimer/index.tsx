@@ -1,12 +1,14 @@
-import {useState} from "react";
+"use client";
+
+import {CSSProperties, useState} from "react";
 
 import styles from './EventsDisclaimer.module.scss';
 
-export const EventsDisclaimer = () => {
+export const EventsDisclaimer = ({className, style}: {className?: string; style?: CSSProperties}) => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   return (
-    <div className={styles.disclaimer}>
+    <div className={`${styles.disclaimer}${className ? ` ${className}` : ''}`} style={style}>
       <button
         className={styles.toggleDisclaimer}
         onClick={() => setShowDisclaimer((open) => !open)}

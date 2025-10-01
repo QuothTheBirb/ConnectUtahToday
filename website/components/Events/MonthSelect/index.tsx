@@ -1,10 +1,12 @@
-import {useRouter} from 'next/navigation';
+"use client";
 
-import styles from '../../EventCalendar.module.scss';
+import {useRouter, useSearchParams} from 'next/navigation';
+
 import {CSSProperties, FocusEvent, useCallback, useEffect, useRef, useState} from "react";
-import {parseMonthYear} from "../../../../../utils/parseMonthYear";
+import {parseMonthYear} from "../../../../utils/parseMonthYear";
+import styles from '../Events.module.scss';
 
-export const MonthNavigation = ({
+export const EventsMonthSelect = ({
   date: {
     year,
     month
@@ -16,6 +18,7 @@ export const MonthNavigation = ({
   };
 }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const formatDisplayDate = useCallback((y: number, m: number) => {
     const d = new Date(Date.UTC(y, m, 1));
@@ -62,12 +65,24 @@ export const MonthNavigation = ({
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth();
 
-    // If the target date is the current month and year, clear the search params
-    if (newYear === currentYear && newMonth === currentMonth) {
-      router.push('/calendar');
-    } else {
-      router.push(`/calendar?year=${newYear}&month=${newMonth + 1}`);
+    const params = new URLSearchParams();
+
+    // Preserve other search params
+    for (const [key, value] of searchParams.entries()) {
+      if (key !== 'year' && key !== 'month') {
+        params.set(key, value);
+      }
     }
+
+    // If the target date is NOT the current month and year, add year and month
+    if (newYear !== currentYear || newMonth !== currentMonth) {
+      params.set('year', String(newYear));
+      params.set('month', String(newMonth + 1));
+    }
+
+    const queryString = params.toString();
+
+    router.push(`/events${queryString ? `?${queryString}` : ''}`, { scroll: false });
   };
 
   const handleCycleMonth = (direction: number) => {
@@ -93,19 +108,13 @@ export const MonthNavigation = ({
   return (
     <>
       <form
-        className={styles.monthNav}
+        className={styles.month}
         onSubmit={(event) => {
           event.preventDefault();
           inputRef.current?.blur();
         }}
-        style={{ // Temporarily unsetting global styles for forms
-          background: 'none',
-          boxShadow: 'none',
-          borderRadius: 0,
-          padding: 0,
-        }}
       >
-        <div style={{ marginBottom: '1rem' }}>
+        <div className={styles.monthControls}>
           <button className={styles.navButton} type={"button"} onClick={() => handleCycleMonth(-1)}>&#8592;</button>
           <input
             ref={inputRef}

@@ -1,13 +1,13 @@
 import type {Metadata} from 'next';
-
-import {UpcomingEvents} from "@/components/UpcomingEvents";
 import {fetchEventsForMonth} from "@/lib/api/fetchEventsForMonth";
+import {Events} from "@/components/Events";
+import {PageHeading} from "@/components/PageHeading";
 
 export const metadata: Metadata = {
-  title: 'Upcoming Events'
+  title: 'Events'
 }
 
-const Events = async ({ searchParams }: {
+const EventsPage = async ({ searchParams }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) => {
   const params = await searchParams;
@@ -20,10 +20,10 @@ const Events = async ({ searchParams }: {
 
   return (
     <main>
-      <h1>Events</h1>
-      <UpcomingEvents monthEvents={events} date={{ year, month }} />
+      <PageHeading heading={'h1'}>Events</PageHeading>
+      <Events monthEvents={events} date={{ year, month }} />
     </main>
   )
 }
 
-export default Events;
+export default EventsPage;

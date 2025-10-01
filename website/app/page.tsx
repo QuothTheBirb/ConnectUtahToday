@@ -1,6 +1,7 @@
 import {Metadata} from "next";
 
 import styles from './Home.module.scss'
+import {PageHeading} from "@/components/PageHeading";
 
 export const metadata: Metadata = {
   title: "Home | Connect Utah Today",
@@ -19,12 +20,12 @@ const Home = () => {
           />
         </div>
 
-        <h1>Welcome to the CUT homepage!</h1>
+        <PageHeading heading={'h1'}>Welcome to the CUT homepage!</PageHeading>
         <p>Here is some information about CUT&apos;s mission.</p>
 
         {/* Group Objectives Section */}
         <div className={styles.objectives}>
-          <h2 className={styles.objectivesTitle}>Group Objectives</h2>
+          <PageHeading heading={'h2'}>Group Objectives</PageHeading>
           <ul className={styles.objectivesList}>
             <li className={styles.objectivesItem}>
               <span className={styles.objectivesBullet}>•</span>
