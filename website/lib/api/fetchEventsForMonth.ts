@@ -3,7 +3,7 @@ export const fetchEventsForMonth = async ({ year, month }: { year: number; month
   const start = new Date(year, month, 1).toISOString();
   const end = new Date(year, month + 1, 1).toISOString();
 
-  const API_BASE = process.env.NODE_ENV !== 'development' ? 'http://localhost:3000/api' : 'https://connectutahtoday-1.onrender.com/api';
+  const API_BASE = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : 'https://connectutahtoday-1.onrender.com/api';
 
   const apiUrl = `${API_BASE}/all-events?timeMin=${encodeURIComponent(start)}&timeMax=${encodeURIComponent(end)}`;
 
