@@ -1,6 +1,6 @@
 import {Dispatch, SetStateAction} from "react";
 import Select from 'react-select';
-import styles from './SelectOrg.module.scss';
+import styles from './OrgSelect.module.scss';
 import {FormInput} from "@/components/FormInput";
 
 type OrganizationFilterProps = {
@@ -33,8 +33,9 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
     } = props;
 
     return (
-      <FormInput label={"Organizations"}>
+      <FormInput label={"Organizations"} htmlFor={'organizations'}>
         <Select
+          inputId={'organizations'}
           name={'organizations'}
           className={styles.orgSelect}
           options={selectOptions}
@@ -51,7 +52,6 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
     )
   }
 
-
   // Otherwise, return a single-select dropdown
   const {
     selectedOrg,
@@ -59,8 +59,9 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
   } = props;
 
   return (
-    <FormInput label={`Organisation`}>
+    <FormInput label={`Organisation`} htmlFor={'organization'}>
       <Select
+        inputId={'organization'}
         name={'organization'}
         className={styles.orgSelect}
         options={selectOptions}

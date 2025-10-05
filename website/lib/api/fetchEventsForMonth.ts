@@ -1,5 +1,7 @@
+import {CalendarEvents} from "@cut/api/types";
+
 export const fetchEventsForMonth = async ({ year, month }: { year: number; month: number;
-}) => {
+}): Promise<CalendarEvents> => {
   const start = new Date(year, month, 1).toISOString();
   const end = new Date(year, month + 1, 1).toISOString();
 

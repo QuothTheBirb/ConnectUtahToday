@@ -4,7 +4,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {CalendarEvent} from "@cut/api/types";
 import {FiltersForm} from "@/components/FilterForm";
-import {OrganizationFilter} from "@/components/FilterForm/Filters/SelectOrg";
+import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import {DateRangeFilter} from "@/components/FilterForm/Filters/DateRange";
 import {EventsViews} from "@/components/Events/Views";
 import {EventsDisclaimer} from "@/components/Events/Disclaimer";
@@ -88,15 +88,13 @@ export const Events = ({
     });
   }, []);
 
-  const isClearable = useMemo(() =>
-      selectedOrgs.length > 0 ||
-      dateRange.start !== "" ||
-      dateRange.end !== "" ||
+  const isClearable = useMemo(() => {
+    return selectedOrgs.length > 0 ||
+      dateRange.start !== "" || dateRange.end !== "" ||
       appliedFilters.orgs.length > 0 ||
       appliedFilters.dateRange.start !== "" ||
-      appliedFilters.dateRange.end !== "",
-    [appliedFilters, dateRange, selectedOrgs]
-  );
+      appliedFilters.dateRange.end !== "";
+  }, [appliedFilters, dateRange, selectedOrgs]);
 
   return (
     <div className={styles.events}>

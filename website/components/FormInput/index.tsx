@@ -2,10 +2,10 @@ import {ReactNode} from "react";
 
 import styles from './FormInput.module.scss';
 
-export const FormInput = ({ children, label }: { children: ReactNode; label?: string; }) => {
+export const FormInput = ({ children, label, htmlFor }: { children: ReactNode; label: string; htmlFor: string; }) => {
   return (
-    <label className={styles.filter}>
-      {label && <span className={styles.filterLabel}>{label}</span>}
+    <div className={styles.filter}>
+      <label className={styles.filterLabel} htmlFor={htmlFor}>{label}</label>
       {children}
-    </label>
+    </div>
   )}

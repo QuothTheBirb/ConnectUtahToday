@@ -1,7 +1,7 @@
 "use client";
 
 import styles from './OpportunityList.module.scss';
-import type {Opportunity, Organization} from "@/app/volunteer/page";
+import type {Opportunity} from "@/app/volunteer/page";
 
 // --- Org Image Logic ---
 const assetFiles = [
@@ -78,12 +78,10 @@ function getOrgImg(orgName: string): string {
 
 interface OpportunityListProps {
   opportunities: Opportunity[];
-  organizations: Organization[];
 }
 
 export const OpportunityList = ({
   opportunities,
-  organizations,
 }: OpportunityListProps) => {
   if (!opportunities.length) {
     return (
@@ -105,7 +103,7 @@ export const OpportunityList = ({
     <>
       {Object.entries(orgMap).map(([orgName, orgData]) => {
         const hasLink =
-          orgData.link && typeof orgData.link === "string" && orgData.link.trim() !== "";
+          orgData.link && orgData.link.trim() !== "";
         return (
           <div
             className={styles.opportunityItem}
