@@ -73,7 +73,7 @@ app.get('/organizations', async (req, res) => {
   try {
     const result = await pool.query(`SELECT id, name, link FROM organizations ORDER BY name`);
     console.log('DEBUG organizations:', result.rows);
-    res.json({ organizations: result.rows });
+    res.json({ items: result.rows });
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error fetching organizations:', error.stack || error);
@@ -160,7 +160,7 @@ app.get('/opportunities', async (req, res) => {
       'SELECT opportunity FROM opportunities WHERE organization_id = $1',
       [organization_id]
     );
-    res.json({ opportunities: result.rows.map(row => row.opportunity) });
+    res.json({ items: result.rows.map(row => row.opportunity) });
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error fetching opportunities:', error.stack || error);
