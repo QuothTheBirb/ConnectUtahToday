@@ -3,9 +3,8 @@ import type {Metadata} from 'next';
 import {PageHeading} from "@/components/PageHeading";
 import {ImageEmbed} from "@/components/Support/ImageEmbed";
 
-
 export const metadata: Metadata = {
-  title: 'Events'
+  title: 'Support a Cause'
 }
 
 const gofundmeEmbeds = [
