@@ -135,9 +135,9 @@ input[type="email"], select, textarea {
   align-items: center;
 }
 
-section {
-  margin-bottom: 2.5em;
-}
+/*section {*/
+/*  margin-bottom: 2.5em;*/
+/*}*/
 
 .volunteer-header {
   color: #006d77 !important;

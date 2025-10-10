@@ -1,7 +1,12 @@
-"use client";
-import React, { useRef, useEffect } from "react";
-import Link from "next/link";
-import Head from "next/head";
+import GofundmeWidget from "@/components/Support/GoFundMeWidget";
+import type {Metadata} from 'next';
+import {PageHeading} from "@/components/PageHeading";
+import {ImageEmbed} from "@/components/Support/ImageEmbed";
+
+
+export const metadata: Metadata = {
+  title: 'Events'
+}
 
 const gofundmeEmbeds = [
   {
@@ -40,127 +45,44 @@ const imageEmbeds = [
 ];
 
 export default function SupportPage() {
-  const disclaimerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && document.querySelector(".gfm-embed")) {
-      const existing = document.querySelector('script[src*="gofundme.com/static/js/embed.js"]');
-      if (!existing) {
-        const script = document.createElement("script");
-        script.src = "https://www.gofundme.com/static/js/embed.js";
-        script.defer = true;
-        document.body.appendChild(script);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      const disclaimer = disclaimerRef.current;
-      const disclaimerLink = document.getElementById("disclaimer-link");
-      if (
-        disclaimer &&
-        disclaimer.style.display === "block" &&
-        !disclaimer.contains(e.target as Node) &&
-        e.target !== disclaimerLink
-      ) {
-        disclaimer.style.display = "none";
-      }
-    }
-    window.addEventListener("click", handleClickOutside);
-    return () => window.removeEventListener("click", handleClickOutside);
-  }, []);
-
-  function openDisclaimer(e: React.MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
-    if (disclaimerRef.current) {
-      disclaimerRef.current.style.display = "block";
-    }
-  }
-  function closeDisclaimer() {
-    if (disclaimerRef.current) {
-      disclaimerRef.current.style.display = "none";
-    }
-  }
-
   return (
     <div>
-      <Head>
-        <title>Support a Cause</title>
-      </Head>
-      <nav>
-        <Link href="/">Home</Link> | <Link href="/calendar">Calendar</Link> |{" "}
-        <Link href="/events">Events</Link> | <Link href="/volunteer">Volunteering</Link> |{" "}
-        <Link href="/support">Support a Cause</Link> | <Link href="/latest-updates">Latest Updates</Link> |{" "}
-        <Link href="/activism">Activism</Link>
-      </nav>
       <main>
-        <h1>Support a Cause</h1>
+        <PageHeading heading={'h1'}>Support a Cause</PageHeading>
         <p>
-          Below are causes endorsed by local organizations which you may choose to donate to. Click on a widget to learn more about the individual causes.{" "}
-          <a href="#" id="disclaimer-link" style={{ textDecoration: "underline", cursor: "pointer" }} onClick={openDisclaimer}>
-            Disclaimer
-          </a>
-          .
+          Below are causes endorsed by local organizations which you may choose to donate to. Click on a widget to learn more about the individual causes. <>disclaimer</>
         </p>
-        {gofundmeEmbeds.map((gfm) => (
-          <section key={gfm.title} style={{ marginTop: "2em" }}>
-            <h2>{gfm.title}</h2>
-            <div
-              style={{
-                width: "100%",
-                maxWidth: 400,
-                margin: "1em auto",
-                padding: "2em",
-                border: "2px dashed #ccc",
-                textAlign: "center",
-              }}
-            >
-              <div className="gfm-embed" data-url={gfm.url}></div>
-            </div>
-          </section>
+        {gofundmeEmbeds.map((gfm, index) => (
+          <GofundmeWidget key={index} url={gfm.url} title={gfm.title} />
         ))}
-        {imageEmbeds.map((img) => (
-          <section key={img.title} style={{ marginTop: "2em" }}>
-            <h2>{img.title}</h2>
-            <div
-              style={{
-                width: "100%",
-                maxWidth: 400,
-                margin: "1em auto",
-                textAlign: "left",
-              }}
-            >
-              <img src={img.img} alt={img.alt} style={{ maxWidth: "100%", borderRadius: 8 }} />
-            </div>
-          </section>
+        {imageEmbeds.map((img, index) => (
+          <ImageEmbed key={index} img={img.img} alt={img.alt} title={img.title} />
         ))}
       </main>
-      <div
-        ref={disclaimerRef}
-        id="disclaimer-popover"
-        style={{
-          display: "none",
-          position: "fixed",
-          top: "20%",
-          left: "50%",
-          transform: "translate(-50%,0)",
-          background: "#fff",
-          border: "1px solid #888",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
-          padding: "2em",
-          maxWidth: 500,
-          zIndex: 1000,
-          borderRadius: 8,
-        }}
-      >
-        <strong>Disclaimer:</strong> Connect Utah Today provides links to third-party charitable organizations for your convenience. We do not collect or process donations directly; all donations are handled by the respective organizations. The inclusion of any link does not imply endorsement or recommendation. We make no representations about the accuracy or completeness of the information provided. By clicking on a donation link, you will leave our website and be subject to the policies and terms of the third-party site. Connect Utah Today is not responsible for the content or privacy practices of any linked site. This site does not provide legal, tax, or financial advice—please consult with an appropriate professional before making a donation or regarding the tax deductibility of your contribution.
-        <br />
-        <br />
-        <button onClick={closeDisclaimer} style={{ marginTop: "1em", padding: "0.5em 1.5em" }}>
-          Close
-        </button>
-      </div>
+      {/*<div*/}
+      {/*  id="disclaimer-popover"*/}
+      {/*  style={{*/}
+      {/*    display: "none",*/}
+      {/*    position: "fixed",*/}
+      {/*    top: "20%",*/}
+      {/*    left: "50%",*/}
+      {/*    transform: "translate(-50%,0)",*/}
+      {/*    background: "#fff",*/}
+      {/*    border: "1px solid #888",*/}
+      {/*    boxShadow: "0 4px 24px rgba(0,0,0,0.18)",*/}
+      {/*    padding: "2em",*/}
+      {/*    maxWidth: 500,*/}
+      {/*    zIndex: 1000,*/}
+      {/*    borderRadius: 8,*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <strong>Disclaimer:</strong> Connect Utah Today provides links to third-party charitable organizations for your convenience. We do not collect or process donations directly; all donations are handled by the respective organizations. The inclusion of any link does not imply endorsement or recommendation. We make no representations about the accuracy or completeness of the information provided. By clicking on a donation link, you will leave our website and be subject to the policies and terms of the third-party site. Connect Utah Today is not responsible for the content or privacy practices of any linked site. This site does not provide legal, tax, or financial advice—please consult with an appropriate professional before making a donation or regarding the tax deductibility of your contribution.*/}
+      {/*  <br />*/}
+      {/*  <br />*/}
+      {/*  <button onClick={closeDisclaimer} style={{ marginTop: "1em", padding: "0.5em 1.5em" }}>*/}
+      {/*    Close*/}
+      {/*  </button>*/}
+      {/*</div>*/}
     </div>
   );
 }
