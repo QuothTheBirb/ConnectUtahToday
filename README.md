@@ -2,10 +2,8 @@
 CUT
 
 ## Remaining Pages to Migrate
-- Upcoming Events
-- Support a Cause
-- Volunteer
-- Latest Updates
+- Org Sign-in
 
 ## TODO
-- Remove/handle mobilize events without an org?
+- Clean up
+- Document changes
