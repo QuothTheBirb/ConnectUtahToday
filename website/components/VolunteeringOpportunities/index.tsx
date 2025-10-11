@@ -3,7 +3,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {Opportunity, Organization} from "@/app/volunteer/page";
-import {EventsDisclaimer} from "@/components/Events/Disclaimer";
 import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import ActivitiesSelect from "@/components/FilterForm/Filters/ActivitiesSelect";
@@ -88,7 +87,6 @@ export const VolunteeringOpportunities = (
 
   return (
     <>
-      <EventsDisclaimer />
       <FiltersForm applyFilters={applyFilters} clearFilters={clearFilters} showClearButton={isClearable}>
         <OrganizationFilter orgOptions={orgOptions} selectedOrgs={selectedOrgs} setSelectedOrgs={setSelectedOrgs} selectMany={true} />
         <ActivitiesSelect activities={activitiesOptions} selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} />

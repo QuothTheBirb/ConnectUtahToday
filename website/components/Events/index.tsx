@@ -7,7 +7,6 @@ import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import {DateRangeFilter} from "@/components/FilterForm/Filters/DateRange";
 import {EventsViews} from "@/components/Events/Views";
-import {EventsDisclaimer} from "@/components/Events/Disclaimer";
 import {EventsMonthSelect} from "@/components/Events/MonthSelect";
 import styles from './Events.module.scss';
 
@@ -98,7 +97,6 @@ export const Events = ({
 
   return (
     <div className={styles.events}>
-      <EventsDisclaimer />
       <FiltersForm
         applyFilters={applyFilters}
         clearFilters={clearFilters}

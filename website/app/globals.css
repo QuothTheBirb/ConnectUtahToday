@@ -28,17 +28,17 @@ main {
 }
 
 p {
-  font-size: 1.15em;
-  margin-bottom: 1.3em;
+  /*font-size: 1.15em;*/
+  /*margin-bottom: 1.3em;*/
   line-height: 1.6;
   color: var(--text-main);
 }
 
 img {
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  /*border-radius: 10px;*/
+  /*box-shadow: 0 2px 8px rgba(0,0,0,0.10);*/
   /*margin: 1.5em 0;*/
-  background: var(--main-bg);
+  /*background: var(--main-bg);*/
 }
 
 form {
