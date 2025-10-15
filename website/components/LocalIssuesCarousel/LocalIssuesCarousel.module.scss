@@ -10,6 +10,7 @@
   .carouselImages {
     display: flex;
     transition: transform 0.5s ease;
+    width: 100%;
 
     .carouselImage {
       min-width: 100%;
@@ -46,7 +47,7 @@
   .carouselDots {
     text-align: center;
     padding: 15px 0;
-    background: rgba(0,0,0,0.05);
+    //background: rgba(0,0,0,0.05);
 
     .carouselDot {
       display: inline-block;
