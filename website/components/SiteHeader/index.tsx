@@ -1,17 +1,9 @@
-import styles from './SiteHeader.module.scss';
-import Link from "next/link";
+import {SiteNav} from "@/components/SiteHeader/SiteNav";
 
 export const SiteHeader = () => {
   return (
     <header>
-      <nav className={styles.siteNav}>
-        <Link href={"/"} className={styles.siteNavLink}>Home</Link> |
-        <Link href={"/events"} className={styles.siteNavLink}>Events</Link> |
-        <Link href={"/volunteer"} className={styles.siteNavLink}>Volunteering</Link> |
-        <Link href={"/support"} className={styles.siteNavLink}>Support a Cause</Link> |
-        <Link href={"/latest-updates"} className={styles.siteNavLink}>Latest Updates</Link> |
-        <Link href={"/local-issues"} className={styles.siteNavLink}>Local Issues</Link>
-      </nav>
+      <SiteNav />
     </header>
   )
 }
