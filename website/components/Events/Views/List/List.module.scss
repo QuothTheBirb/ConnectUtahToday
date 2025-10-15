@@ -1,0 +1,104 @@
+.eventFeed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style-type: none;
+  padding-left: 0;
+
+  .eventItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    .eventContent {
+      width: 100%;
+      max-width: 40rem;
+
+      .eventImageContainer {
+        margin: 0 0 1.2rem 0;
+
+        .eventImage {
+          width: 100%;
+          max-width: 400px;
+          height: auto;
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+      }
+
+      .eventDetails {
+        width: 100%;
+
+        .eventSummary {
+          font-size: 1.6rem;
+          font-weight: bold;
+          margin-bottom: 1.2rem;
+        }
+
+        .eventMeta {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          //font-size: 0.875rem;
+          color: #444;
+          margin-bottom: 6px;
+
+          .eventLink {
+            color: #1976d2;
+          }
+        }
+
+        .eventDescription {
+          word-break: break-all;
+        }
+      }
+    }
+  }
+
+  .eventItem + .eventItem::before {
+    content: '';
+    width: calc(100% - 6rem);
+    height: 1px;
+    background-color: #8c93a4;
+    margin: 1.5rem 0 2rem 0; // Adjust when global paragraph styles are replaced
+  }
+}
+
+//.eventItem {
+//  margin-bottom: 40px;
+//  text-align: center;
+//
+//  .eventImageContainer {
+//    margin-bottom: 15px;
+//    img {
+//      width: 100%;
+//      max-width: 400px;
+//      height: auto;
+//      border-radius: 8px;
+//      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+//    }
+//  }
+//
+//  .eventDetails {
+//    text-align: left;
+//    max-width: 600px;
+//    margin: 0 auto;
+//    .eventSummary {
+//      font-size: 24px;
+//      font-weight: bold;
+//      margin-bottom: 6px;
+//    }
+//    .eventMeta {
+//      font-size: 15px;
+//      color: #444;
+//      margin-bottom: 6px;
+//      a {
+//        color: #1976d2;
+//      }
+//    }
+//    .eventDescription {
+//      margin-top: 18px;
+//    }
+//  }
+//}
