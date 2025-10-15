@@ -21,7 +21,7 @@ export const DateRangeFilter = (
   const { start, end } = dateRange;
 
   return (
-    <FormInput label={"Date Range"}>
+    <FormInput label={"Date Range"} htmlFor={'date-range'}>
       <div className={styles.dateRange}>
         <input
           type={"date"}
