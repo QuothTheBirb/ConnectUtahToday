@@ -102,25 +102,24 @@ app.post('/organizations', async (req, res) => {
   }
 });
 
-
-// API to add a new opportunity for an organization
-app.post('/opportunities', async (req, res) => {
-  const { organization_id, opportunity } = req.body;
-  if (!organization_id || !opportunity) {
-    return res.status(400).json({ error: 'organization_id and opportunity are required' });
+// API to get volunteer opportunities for an organization by organization_id
+app.get('/opportunities', async (req, res) => {
+  const { organization_id } = req.query;
+  if (!organization_id) {
+    return res.status(400).json({ error: 'organization_id is required' });
   }
   try {
-    await pool.query(
-      'INSERT INTO opportunities (organization_id, opportunity) VALUES ($1, $2)',
-      [organization_id, opportunity]
+    const result = await pool.query(
+      'SELECT opportunity FROM opportunities WHERE organization_id = $1',
+      [organization_id]
     );
-    res.json({ success: true });
+    res.json({ items: result.rows.map(row => row.opportunity) });
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Error adding opportunity:', error.stack || error);
+      console.error('Error fetching opportunities:', error.stack || error);
     }
 
-    res.status(500).json({ error: 'Failed to add opportunity' });
+    res.status(500).json({ error: 'Failed to fetch opportunities' });
   }
 });
 
@@ -149,24 +148,25 @@ app.delete('/opportunities', async (req, res) => {
   }
 });
 
-// API to get volunteer opportunities for an organization by organization_id
-app.get('/opportunities', async (req, res) => {
-  const { organization_id } = req.query;
-  if (!organization_id) {
-    return res.status(400).json({ error: 'organization_id is required' });
+
+// API to add a new opportunity for an organization
+app.post('/opportunities', async (req, res) => {
+  const { organization_id, opportunity } = req.body;
+  if (!organization_id || !opportunity) {
+    return res.status(400).json({ error: 'organization_id and opportunity are required' });
   }
   try {
-    const result = await pool.query(
-      'SELECT opportunity FROM opportunities WHERE organization_id = $1',
-      [organization_id]
+    await pool.query(
+      'INSERT INTO opportunities (organization_id, opportunity) VALUES ($1, $2)',
+      [organization_id, opportunity]
     );
-    res.json({ items: result.rows.map(row => row.opportunity) });
+    res.json({ success: true });
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Error fetching opportunities:', error.stack || error);
+      console.error('Error adding opportunity:', error.stack || error);
     }
 
-    res.status(500).json({ error: 'Failed to fetch opportunities' });
+    res.status(500).json({ error: 'Failed to add opportunity' });
   }
 });
 
@@ -303,36 +303,37 @@ app.get('/google-calendar', async (req: Request<{}, {}, {}, EventsApiQueryParams
  * Combined Events API (aggregates Mobilize and Google Calendar events)
  * Uses internal function calls!
  */
-app.get('/all-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
+app.get('/api/all-events', async (req, res) => {
   console.log('=== COMBINED EVENTS REQUEST ===');
   try {
-    // Fetch from both APIs in parallel using Promise.allSettled
-    const [mobilizeResponse, googleResponse] = await Promise.allSettled([
-      axios.get<EventsApiResponse>(`${apiBase}/mobilize-events?${new URLSearchParams(req.query)}`),
-      axios.get<EventsApiResponse>(`${apiBase}/google-calendar?${new URLSearchParams(req.query)}`)
+    // Fetch from all three APIs in parallel
+    const [mobilizeResponse, googleResponse, imageResponse] = await Promise.allSettled([
+      axios.get(`${apiBase}/mobilize-events?${new URLSearchParams(req.query)}`),
+      axios.get(`${apiBase}/google-calendar?${new URLSearchParams(req.query)}`),
+      axios.get(`${apiBase}/image-events?${new URLSearchParams(req.query)}`)
     ]);
 
     let allEvents: CalendarEvent[] = [];
 
-    // Add mobilize events if successful
     if (mobilizeResponse.status === 'fulfilled') {
       const mobilizeEvents = mobilizeResponse.value.data.items || [];
       allEvents = allEvents.concat(mobilizeEvents);
       console.log('Added mobilize events:', mobilizeEvents.length);
-    } else {
-      console.log('Mobilize API failed:', mobilizeResponse.reason?.message);
     }
-
-    // Add google events if successful
     if (googleResponse.status === 'fulfilled') {
       const googleEvents = googleResponse.value.data.items || [];
       allEvents = allEvents.concat(googleEvents);
       console.log('Added Google Calendar events:', googleEvents.length);
+    }
+    if (imageResponse.status === 'fulfilled') {
+      const imageEvents = imageResponse.value.data.items || [];
+      allEvents = allEvents.concat(imageEvents);
+      console.log('Added image events:', imageEvents.length);
     } else {
-      console.log('Google Calendar API failed:', googleResponse.reason?.message);
+      console.error('Image events fetch failed:', imageResponse);
     }
 
-    // Sort all events by date
+    // Sort by date
     allEvents.sort((a, b) => {
       const dateA = +new Date(a.date);
       const dateB = +new Date(b.date);
@@ -345,12 +346,75 @@ app.get('/all-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, re
     res.json(<EventsApiResponse>{ items: allEvents });
   } catch (error) {
     console.error('=== COMBINED EVENTS ERROR ===');
-    console.error('Error:', error);
-    console.error('=== END ERROR ===');
-
     if (error instanceof Error) {
       res.status(500).json({ error: 'Failed to fetch combined events', details: error.message });
     }
+  }
+});
+
+// Image upload Postgres logic
+app.post('/images', async (req, res) => {
+  const { url, organization, date } = req.body;
+  if (!url || !organization || !date) {
+    return res.status(400).json({ error: 'url, organization, and date required' });
+  }
+  try {
+    const result = await pool.query(
+      'INSERT INTO images (url, organization, date) VALUES ($1, $2, $3) RETURNING *',
+      [url, organization, date]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error saving image:', err);
+    res.status(500).json({ error: 'Error saving image data' });
+  }
+});
+
+// API to fetch events from images table
+app.get('/image-events', async (req, res) => {
+  try {
+    // Optional filters
+    const { org, timeMin, timeMax } = req.query;
+    let query = 'SELECT * FROM images';
+    const params = [];
+    const where = [];
+    if (org) {
+      where.push('organization ILIKE $' + (params.length + 1));
+      params.push(`%${org}%`);
+    }
+    if (timeMin) {
+      where.push('date >= $' + (params.length + 1));
+      params.push(timeMin);
+    }
+    if (timeMax) {
+      where.push('date <= $' + (params.length + 1));
+      params.push(timeMax);
+    }
+    if (where.length) query += ' WHERE ' + where.join(' AND ');
+    query += ' ORDER BY date ASC';
+
+    const result = await pool.query(query, params);
+
+    // Log raw rows from the images table
+    console.log('Images table result:', result.rows);
+
+    // Normalize to event structure
+    const events = result.rows.map(row => ({
+      id: `image-${row.id}`,
+      summary: '',
+      description: '',
+      date: row.date,
+      endDate: row.date,
+      image: row.url,
+      org: row.organization,
+      url: row.url,
+      event_type: 'image',
+      source: 'image'
+    }));
+    res.json({ items: events });
+  } catch (error) {
+    console.error('Error fetching image events:', error);
+    res.status(500).json({ error: 'Failed to fetch image events' });
   }
 });
 
@@ -360,5 +424,4 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-console.log(PORT);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

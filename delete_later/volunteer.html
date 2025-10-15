@@ -58,17 +58,42 @@
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a> |
-    <a href="calendar.html">Calendar</a> |
-    <a href="events.html">Events</a> |
-    <a href="volunteer.html">Volunteering</a> |
-    <a href="support.html">Support a Cause</a> |
-    <a href="latest-updates.html">Latest Updates</a> |
-    <a href="activism.html">Activism</a>
-  </nav>
-  <div style="text-align:right; margin: 0.5em 2em 0 0;">
-    <a href="org-signin.html" id="org-signin-link" style="font-size:0.97em;text-decoration:underline;cursor:pointer;">Organization sign-in</a>
+  <div class="site-nav-wrapper">
+    <nav id="site-nav">
+      <div class="links-container">
+        <div class="link-wrapper">
+          <a href="index.html">Home</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="calendar.html">Calendar</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="events.html">Events</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="volunteer.html">Volunteering</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="support.html">Support a Cause</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="latest-updates.html">Latest Updates</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="activism.html">Activism</a>
+        </div>
+      </div>
+    </nav>
+    <button
+      id="toggle-site-nav"
+      aria-controls="main-navigation"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
   <main>
     <h1>Volunteer for Local Events and Organizations</h1>
@@ -184,6 +209,9 @@
     async function fetchOrganizations() {
       const res = await fetch('https://connectutahtoday-1.onrender.com/api/organizations');
       const data = await res.json();
+      (data.organizations || []).forEach(org => {
+        console.log('Organization link:', org.link);
+      });
       return (data.organizations || []).map(org => ({
         id: org.id,
         name: org.name,
@@ -308,6 +336,7 @@
       const orgMap = {};
       opps.forEach(opp => {
         if (!orgMap[opp.orgName]) orgMap[opp.orgName] = { activities: [], link: opp.orgLink };
+        console.log(opp.orgLink);
         orgMap[opp.orgName].activities.push(opp.activity);
       });
       Object.keys(orgMap).forEach(orgName => {
@@ -400,6 +429,17 @@
           }
         });
       }
+    });
+
+    // Site mobile navigation menu
+    const menuButton = document.getElementById('toggle-site-nav');
+    const siteNav = document.getElementById('site-nav');
+
+    menuButton.addEventListener('click', function() {
+      const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+
+      menuButton.setAttribute('aria-expanded', Boolean(!expanded).toString());
+      siteNav.classList.toggle('nav-opened');
     });
   </script>
 </body>

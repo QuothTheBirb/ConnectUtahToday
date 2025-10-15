@@ -6,16 +6,43 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a> |
-    <a href="calendar.html">Calendar</a> |
-    <a href="events.html">Events</a> |
-    <a href="volunteer.html">Volunteering</a> |
-    <a href="support.html">Support a Cause</a> |
-    <a href="latest-updates.html">Latest Updates</a> |
-    <a href="activism.html">Activism</a> |
-
-  </nav>
+  <div class="site-nav-wrapper">
+    <nav id="site-nav">
+      <div class="links-container">
+        <div class="link-wrapper">
+          <a href="index.html">Home</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="calendar.html">Calendar</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="events.html">Events</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="volunteer.html">Volunteering</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="support.html">Support a Cause</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="latest-updates.html">Latest Updates</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="activism.html">Activism</a>
+        </div>
+      </div>
+    </nav>
+    <button
+      id="toggle-site-nav"
+      aria-controls="main-navigation"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
   <main>
     <h1>Upcoming Events</h1>
     <div style="text-align:left; margin: 1.5em 0 0.5em 0;">
@@ -70,6 +97,13 @@
             <input type="date" id="start-date-filter" style="margin-left: 5px;" disabled>
             <span style="margin: 0 5px;">to</span>
             <input type="date" id="end-date-filter" disabled>
+          </div>
+
+          <div>
+            <label>
+              Organization:
+              <input type="text" id="org-filter" placeholder="Type organization name..." style="margin-left: 5px;">
+            </label>
           </div>
         </div>
 
@@ -222,6 +256,7 @@
       const dayFilter = document.getElementById('day-filter');
       const startDateFilter = document.getElementById('start-date-filter');
       const endDateFilter = document.getElementById('end-date-filter');
+      const orgFilter = document.getElementById('org-filter');
       const applyButton = document.getElementById('apply-filter');
       const clearButton = document.getElementById('clear-filter');
       const now = new Date();
@@ -242,7 +277,15 @@
       clearButton.addEventListener('click', function() {
         document.querySelector('input[value="all"]').checked = true;
         filterTypeRadios.forEach(radio => radio.dispatchEvent(new Event('change')));
+        orgFilter.value = '';
         renderEvents(allEvents);
+      });
+      orgFilter.disabled = false;
+      orgFilter.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+          const selectedFilter = document.querySelector('input[name="filter-type"]:checked').value;
+          applyEventFilter(selectedFilter);
+        }
       });
     }
     function applyEventFilter(filterType) {
@@ -277,6 +320,13 @@
             filteredEvents = getEventsInDateRange(startDate, endDate);
           }
           break;
+      }
+      // Organization filter (case-insensitive)
+      const orgValue = document.getElementById('org-filter').value.trim().toLowerCase();
+      if (orgValue) {
+        filteredEvents = filteredEvents.filter(event =>
+          (event.org || '').toLowerCase().includes(orgValue)
+        );
       }
       renderEvents(filteredEvents);
     }
@@ -315,8 +365,10 @@
         container.innerHTML = '<p>No events found.</p>';
         return;
       }
+      // Group by source for legacy layout, but image events will show in list too
       const googleEvents = events.filter(event => event.source === 'google');
       const mobilizeEvents = events.filter(event => event.source === 'mobilize');
+      const imageEvents = events.filter(event => event.source === 'image');
       let html = '';
       if (googleEvents.length > 0) {
         html += '<ul style="list-style-type: none; padding-left: 0;">';
@@ -332,16 +384,26 @@
         });
         html += '</ul>';
       }
+      if (imageEvents.length > 0) {
+        html += '<ul style="list-style-type: none; padding-left: 0;">';
+        imageEvents.forEach(event => {
+          html += renderEventHTML(event);
+        });
+        html += '</ul>';
+      }
       container.innerHTML = html;
     }
     function renderEventHTML(event) {
       const date = event.date
         ? new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
         : 'Date TBD';
-      const summary = event.summary || event.title || '';
+      const summary = event.summary || event.org || '';
       const description = event.description || '';
       const imageURL = event.image || getMatchingImage(summary, description);
-      let eventContent = `<p style="margin-top: 18px;">${description}</p>`;
+      let eventContent = '';
+      if (description) {
+        eventContent = `<p style="margin-top: 18px;">${description}</p>`;
+      }
       return `
         <li style="margin-bottom: 40px; text-align: center;">
           <div style="margin-bottom: 15px;">
@@ -382,6 +444,17 @@
       if (eventsDisclaimerPopover.style.display === 'block' && !eventsDisclaimerPopover.contains(e.target) && e.target !== eventsDisclaimerLink) {
         eventsDisclaimerPopover.style.display = 'none';
       }
+    });
+
+    // Site mobile navigation menu
+    const menuButton = document.getElementById('toggle-site-nav');
+    const siteNav = document.getElementById('site-nav');
+
+    menuButton.addEventListener('click', function() {
+      const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+
+      menuButton.setAttribute('aria-expanded', Boolean(!expanded).toString());
+      siteNav.classList.toggle('nav-opened');
     });
   </script>
 </body>

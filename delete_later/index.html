@@ -7,16 +7,48 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>🦉</text></svg>">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a> |
-    <a href="calendar.html">Calendar</a> |
-    <a href="events.html">Events</a> |
-    <a href="volunteer.html">Volunteering</a> |
-    <a href="support.html">Support a Cause</a> |
-    <a href="latest-updates.html">Latest Updates</a> |
-    <a href="activism.html">Activism</a>
-  </nav>
+  <div class="site-nav-wrapper">
+    <nav id="site-nav">
+      <div class="links-container">
+        <div class="link-wrapper">
+          <a href="index.html">Home</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="calendar.html">Calendar</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="events.html">Events</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="volunteer.html">Volunteering</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="support.html">Support a Cause</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="latest-updates.html">Latest Updates</a>
+        </div>
+        <div class="link-wrapper">
+          <a href="activism.html">Activism</a>
+        </div>
+      </div>
+    </nav>
+    <button
+      id="toggle-site-nav"
+      aria-controls="main-navigation"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
   <main>
+    <!-- Temporarily moved so it doesn't overlap with the mobile nav hamburger button -->
+    <div style="text-align:right; margin: 0.5em 2em 0 0;">
+      <a href="org-signin.html" id="org-signin-link" style="font-size:0.97em;text-decoration:underline;cursor:pointer;">Organization sign-in</a>
+    </div>
     <!-- Logo at top center -->
     <div style="text-align:center; margin: 1em 0 0.5em 0;">
       <img src="/ConnectUtahToday/assets/CUT.png" alt="Connect Utah Today Logo" style="max-width:300px; height:auto;">
@@ -124,6 +156,17 @@
       document.body.style.overflow = 'hidden';
       sessionStorage.removeItem('cut_terms_accepted');
     };
+
+    // Site mobile navigation menu
+    const menuButton = document.getElementById('toggle-site-nav');
+    const siteNav = document.getElementById('site-nav');
+
+    menuButton.addEventListener('click', function() {
+      const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+
+      menuButton.setAttribute('aria-expanded', Boolean(!expanded).toString());
+      siteNav.classList.toggle('nav-opened');
+    });
   </script>
 </body>
 </html>
