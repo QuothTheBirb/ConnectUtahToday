@@ -1,3 +1,6 @@
 .env
 node_modules
 r2-worker/node_modules
+website/.next
+.gitconfig
+.idea
