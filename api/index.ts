@@ -303,7 +303,7 @@ app.get('/google-calendar', async (req: Request<{}, {}, {}, EventsApiQueryParams
  * Combined Events API (aggregates Mobilize and Google Calendar events)
  * Uses internal function calls!
  */
-app.get('/api/all-events', async (req, res) => {
+app.get('/all-events', async (req: Request<{}, {}, {}, EventsApiQueryParams>, res: Response) => {
   console.log('=== COMBINED EVENTS REQUEST ===');
   try {
     // Fetch from all three APIs in parallel
