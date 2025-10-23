@@ -44,6 +44,59 @@ pool.on('error', (err) => {
   process.exit(-1);
 });
 
+/*
+ * Org Signin
+ */
+
+app.post('/set-password', async (req: Request<{}, {}, { currentPassword?: string; newPassword: string; }, {}>, res: Response) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!newPassword || newPassword.length < 8) {
+    return res.status(400).json({ success: false, error: 'New password must be at least 8 characters long.' });
+  }
+
+  try {
+    const result = await pool.query('SELECT id, password_hash FROM password LIMIT 1');
+
+    if (result.rows.length > 0) {
+      const { id } = await result.rows[0];
+
+      if (!currentPassword) {
+        return res.status(401).json({ success: false, error: 'Current password is required to update the password.' });
+      }
+
+      const hashedPassword = result.rows[0].password_hash;
+      console.log(result.rows[0])
+      console.log(currentPassword, hashedPassword);
+      const match = await bcrypt.compare(currentPassword, hashedPassword);
+
+      if (!match) {
+        return res.status(401).json({ success: false, error: 'Incorrect current password.' });
+      }
+
+      const newPasswordHash = await bcrypt.hash(newPassword, 10);
+      await pool.query('UPDATE password SET password_hash = $1 WHERE id = $2', [newPasswordHash, id]);
+
+      return res.json({ success: true, message: 'Password updated successfully.' });
+    } else {
+      if (currentPassword) {
+        return res.status(400).json({ success: false, error: 'A current password was provided, but no password is set.' });
+      }
+
+      const newPasswordHash = await bcrypt.hash(newPassword, 10);
+      await pool.query('INSERT INTO password (password_hash) VALUES ($1)', [newPasswordHash]);
+
+      return res.status(201).json({ success: true, message: 'Password set successfully.' });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error updating password:', error.stack || error);
+    }
+
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+})
+
 // API to verify org-signin password
 app.post('/org-signin', async (req, res) => {
   const { password } = req.body;

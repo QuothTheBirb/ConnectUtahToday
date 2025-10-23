@@ -15,4 +15,11 @@ CREATE TABLE IF NOT EXISTS organizations (
   link VARCHAR ( 100 ) NOT NULL
 );
 ```
+
 #### Password Table
+```
+CREATE TABLE IF NOT EXISTS password (
+  id SERIAL PRIMARY KEY,
+  password_hash TEXT NOT NULL
+);
+```
