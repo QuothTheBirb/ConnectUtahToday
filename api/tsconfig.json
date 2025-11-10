@@ -12,9 +12,10 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "isolatedModules": true
+    "isolatedModules": true,
   },
   "include": [
-    "index.ts"
-  ],
+    "index.ts",
+    "**/*.ts",
+  ]
 }
