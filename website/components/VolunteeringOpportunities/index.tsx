@@ -2,12 +2,12 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {Opportunity, Organization} from "@/app/volunteer/page";
 import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import ActivitiesSelect from "@/components/FilterForm/Filters/ActivitiesSelect";
 import OpportunityList from "@/components/VolunteeringOpportunities/OpportunityList/OpportunityList";
 import styles from './VolunteeringOpportunities.module.scss';
+import {Opportunity, Organization} from "@/app/(app)/volunteer/page";
 
 export const VolunteeringOpportunities = (
   {
