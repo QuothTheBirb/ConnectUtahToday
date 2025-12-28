@@ -1,7 +1,7 @@
 "use client";
 
 import styles from './OpportunityList.module.scss';
-import type {Opportunity} from "@/app/volunteer/page";
+import {Opportunity} from "@/app/(app)/volunteer/page";
 
 // --- Org Image Logic ---
 const assetFiles = [
