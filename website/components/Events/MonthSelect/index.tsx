@@ -20,6 +20,10 @@ export const EventsMonthSelect = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+
   const formatDisplayDate = useCallback((y: number, m: number) => {
     const d = new Date(Date.UTC(y, m, 1));
 
@@ -61,10 +65,6 @@ export const EventsMonthSelect = ({
   };
 
   const handleNavigate = (newYear: number, newMonth: number) => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth();
-
     const params = new URLSearchParams();
 
     // Preserve other search params
@@ -133,7 +133,7 @@ export const EventsMonthSelect = ({
           <button className={styles.navButton} type={"button"} onClick={() => handleCycleMonth(1)}>&#8594;</button>
         </div>
         <div className={styles.controlsInfo}>
-          <span>Type month and year (e.g., "January 2025" or "1/2025") and press Enter</span>
+          <span>Type month and year (e.g., "January {currentYear}" or "1/{currentYear}") and press Enter</span>
         </div>
         {error && <div style={errorMsgStyle}>{error}</div>}
       </form>
