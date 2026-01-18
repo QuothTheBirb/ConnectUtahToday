@@ -31,11 +31,11 @@ const GofundmeWidget = ({ url, title }: { url: string, title: string }) => {
         iframeRef.current &&
         iframeRef.current.contentWindow === event.source
       ) {
-        if (event.data.offsetWidth !== undefined) {
+        if (event.data.offsetWidth) {
           setIframeWidth(event.data.offsetWidth);
         }
 
-        if (event.data.offsetHeight !== undefined) {
+        if (event.data.offsetHeight) {
           setIframeHeight(event.data.offsetHeight);
         }
       }

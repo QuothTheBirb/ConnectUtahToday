@@ -1,4 +1,4 @@
-import {Organization} from "@/app/volunteer/page";
+import {Organization} from "@/app/(app)/volunteer/page";
 
 export const fetchOrganizations = async (): Promise<Organization[]> => {
   const API_BASE = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : 'https://connectutahtoday-1.onrender.com/api';
