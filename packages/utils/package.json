@@ -1,0 +1,22 @@
+{
+  "name": "@connect-utah-today/utils",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "imports": {
+    "#*": "./dist/*"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "@connect-utah-today/tsconfig": "*"
+  }
+}

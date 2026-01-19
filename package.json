@@ -1,20 +1,23 @@
 {
-  "name": "ConnectUtahToday",
+  "name": "connect-utah-today",
   "version": "1.0.0",
-  "main": "server.js",
-  "repository": "git@github.com:madssee/ConnectUtahToday.git",
-  "author": "<madssee>",
+  "type": "module",
+  "repository": "git@github.com:QuothTheBirb/ConnectUtahToday.git",
+  "author": "<QuothTheBirb>",
   "license": "MIT",
-  "dependencies": {
-    "axios": "^1.11.0",
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "pg": "^8.11.2",
-    "server": "^1.0.42"
-  },
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tooling/*"
+  ],
   "scripts": {
-    "start": "node server.js"
-  }
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.7.5"
+  },
+  "packageManager": "npm@11.1.0"
 }

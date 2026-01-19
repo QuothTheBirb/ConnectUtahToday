@@ -1,0 +1,13 @@
+{
+  "extends": "@connect-utah-today/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "paths": {
+			"@/*": ["./*"],
+			"@/fonts": ["./styles/fonts"],
+			"@payload-config": ["./payload.config.ts"]
+		}
+  },
+  "include": ["index.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,31 @@
+.filter {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+
+  .filterLabel {
+    color: var(--accent2);
+    //font-weight: 600;
+  }
+
+  //.filterDateRange {
+  //  display: flex;
+  //  gap: 0.5rem;
+  //  align-items: center;
+  //
+  //  input[type=date].filterDateInput {
+  //    padding: 0.4em 1em;
+  //    border: 1.5px solid #dee2e6;
+  //    border-radius: 6px;
+  //    min-width: 120px;
+  //  }
+  //}
+
+  //select.filterOrgSelect {
+  //  padding: 0.4em 1em;
+  //  border: 1.5px solid #dee2e6;
+  //  border-radius: 6px;
+  //  min-width: 120px;
+  //}
+}

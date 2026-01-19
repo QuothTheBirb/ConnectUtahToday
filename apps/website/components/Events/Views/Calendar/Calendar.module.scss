@@ -1,0 +1,66 @@
+.calendarContainer {
+  .calendarMonthYear {
+    font-family: 'Staatliches', 'Segoe UI', 'Arial', sans-serif;
+    color: #1e2a36;
+    letter-spacing: 0.04rem;
+    text-align: center;
+    font-size: 2.4rem;
+    margin: 0.4rem 0 0.8rem 0;
+  }
+
+  .calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ddd;
+    border: 1px solid #ddd;
+
+    .dayHeader {
+      background: #f0f0f0;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .calendarGridDays {
+      grid-column: 1 / -1;
+      display: contents;
+
+      .calendarCell {
+        background: #fff;
+        padding: 10px;
+        min-height: 60px;
+        border: 1px solid #eee;
+        position: relative;
+
+        .events {
+          position: absolute; bottom: 4px; left: 4px; right: 4px;
+
+          .event {
+            font-size: 9px;
+            background: #1976d2;
+            color: white;
+            padding: 1px 3px;
+            margin: 1px 0;
+            border-radius: 2px;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+
+  .controlsInfo {
+    text-align: center;
+    margin-bottom: 1em;
+    font-size: 0.9em;
+    color: #6c757d;
+  }
+
+  .detailsInfo {
+    margin-top: 1em;
+    text-align: center;
+  }
+}

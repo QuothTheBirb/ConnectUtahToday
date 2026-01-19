@@ -1,0 +1,68 @@
+.carouselContainer {
+  max-width: 800px;
+  margin: 2em auto;
+  position: relative;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+  .carouselImages {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 100%;
+
+    .carouselImage {
+      min-width: 100%;
+      height: 400px;
+      object-fit: contain;
+    }
+  }
+
+  .carouselNav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 5px;
+
+    &:hover {
+      background: rgba(0,0,0,0.7);
+    }
+
+    &.carouselPrev {
+      left: 10px;
+    }
+
+    &.carouselNext {
+      right: 10px;
+    }
+  }
+
+  .carouselDots {
+    text-align: center;
+    padding: 15px 0;
+    //background: rgba(0,0,0,0.05);
+
+    .carouselDot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ccc;
+      margin: 0 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: none;
+
+      &.active {
+        background: #007bff;
+      }
+    }
+  }
+}

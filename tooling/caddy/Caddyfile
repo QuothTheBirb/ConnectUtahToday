@@ -1,0 +1,7 @@
+{$DOMAIN} {
+	reverse_proxy /* website:3000
+}
+
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri}
+}

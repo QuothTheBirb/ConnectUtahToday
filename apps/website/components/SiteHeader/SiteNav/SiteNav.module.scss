@@ -1,0 +1,141 @@
+.siteNav {
+  background: var(--accent1);
+  padding: 1em 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .linksContainer {
+    display: flex;
+    justify-content: center;
+    letter-spacing: 0.02em;
+    text-align: center;
+    //align-items: center;
+
+    .linkWrapper + .linkWrapper::before {
+      content: '';
+      border-left: var(--accent2) 1px solid;
+      padding: 0.25rem 0;
+    }
+
+    .linkWrapper {
+      .siteNavLink {
+        color: #01373c;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 1.3em;
+        padding: 0.4em 0.8em;
+        border-radius: 4px;
+        transition: background 0.2s, color 0.2s;
+        font-size: 1.08em;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus {
+          background: #fff;
+          color: var(--accent2);
+        }
+      }
+    }
+  }
+}
+
+button.toggleSiteNav {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .siteNavWrapper {
+    height: 36px;
+  }
+
+  nav.siteNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    opacity: 0;
+    padding: 128px 0 64px 0;
+    pointer-events: none;
+
+    &.smoothTransition {
+      transition: opacity 0.2s;
+
+      .linksContainer {
+        transition: transform 0.2s linear;
+        transform: translateY(20px);
+      }
+    }
+
+    &.navOpened {
+      opacity: 1;
+      pointer-events: auto;
+
+      .linksContainer {
+        transform: translateY(0);
+      }
+    }
+
+    .linksContainer {
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+
+      .linkWrapper + .linkWrapper::before {
+        border: none;
+        padding: 0;
+      }
+
+      .linkWrapper {
+        .siteNavLink {
+          font-size: 1.3rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  button.toggleSiteNav {
+    background: var(--accent2);
+    box-shadow: 6px 4px 24px 0 #4545454d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0.75rem;
+    right: 0.5rem;
+    z-index: 20;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+
+    span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 2px;
+      background: #f5f5f5;
+    }
+
+    span + span {
+      margin-top: 4px;
+    }
+  }
+}
+
+/* Mobile Navigation (Prefers Reduced Motion) */
+@media (max-width: 1100px) and (prefers-reduced-motion: reduce) {
+  nav.siteNav {
+    &.smoothTransition {
+      transition: none;
+
+      .linksContainer {
+        transition: none;
+        transform: none;
+      }
+    }
+  }
+}

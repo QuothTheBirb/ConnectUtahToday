@@ -1,0 +1,9 @@
+{
+  "extends": "@connect-utah-today/tsconfig/base.json",
+  "compilerOptions": {
+
+    "outDir": "dist"
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
