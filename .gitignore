@@ -1,6 +1,20 @@
 .env
 node_modules
 **/node_modules
-website/.next
+
+# next.js
+.next/
+out/
+build
+
+# Git Config
 .gitconfig
+
+# turbo
+.turbo
+
+# dist
+dist
+
+# Webstorm
 .idea

@@ -1,29 +1,23 @@
 {
-  "name": "ConnectUtahToday",
+  "name": "connect-utah-today",
   "version": "1.0.0",
-  "main": "server.js",
   "type": "module",
-  "repository": "git@github.com:madssee/ConnectUtahToday.git",
-  "author": "<madssee>",
+  "repository": "git@github.com:QuothTheBirb/ConnectUtahToday.git",
+  "author": "<QuothTheBirb>",
   "license": "MIT",
+  "private": true,
   "workspaces": [
-    "api/",
-    "website/",
-    "r2-worker/"
+    "apps/*",
+    "packages/*",
+    "tooling/*"
   ],
   "scripts": {
-    "build": "npm run build:website",
-    "build:website": "cd website && npm run build",
-    "start": "concurrently \"npm run start:api\" \"npm run start:website\"",
-    "start:api": "cd api && npm run start",
-    "start:website": "cd website && npm run start",
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:website\"",
-    "dev:api": "cd api && npm run dev",
-    "dev:website": "cd website && npm run dev"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
-    "typescript": "^5.9.2"
+    "turbo": "^2.7.5"
   },
   "packageManager": "npm@11.1.0"
 }

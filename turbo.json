@@ -1,0 +1,28 @@
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**"
+      ],
+      "passThroughEnv": [
+        "DOTENV_PRIVATE_KEY_PRODUCTION"
+      ]
+    },
+    "dev": {
+      "persistent": true,
+			"cache": false,
+			"inputs": [
+				"$TURBO_DEFAULT$",
+				".env.local"
+			]
+    }
+  },
+  "ui": "tui"
+}
