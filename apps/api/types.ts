@@ -8,9 +8,13 @@ export type MobilizeEvents = {
     id: string;
     title: string;
     description: string;
-    featured_image_url: string;
+    featured_image_url?: string;
     sponsor?: {
+      id: number;
       name: string;
+      event_feed_url: string;
+      slug: string;
+      state?: string;
     }
     timeslots: {
       start_date: number;
@@ -27,7 +31,7 @@ export type MobilizeEvents = {
 // Reference: https://developers.google.com/calendar/api/v3/reference/events
 export type GoogleCalendarEvents = calendar_v3.Schema$Events;
 
-type BaseEvent = {
+type BaseCalendarEvent = {
   id: string;
   title: string;
   description?: string;
@@ -35,17 +39,32 @@ type BaseEvent = {
   endDate?: string;
   url: string;
 }
-export type CalendarEvent = BaseEvent & ({
+type MobilizeCalendarEvent =  BaseCalendarEvent & {
   source: "mobilize";
-  image: string;
-  org?: string;
+  image?: string;
+  organization: {
+    id: number;
+    name: string;
+    slug: string;
+    url: string;
+    state?: string;
+  }
   event_type: MobilizeEventType;
-} | {
+}
+type GoogleCalendarEvent = BaseCalendarEvent &  {
   source: "google";
-  image?: string | null;
-  org: 'Connect Utah Today';
+  image?: string;
+  organization: {
+    id?: string;
+    name?: string;
+    url?: never;
+    slug?: never;
+    state?: never;
+  }
   event_type: "CUTCOMMUNITY";
-})
+}
+
+export type CalendarEvent = MobilizeCalendarEvent | GoogleCalendarEvent;
 export type CalendarEvents = CalendarEvent[] | [];
 
 // Events API

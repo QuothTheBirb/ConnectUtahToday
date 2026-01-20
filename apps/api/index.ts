@@ -247,8 +247,9 @@ async function fetchGoogleCalendarEvents(reqQuery: EventsApiQueryParams): Promis
     const events: CalendarEvent[] = response.data.items ? response.data.items.flatMap((event) => {
       const date = googleCalendarDateToUtcIso(event.start);
       const endDate = googleCalendarDateToUtcIso(event.end);
+      const organization = event.organizer;
 
-      if (!event.id || !date || !event.summary || !event.htmlLink) return [];
+      if (!event.id || !date || !event.summary || !event.htmlLink || !organization) return [];
 
       return {
         id: event.id,
@@ -256,8 +257,10 @@ async function fetchGoogleCalendarEvents(reqQuery: EventsApiQueryParams): Promis
         description: event.description || undefined,
         date: date,
         endDate: endDate,
-        image: null,
-        org: 'Connect Utah Today',
+        organization: {
+          id: organization.id,
+          name: organization.displayName,
+        },
         url: event.htmlLink,
         event_type: 'CUTCOMMUNITY',
         source: 'google'
@@ -312,9 +315,11 @@ app.get('/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryParams
       const timeslot = (event.timeslots && event.timeslots[0]);
       const date = mobilizeTimestampToUtcIso(timeslot?.start_date);
       const endDate = mobilizeTimestampToUtcIso(timeslot?.end_date);
-      const org = event.sponsor && event.sponsor.name;
+      const organization = event.sponsor;
 
-      if (!date || !org) return [];
+      if (!date || !organization) return [];
+
+      console.log(`RAW EVENT: `, event)
 
       return {
         id: event.id,
@@ -323,7 +328,13 @@ app.get('/mobilize-events', async (req: Request<{}, {}, {}, EventsApiQueryParams
         date: date,
         endDate: endDate,
         image: event.featured_image_url,
-        org: org,
+        organization: {
+          id: organization.id,
+          name: organization.name,
+          url: organization.event_feed_url,
+          slug: organization.slug,
+          state: organization.state,
+        },
         url: event.browser_url,
         event_type: event.event_type,
         source: 'mobilize'
