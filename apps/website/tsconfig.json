@@ -5,7 +5,8 @@
     "paths": {
 			"@/*": ["./*"],
 			"@/fonts": ["./styles/fonts"],
-			"@payload-config": ["./payload.config.ts"]
+			"@payload-config": ["./payload.config.ts"],
+			"@connect-utah-today/api/*": ["../api/*"],
 		}
   },
   "include": ["index.d.ts", "**/*.ts", "**/*.tsx"],

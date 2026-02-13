@@ -1,20 +1,22 @@
-import {Organization} from "@/app/(app)/volunteer/page";
+import config from "@payload-config";
+import {getPayload} from "payload";
+import {Organization} from "@/payload-types";
 
-export const fetchOrganizations = async (): Promise<Organization[] | []> => {
-  const API_BASE = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : 'https://connectutahtoday-1.onrender.com/api';
+export const fetchOrganizations = async (): Promise<Organization[]> => {
+  const payload = await getPayload({ config });
 
-  const apiUrl = `${API_BASE}/organizations`;
+  try {
+    const organizations = await payload.find({
+      collection: 'organizations',
+      depth: 1,
+      pagination: false
+    });
 
-  const res = await fetch(apiUrl, {
-    next: {
-      revalidate: 300
-    }
-  });
-  if (!res.ok) {
+    if (!organizations.docs) return [];
+
+    return organizations.docs;
+  } catch (error) {
+    console.error('Error fetching organizations:', error);
     return [];
   }
-
-  const data = await res.json();
-
-  return data.items || [];
 }

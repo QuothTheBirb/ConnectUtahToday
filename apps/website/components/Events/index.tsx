@@ -2,13 +2,13 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {CalendarEvent} from "@cut/api/types";
 import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import {DateRangeFilter} from "@/components/FilterForm/Filters/DateRange";
 import {EventsViews} from "@/components/Events/Views";
 import {EventsMonthSelect} from "@/components/Events/MonthSelect";
 import styles from './Events.module.scss';
+import {CalendarEvent} from "@connect-utah-today/api/types";
 
 export const Events = ({
   monthEvents,
@@ -39,21 +39,24 @@ export const Events = ({
   const orgOptions = useMemo(() => {
     if (!monthEvents) return [];
 
-    const organizations = new Set<string>();
+    const orgMap = new Map<string, string>();
 
     monthEvents.forEach(event => {
-      if (event.org && event.org !== '') {
-        organizations.add(event.org.trim());
+      if (event.organization?.name && event.organization?.slug) {
+        orgMap.set(event.organization.slug.trim(), event.organization.name.trim());
       }
     });
 
-    return Array.from(organizations).sort((a, b) => a.localeCompare(b));
+    return Array.from(orgMap.entries()).map(([slug, name]) => ({
+      value: slug,
+      label: name
+    })).sort((a, b) => a.label.localeCompare(b.label));
   }, [monthEvents]);
 
   const events = useMemo(() => {
     return monthEvents.filter((event) => {
       // Filter by applied org
-      const matchesOrg = appliedFilters.orgs.length < 1 || !!(event.org && appliedFilters.orgs.includes(event.org));
+      const matchesOrg = appliedFilters.orgs.length < 1 || (!!event.organization?.slug && appliedFilters.orgs.includes(event.organization.slug));
 
       // Filter by applied date range
       const start = appliedFilters.dateRange.start ? new Date(appliedFilters.dateRange.start) : undefined;

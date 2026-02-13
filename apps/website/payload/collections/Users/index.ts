@@ -25,6 +25,10 @@ export const Users: CollectionConfig = {
     // hidden: ({user}) => checkRole(['admin'], user)
   },
   defaultSort: ["-updatedAt", "createdAt"],
+  hooks: {
+    // beforeChange: [handleInviteCode],
+    // afterChange: [markInviteUsed],
+  },
   auth: {
     // tokenExpiration: 7200, // How many seconds to keep the user logged in
     // verify: true, // Require email verification before being allowed to authenticate
@@ -49,7 +53,7 @@ export const Users: CollectionConfig = {
         beforeChange: [ensureFirstUserIsAdmin],
       },
       required: true,
-      defaultValue: ['organizer'],
+      defaultValue: [],
       options: [
         {
           label: "admin",
@@ -61,6 +65,22 @@ export const Users: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'inviteCode',
+      type: 'text',
+      admin: {
+        hidden: true,
+      },
+    },
+    // {
+    //   name: 'invite',
+    //   type: 'relationship',
+    //   relationTo: 'organization-invites',
+    //   admin: {
+    //     readOnly: true,
+    //     position: 'sidebar',
+    //   },
+    // },
     // {
     //   type: 'group',
     //   name: 'organization',

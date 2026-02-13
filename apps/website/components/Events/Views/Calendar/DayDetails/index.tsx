@@ -58,7 +58,9 @@ export const EventDetailsPopover = (
                       <img src={eventImage} alt={"Event image"} className={styles.eventImage} onError={(event) => (event.currentTarget.src = 'assets/placeholder.jpg')}/>
                     </div>
                     <div className={styles.eventDetails}>
-                      {event.org && <div className={styles.eventOrg}>{event.org}</div>}
+                      {(event.organization?.name || event.organization?.name) && (
+                        <div className={styles.eventOrg}>{event.organization.name}</div>
+                      )}
                       <h3 className={styles.eventSummary}>{event.title}</h3>
                       <div className={styles.eventGrid}>
                         {event.date && (
@@ -76,8 +78,10 @@ export const EventDetailsPopover = (
                         {/*    <span>{event.location}</span>*/}
                         {/*  </>*/}
                         {/*)}*/}
-                        <span className={styles.eventGridLabel}>{event.source === 'google' ? '📅' : '📢'} Source:</span>
-                        <span className={styles.eventGridValue}>{event.source === 'google' ? 'Google Calendar' : 'Mobilize'}</span>
+                        <span className={styles.eventGridLabel}>{event.source === 'google' ? '📅' : event.source === 'local' ? '🏠' : '📢'} Source:</span>
+                        <span className={styles.eventGridValue}>
+                          {event.source === 'google' ? 'Google Calendar' : event.source === 'local' ? 'Local' : 'Mobilize'}
+                        </span>
                       </div>
                       {shortDesc && <div className={styles.eventDescription} dangerouslySetInnerHTML={{ __html: shortDesc }}></div>}
                       <div className={styles.eventActions}>
@@ -86,8 +90,8 @@ export const EventDetailsPopover = (
                             <span>View Details</span> <span style={{ fontSize: '1.1em' }}>→</span>
                           </a>
                         )}
-                        {event.source === 'mobilize' && event.event_type && (
-                          <span className={styles.eventTypeTag}>{event.event_type}</span>
+                        {event.source === 'mobilize' && event.eventType && (
+                          <span className={styles.eventTypeTag}>{event.eventType}</span>
                         )}
                       </div>
                     </div>

@@ -70,7 +70,12 @@ export interface Config {
     users: User;
     organizations: Organization;
     opportunities: Opportunity;
+    events: Event;
+    'event-assets': EventAsset;
+    'organization-assets': OrganizationAsset;
+    'organization-invites': OrganizationInvite;
     'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -80,7 +85,12 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     organizations: OrganizationsSelect<false> | OrganizationsSelect<true>;
     opportunities: OpportunitiesSelect<false> | OpportunitiesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    'event-assets': EventAssetsSelect<false> | EventAssetsSelect<true>;
+    'organization-assets': OrganizationAssetsSelect<false> | OrganizationAssetsSelect<true>;
+    'organization-invites': OrganizationInvitesSelect<false> | OrganizationInvitesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -89,15 +99,28 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
-  locale: null;
-  user: User & {
-    collection: 'users';
+  globals: {
+    'event-settings': EventSetting;
+    'payload-jobs-stats': PayloadJobsStat;
   };
+  globalsSelect: {
+    'event-settings': EventSettingsSelect<false> | EventSettingsSelect<true>;
+    'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
+  };
+  locale: null;
+  user: User;
   jobs: {
-    tasks: unknown;
-    workflows: unknown;
+    tasks: {
+      mobilizeSync: TaskMobilizeSync;
+      googleCalendarSync: TaskGoogleCalendarSync;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
+    workflows: {
+      syncEvents: WorkflowSyncEvents;
+    };
   };
 }
 export interface UserAuthOperations {
@@ -126,6 +149,7 @@ export interface User {
   id: string;
   name: string;
   roles: ('admin' | 'organizer')[];
+  inviteCode?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -143,6 +167,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -156,11 +181,46 @@ export interface Organization {
    */
   generateSlug?: boolean | null;
   slug: string;
-  url?: string | null;
-  opportunities?: (string | Opportunity)[] | null;
+  url: string;
   organizer: string | User;
+  logo?: (string | null) | OrganizationAsset;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  opportunities?: (string | Opportunity)[] | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "organization-assets".
+ */
+export interface OrganizationAsset {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -175,6 +235,80 @@ export interface Opportunity {
   description?: string | null;
   status?: ('pending' | 'verified') | null;
   requestedBy?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: string;
+  /**
+   * The name of this event.
+   */
+  title: string;
+  /**
+   * A brief description of this event.
+   */
+  description: string;
+  url: string;
+  date: string;
+  endDate?: string | null;
+  eventType?: string | null;
+  source?: ('local' | 'googleCalendar' | 'mobilize') | null;
+  local?: {
+    image?: (string | null) | EventAsset;
+    organization?: (string | null) | Organization;
+  };
+  mobilize?: {
+    eventId: number;
+    image?: string | null;
+    organization: {
+      id: number;
+      name: string;
+      slug: string;
+      url: string;
+      state?: string | null;
+    };
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-assets".
+ */
+export interface EventAsset {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "organization-invites".
+ */
+export interface OrganizationInvite {
+  id: string;
+  /**
+   * The secure code used for the invite link.
+   */
+  code: string;
+  expiresIn: '12hours' | '1day' | '3days' | '1week' | '1month' | 'custom';
+  expiresAt?: string | null;
+  status?: ('pending' | 'registered' | 'completed') | null;
+  usedBy?: (string | null) | User;
+  createdBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -197,6 +331,112 @@ export interface PayloadKv {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: string;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'mobilizeSync' | 'googleCalendarSync';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  workflowSlug?: 'syncEvents' | null;
+  taskSlug?: ('inline' | 'mobilizeSync' | 'googleCalendarSync') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  /**
+   * Used for concurrency control. Jobs with the same key are subject to exclusive/supersedes rules.
+   */
+  concurrencyKey?: string | null;
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -213,6 +453,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'opportunities';
         value: string | Opportunity;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: string | Event;
+      } | null)
+    | ({
+        relationTo: 'event-assets';
+        value: string | EventAsset;
+      } | null)
+    | ({
+        relationTo: 'organization-assets';
+        value: string | OrganizationAsset;
+      } | null)
+    | ({
+        relationTo: 'organization-invites';
+        value: string | OrganizationInvite;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -263,6 +519,7 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
+  inviteCode?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -289,8 +546,10 @@ export interface OrganizationsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   url?: T;
-  opportunities?: T;
   organizer?: T;
+  logo?: T;
+  description?: T;
+  opportunities?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -308,11 +567,131 @@ export interface OpportunitiesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  url?: T;
+  date?: T;
+  endDate?: T;
+  eventType?: T;
+  source?: T;
+  local?:
+    | T
+    | {
+        image?: T;
+        organization?: T;
+      };
+  mobilize?:
+    | T
+    | {
+        eventId?: T;
+        image?: T;
+        organization?:
+          | T
+          | {
+              id?: T;
+              name?: T;
+              slug?: T;
+              url?: T;
+              state?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-assets_select".
+ */
+export interface EventAssetsSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "organization-assets_select".
+ */
+export interface OrganizationAssetsSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "organization-invites_select".
+ */
+export interface OrganizationInvitesSelect<T extends boolean = true> {
+  code?: T;
+  expiresIn?: T;
+  expiresAt?: T;
+  status?: T;
+  usedBy?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  workflowSlug?: T;
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  concurrencyKey?: T;
+  meta?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -345,6 +724,201 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-settings".
+ */
+export interface EventSetting {
+  id: string;
+  /**
+   * Configure site settings for events uploaded to the site through the dashboard.
+   */
+  localEvents?: {
+    enableLocalEvents?: boolean | null;
+  };
+  /**
+   * Configure site settings for Google Calendar events.
+   */
+  googleCalendar?: {
+    enableGoogleCalendar?: boolean | null;
+    /**
+     * Get an API key from https://developers.google.com/calendar/quickstart/js
+     */
+    googleCalendarApiKey?: string | null;
+    /**
+     * Get your calendar ID from https://calendar.google.com/calendar/r/settings/addbyurl
+     */
+    googleCalendarId?: string | null;
+  };
+  /**
+   * Configure site settings for Mobilize events. Syncs with event calendar every 4 hours by default.
+   */
+  mobilize: {
+    enableMobilize?: boolean | null;
+    /**
+     * Optional, currently unused.
+     */
+    mobilizeApiKey?: string | null;
+    enableStateFilter: boolean;
+    /**
+     * Filter events by state. Required by default when enabling mobilize integration to limit total number of events fetched.
+     */
+    stateFilter?: {
+      state:
+        | 'AL'
+        | 'AK'
+        | 'AZ'
+        | 'AR'
+        | 'CA'
+        | 'CO'
+        | 'CT'
+        | 'DE'
+        | 'DC'
+        | 'FL'
+        | 'GA'
+        | 'HI'
+        | 'ID'
+        | 'IL'
+        | 'IN'
+        | 'IA'
+        | 'KS'
+        | 'KY'
+        | 'LA'
+        | 'ME'
+        | 'MD'
+        | 'MA'
+        | 'MI'
+        | 'MN'
+        | 'MS'
+        | 'MO'
+        | 'MT'
+        | 'NE'
+        | 'NV'
+        | 'NH'
+        | 'NJ'
+        | 'NM'
+        | 'NY'
+        | 'NC'
+        | 'ND'
+        | 'OH'
+        | 'OK'
+        | 'OR'
+        | 'PA'
+        | 'RI'
+        | 'SC'
+        | 'SD'
+        | 'TN'
+        | 'TX'
+        | 'UT'
+        | 'VT'
+        | 'VA'
+        | 'WA'
+        | 'WV'
+        | 'WI'
+        | 'WY';
+    };
+    enableOrganizationFilter?: boolean | null;
+    organizationFilter?: {
+      type: 'allowlist' | 'blocklist';
+      list: string[];
+    };
+  };
+  syncInterval: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats".
+ */
+export interface PayloadJobsStat {
+  id: string;
+  stats?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-settings_select".
+ */
+export interface EventSettingsSelect<T extends boolean = true> {
+  localEvents?:
+    | T
+    | {
+        enableLocalEvents?: T;
+      };
+  googleCalendar?:
+    | T
+    | {
+        enableGoogleCalendar?: T;
+        googleCalendarApiKey?: T;
+        googleCalendarId?: T;
+      };
+  mobilize?:
+    | T
+    | {
+        enableMobilize?: T;
+        mobilizeApiKey?: T;
+        enableStateFilter?: T;
+        stateFilter?:
+          | T
+          | {
+              state?: T;
+            };
+        enableOrganizationFilter?: T;
+        organizationFilter?:
+          | T
+          | {
+              type?: T;
+              list?: T;
+            };
+      };
+  syncInterval?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats_select".
+ */
+export interface PayloadJobsStatsSelect<T extends boolean = true> {
+  stats?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskMobilizeSync".
+ */
+export interface TaskMobilizeSync {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskGoogleCalendarSync".
+ */
+export interface TaskGoogleCalendarSync {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WorkflowSyncEvents".
+ */
+export interface WorkflowSyncEvents {
+  input?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -7,9 +7,9 @@ import {checkRole} from "@/payload/access/utilities";
 export const Organizations: CollectionConfig = {
   slug: 'organizations',
   access: {
-    create: publicAccess,
+    create: ({ req: { user } }) => checkRole(["admin", "organizer"], user),
     delete: adminOrOrganizer,
-    read: adminOrOrganizer,
+    read: publicAccess,
     update: adminOrOrganizer,
   },
   admin: {
@@ -17,50 +17,85 @@ export const Organizations: CollectionConfig = {
     useAsTitle: "name",
   },
   defaultSort: ['name'],
+  hooks: {
+    // afterChange: [completeInvite],
+  },
   fields: [
     {
-      name: 'name',
-      label: 'Organization Name',
-      type: 'text',
-      required: true,
-    },
-    slugField({
-      useAsSlug: 'name',
-    }),
-    {
-      name: 'url',
-      label: 'Organization Link',
-      type: 'text',
-    },
-    {
-      name: 'opportunities',
-      label: 'Volunteering Opportunities',
-      type: "relationship",
-      relationTo: 'opportunities',
-      hasMany: true,
-      admin: {
-        sortOptions: 'name'
-      }
-    },
-    {
-      name: 'organizer',
-      label: 'Organizer',
-      type: "relationship",
-      relationTo: 'users',
-      defaultValue: ({ user }) => {
-        if (checkRole(['organizer'], user)) return {
-          id: user?.id,
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Organization Details',
+          fields: [
+            {
+              name: 'name',
+              label: 'Organization Name',
+              type: 'text',
+              required: true,
+            },
+            slugField({
+              useAsSlug: 'name',
+            }),
+            {
+              name: 'url',
+              label: 'Organization Link',
+              type: 'text',
+              required: true,
+              // TODO: Add validation to input
+            },
+            {
+              name: 'organizer',
+              label: 'Organizer',
+              type: "relationship",
+              relationTo: 'users',
+              defaultValue: ({ user }) => {
+                if (checkRole(['organizer'], user)) return {
+                  id: user?.id,
+                }
+              },
+              filterOptions:  {
+                roles: {
+                  contains: 'organizer'
+                }
+              },
+              required: true,
+              access: {
+                update: adminOnlyFieldAccess,
+              }
+            },
+          ]
+        },
+        {
+          label: 'Organization Page',
+          fields: [
+            {
+              name: 'logo',
+              type: 'upload',
+              relationTo: 'organization-assets'
+            },
+            // {
+            //   name: 'shortDescription',
+            //   label: 'Short Description',
+            //   type: 'richText',
+            // },
+            {
+              name: 'description',
+              label: 'Page Content',
+              type: 'richText',
+            },
+            {
+              name: 'opportunities',
+              label: 'Volunteering Opportunities',
+              type: "relationship",
+              relationTo: 'opportunities',
+              hasMany: true,
+              admin: {
+                sortOptions: 'name'
+              }
+            },
+          ]
         }
-      },
-      filterOptions:  {
-        roles: {
-          contains: 'organizer'
-        }
-      },
-      required: true,
-      access: {
-        update: adminOnlyFieldAccess,
-      }
+      ]
     },
   ]
 }

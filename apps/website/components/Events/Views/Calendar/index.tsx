@@ -12,7 +12,8 @@ const DayEvents = ({events}: DayEventsProps) => {
   const remainingEventsCount = events.length - visibleEvents.length;
 
   const getEventLabel = (event: CalendarEvent) => {
-    const label = [event.org, event.title || 'Event'].filter(Boolean).join(': ');
+    // const label = [event.organization?.name, event.title || 'Event'].filter(Boolean).join(': ');
+    const label = `${event.title}`
 
     return label.length > 24 ? `${label.substring(0, 23)}…` : label;
   }
@@ -64,7 +65,7 @@ const CalendarDay = ({ dayOfMonth, date, isToday, dayEvents, onDayClick }: Calen
       style={cellStyle}
       onClick={handleDayClick}
     >
-      <div style={{ fontWeight: isToday ? 'bold' : 'normal' }}>{dayOfMonth}</div>
+      <div className={styles.dayNumber} style={{ fontWeight: isToday ? 'bold' : 'normal' }}>{dayOfMonth}</div>
       {hasEvents && <DayEvents events={dayEvents} />}
     </div>
   );

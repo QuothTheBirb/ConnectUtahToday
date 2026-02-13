@@ -1,66 +1,52 @@
 "use client";
 
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 
 import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import ActivitiesSelect from "@/components/FilterForm/Filters/ActivitiesSelect";
 import OpportunityList from "@/components/VolunteeringOpportunities/OpportunityList/OpportunityList";
 import styles from './VolunteeringOpportunities.module.scss';
-import {Opportunity, Organization} from "@/app/(app)/volunteer/page";
+import {Organization} from "@/payload-types";
 
-export const VolunteeringOpportunities = (
-  {
-    organizations,
-    opportunities,
-  }: {
-    organizations: Organization[];
-    opportunities: Opportunity[];
-  }
-) => {
+export const VolunteeringOpportunities = ({ organizations }: { organizations: Organization[] }) => {
   const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
-  const [ appliedFilters, setAppliedFilters ] = useState<{
-    orgs: string[];
-    activities: string[];
-  }>({
-    orgs: [],
-    activities: [],
+  const [appliedFilters, setAppliedFilters] = useState({
+    orgs: [] as string[],
+    activities: [] as string[],
   });
 
-  const filteredOpportunities = useMemo(() => {
-    return opportunities.filter((opp) => {
-      const matchesOrg = appliedFilters.orgs.length < 1 || !!(opp.orgName && appliedFilters.orgs.includes(opp.orgName));
-      const matchesAct = appliedFilters.activities.length < 1 || (appliedFilters.activities.includes(opp.activity));
+  const filteredOrganizations = useMemo(() => {
+    const { orgs, activities } = appliedFilters;
+    return organizations.filter((org) => {
+      const matchesOrg = orgs.length === 0 || orgs.includes(org.name);
+      if (!matchesOrg) return false;
 
-      return matchesOrg && matchesAct;
+      if (activities.length === 0) return true;
+
+      const orgActivities =
+        org.opportunities
+          ?.map((opp) => (typeof opp === "object" ? opp.name : ""))
+          .filter(Boolean) || [];
+
+      return activities.some((act) => orgActivities.includes(act));
     });
-  }, [opportunities, appliedFilters]);
-
-  useEffect(() => {
-    // setSelectedActivities(Array.from(new Set(opportunities.map(o => o.activity))).sort());
-    setSelectedActivities([]);
-  }, [opportunities]);
+  }, [organizations, appliedFilters]);
 
   const activitiesOptions = useMemo(() => {
-    if (!opportunities) return [];
+    const activities = organizations
+      .flatMap((org) => org.opportunities || [])
+      .map((opp) => (typeof opp === "object" ? opp.name.trim() : ""))
+      .filter(Boolean);
 
-    const activities = new Set<string>();
+    return Array.from(new Set(activities)).sort();
+  }, [organizations]);
 
-    opportunities.forEach(opp => {
-      if (opp.activity && opp.activity !== '') {
-        activities.add(opp.activity.trim());
-      }
-    });
-
-    return Array.from(activities).sort((a, b) => a.localeCompare(b));
-  }, [opportunities]);
-
-  const orgOptions = useMemo(() => {
-    const orgs = organizations.map(org => org.name);
-
-    return Array.from(orgs).sort((a, b) => a.localeCompare(b));
-  }, [organizations, selectedActivities]);
+  const orgOptions = useMemo(
+    () => Array.from(new Set(organizations.map((org) => org.name))).sort(),
+    [organizations]
+  );
 
   const applyFilters = useCallback(() => {
     setAppliedFilters({
@@ -78,12 +64,11 @@ export const VolunteeringOpportunities = (
     });
   }, []);
 
-  const isClearable = useMemo(() => {
-    return selectedOrgs.length > 0 ||
-      selectedActivities.length > 0 ||
-      appliedFilters.orgs.length > 0 ||
-      appliedFilters.activities.length > 0;
-  }, [selectedOrgs, selectedActivities]);
+  const isClearable =
+    selectedOrgs.length > 0 ||
+    selectedActivities.length > 0 ||
+    appliedFilters.orgs.length > 0 ||
+    appliedFilters.activities.length > 0;
 
   return (
     <>
@@ -92,7 +77,7 @@ export const VolunteeringOpportunities = (
         <ActivitiesSelect activities={activitiesOptions} selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} />
       </FiltersForm>
       <section className={styles.opportunityList}>
-        <OpportunityList opportunities={filteredOpportunities} />
+        <OpportunityList organizations={filteredOrganizations} />
       </section>
     </>
   )

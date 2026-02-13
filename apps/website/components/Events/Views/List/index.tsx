@@ -1,6 +1,6 @@
-import {CalendarEvents} from "@cut/api/types";
 import styles from './List.module.scss';
 import {getEventImage} from "@/lib/getEventImage";
+import {CalendarEvents} from "@connect-utah-today/api/types";
 
 const EventItem = ({ event }: { event: any }) => {
   const date = event.date ? new Date(event.date).toDateString() : 'Date TBD';
@@ -20,9 +20,21 @@ const EventItem = ({ event }: { event: any }) => {
             {date} — {summary}
           </div>
           <div className={styles.eventMeta}>
-            <span><strong>Organization:</strong> {event.org || 'Unknown'}</span>
+            <span><strong>Organization:</strong> {event.organization?.name || event.externalOrganizationName || 'Unknown'}</span>
+            {process.env.NODE_ENV === 'development' && <span><strong>Organization Slug:</strong> {event.organization?.slug || 'N/A'}</span>}
             <span><strong>Type:</strong> {event.event_type || 'Other'}</span>
-            {event.url && <span><a href={event.url} target={"_blank"} rel={"noopener"} className={styles.eventLink}>Event Link</a></span>}
+            {event.url && (
+              <span>
+                <a
+                  href={event.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.eventLink}
+                >
+                  Event Link
+                </a>
+              </span>
+            )}
           </div>
           <p className={styles.eventDescription}>{description}</p> {/* TODO: Add markdown formatting */}
         </div>

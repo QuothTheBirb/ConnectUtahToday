@@ -2,8 +2,7 @@
 
 ## TODO
 - Clean up codebase
-- Migrate authentication logic to PayloadCMS
-- Refactor organizations and opportunities as PayloadCMS collections
-  - Set a global organizations blacklist
+- Update styles on /volunteer
 - Add tests
 - Add CI/CD pipeline for deployments
+- Add organization invite page on the frontend

@@ -3,8 +3,10 @@ import Select from 'react-select';
 import styles from './OrgSelect.module.scss';
 import {FormInput} from "@/components/FormInput";
 
+type OrgOption = { label: string; value: string };
+
 type OrganizationFilterProps = {
-  orgOptions: string[];
+  orgOptions: (string | OrgOption)[];
 } & ({
   selectedOrg: string | null;
   setSelectedOrg: Dispatch<SetStateAction<string | null>>;
@@ -20,10 +22,15 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
     selectMany
   } = props;
 
-  const selectOptions = orgOptions.map((org, index) => ({
-    value: org,
-    label: org
-  }));
+  const selectOptions = orgOptions.map((org) => {
+    if (typeof org === 'string') {
+      return {
+        value: org,
+        label: org
+      };
+    }
+    return org;
+  });
 
   // If selectMany is true, return a multi-select dropdown
   if (selectMany) {
@@ -40,7 +47,10 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
           className={styles.orgSelect}
           options={selectOptions}
           isMulti={true}
-          value={selectedOrgs.map((org) => ({value: org, label: org}))}
+          value={selectedOrgs.map((org) => {
+            const option = selectOptions.find(o => o.value === org);
+            return option || {value: org, label: org};
+          })}
           onChange={(value) => setSelectedOrgs(value.map((org) => org.value))}
           placeholder={"Any"}
           isClearable={true}
@@ -66,10 +76,10 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
         className={styles.orgSelect}
         options={selectOptions}
         isMulti={false}
-        value={selectedOrg ? {
+        value={selectedOrg ? (selectOptions.find(o => o.value === selectedOrg) || {
           value: selectedOrg,
           label: selectedOrg,
-        } : null}
+        }) : null}
         onChange={(value) => setSelectedOrg(value ? value.value : null)}
         placeholder={"Any"}
         isClearable={true}
