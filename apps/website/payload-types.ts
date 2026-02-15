@@ -304,11 +304,19 @@ export interface OrganizationInvite {
    * The secure code used for the invite link.
    */
   code: string;
-  expiresIn: '12hours' | '1day' | '3days' | '1week' | '1month' | 'custom';
-  expiresAt?: string | null;
-  status?: ('pending' | 'registered' | 'completed') | null;
+  /**
+   * The total number of organizations that the recipient can create after the invite is accepted. Max 10.
+   */
+  organizationTokens: number;
+  expiresIn: '1day' | '3days' | '1week' | '2weeks' | '1month' | 'date';
+  expirationDate?: string | null;
+  status: 'pending' | 'completed' | 'expired';
   usedBy?: (string | null) | User;
-  createdBy?: (string | null) | User;
+  createdBy: string | User;
+  /**
+   * (Optional) Internal notes for this invitation. These are only visible to site administrators.
+   */
+  notes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -643,11 +651,13 @@ export interface OrganizationAssetsSelect<T extends boolean = true> {
  */
 export interface OrganizationInvitesSelect<T extends boolean = true> {
   code?: T;
+  organizationTokens?: T;
   expiresIn?: T;
-  expiresAt?: T;
+  expirationDate?: T;
   status?: T;
   usedBy?: T;
   createdBy?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }
