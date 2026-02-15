@@ -3,6 +3,7 @@ import {Metadata} from "next";
 
 import './globals.css';
 import {SiteHeader} from "@/components/SiteHeader";
+import {Providers} from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: {
@@ -19,8 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SiteHeader />
-        {children}
+        <Providers>
+          <SiteHeader />
+          {children}
+        </Providers>
       </body>
     </html>
   )

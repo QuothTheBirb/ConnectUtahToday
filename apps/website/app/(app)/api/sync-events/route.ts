@@ -16,15 +16,6 @@ export const POST = async () => {
       id: manualSync.id
     });
 
-    // const res = await payload.jobs.run({
-    //   queue: 'manual-sync:events',
-    //   // where: {
-    //   //   status: {
-    //   //     equals: 'pending'
-    //   //   }
-    //   // }
-    // });
-
     return NextResponse.json(res);
   } catch (error) {
     console.error('Error queuing SyncEvents task:', error);

@@ -9,12 +9,10 @@ export const metadata: Metadata = {
 
 const LocalIssues = () => {
   return (
-    <>
-      <main>
-        <PageHeading heading={'h1'}>Local Activism Campaigns & Issues</PageHeading>
-        <LocalIssuesCarousel />
-      </main>
-    </>
+    <main>
+      <PageHeading heading={'h1'}>Local Activism Campaigns & Issues</PageHeading>
+      <LocalIssuesCarousel />
+    </main>
   )
 }
 

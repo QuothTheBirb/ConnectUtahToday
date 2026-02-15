@@ -2,7 +2,7 @@ import GofundmeWidget from "@/components/Support/GoFundMeWidget";
 import type {Metadata} from 'next';
 import {PageHeading} from "@/components/PageHeading";
 import {ImageEmbed} from "@/components/Support/ImageEmbed";
-import {DisclaimerButton, DisclaimerPopup, DisclaimerProvider} from "@/components/Disclaimer";
+import {DisclaimerButton, DisclaimerPopup} from "@/components/Disclaimer";
 
 export const metadata: Metadata = {
   title: 'Support a Cause'
@@ -46,25 +46,23 @@ const imageEmbeds = [
 
 export default function SupportPage() {
   return (
-    <DisclaimerProvider>
-      <main>
-        <PageHeading heading={'h1'}>Support a Cause</PageHeading>
+    <main>
+      <PageHeading heading={'h1'}>Support a Cause</PageHeading>
+      <p>
+        Below are causes endorsed by local organizations which you may choose to donate to. Click on a widget to learn
+        more about the individual causes. <DisclaimerButton>Disclaimer.</DisclaimerButton>
+      </p>
+      {gofundmeEmbeds.map((gfm, index) => (
+        <GofundmeWidget key={index} url={gfm.url} title={gfm.title}/>
+      ))}
+      {imageEmbeds.map((img, index) => (
+        <ImageEmbed key={index} img={img.img} alt={img.alt} title={img.title}/>
+      ))}
+      <DisclaimerPopup>
         <p>
-          Below are causes endorsed by local organizations which you may choose to donate to. Click on a widget to learn
-          more about the individual causes. <DisclaimerButton>Disclaimer.</DisclaimerButton>
+          <strong>Disclaimer:</strong> Connect Utah Today provides links to third-party charitable organizations for your convenience. We do not collect or process donations directly; all donations are handled by the respective organizations. The inclusion of any link does not imply endorsement or recommendation. We make no representations about the accuracy or completeness of the information provided. By clicking on a donation link, you will leave our website and be subject to the policies and terms of the third-party site. Connect Utah Today is not responsible for the content or privacy practices of any linked site. This site does not provide legal, tax, or financial advice—please consult with an appropriate professional before making a donation or regarding the tax deductibility of your contribution.
         </p>
-        {gofundmeEmbeds.map((gfm, index) => (
-          <GofundmeWidget key={index} url={gfm.url} title={gfm.title}/>
-        ))}
-        {imageEmbeds.map((img, index) => (
-          <ImageEmbed key={index} img={img.img} alt={img.alt} title={img.title}/>
-        ))}
-        <DisclaimerPopup>
-          <p>
-            <strong>Disclaimer:</strong> Connect Utah Today provides links to third-party charitable organizations for your convenience. We do not collect or process donations directly; all donations are handled by the respective organizations. The inclusion of any link does not imply endorsement or recommendation. We make no representations about the accuracy or completeness of the information provided. By clicking on a donation link, you will leave our website and be subject to the policies and terms of the third-party site. Connect Utah Today is not responsible for the content or privacy practices of any linked site. This site does not provide legal, tax, or financial advice—please consult with an appropriate professional before making a donation or regarding the tax deductibility of your contribution.
-          </p>
-        </DisclaimerPopup>
-      </main>
-    </DisclaimerProvider>
+      </DisclaimerPopup>
+    </main>
   );
 }

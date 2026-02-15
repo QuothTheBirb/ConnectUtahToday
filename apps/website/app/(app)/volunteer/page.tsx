@@ -13,7 +13,6 @@ const VolunteerPage = async () => {
   const organizations = await fetchOrganizations();
 
   return (
-    <DisclaimerProvider>
       <main>
         <PageHeading heading={'h1'}>Volunteer for Local Events and Organizations</PageHeading>
         <p>
@@ -27,7 +26,6 @@ const VolunteerPage = async () => {
           </p>
         </DisclaimerPopup>
       </main>
-    </DisclaimerProvider>
   );
 };
 
