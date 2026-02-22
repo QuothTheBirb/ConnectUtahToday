@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useRef} from "react";
+import styles from './LatestUpdates.module.scss';
 import {strippedEmbedsHtml} from "@/components/LatestUpdates/strippedEmbedsHtml";
 
 export const LatestUpdates = () => {
@@ -26,7 +27,7 @@ export const LatestUpdates = () => {
   return (
       <div
         ref={containerRef}
-        style={{ marginTop: "2em", display: "flex", flexDirection: "column", alignItems: "center" }}
+        className={styles.container}
         dangerouslySetInnerHTML={{ __html: strippedEmbedsHtml }}
       />
   )

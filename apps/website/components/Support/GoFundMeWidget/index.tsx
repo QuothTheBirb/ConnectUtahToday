@@ -2,6 +2,7 @@
 
 import {PageHeading} from "@/components/PageHeading";
 import {useEffect, useRef, useState} from "react";
+import styles from './GoFundMeWidget.module.scss';
 
 // Based on the GoFundMe embed script: https://www.gofundme.com/static/js/embed.js
 
@@ -74,32 +75,24 @@ const GofundmeWidget = ({ url, title }: { url: string, title: string }) => {
   }, [iframeWidth]);
 
   return (
-    <section
-      style={{ marginBottom: '2rem' }}
-    >
+    <section className={styles.section}>
       <PageHeading heading={'h2'}>{title}</PageHeading>
       <div
         ref={containerRef}
+        className={styles.container}
         style={{
-          width: '100%',
           maxWidth: `${iframeWidth}px`,
           height: `${iframeHeight * scale}px`,
-          margin: '0 auto',
-          // border: '2px dashed #ccc',
-          position: 'relative',
-          overflow: 'hidden',
         }}
       >
         <iframe
           ref={iframeRef}
           src={url}
+          className={styles.iframe}
           style={{
             width: `${iframeWidth}px`,
             height: `${iframeHeight}px`,
-            border: 'none',
-            display: 'block',
             transform: scale < 1 ? `scale(${scale})` : 'none',
-            transformOrigin: 'top left',
           }}
           title={title}
           sandbox={'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms'}
@@ -109,5 +102,5 @@ const GofundmeWidget = ({ url, title }: { url: string, title: string }) => {
       </div>
     </section>
   );
-};
+}
 export default GofundmeWidget

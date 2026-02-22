@@ -2,8 +2,8 @@
 
 import {useRouter, useSearchParams} from 'next/navigation';
 
-import {CSSProperties, FocusEvent, useCallback, useEffect, useRef, useState} from "react";
-import styles from '../Events.module.scss';
+import {useCallback, useEffect, useRef, useState} from "react";
+import styles from './MonthSelect.module.scss';
 import {parseMonthYear} from "@connect-utah-today/utils/parseMonthYear";
 
 export const EventsMonthSelect = ({
@@ -39,7 +39,7 @@ export const EventsMonthSelect = ({
     setInputValue(formatDisplayDate(year, month));
   }, [year, month, formatDisplayDate]);
 
-  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     setOriginalValue(event.target.value);
     event.target.select();
   };
@@ -91,20 +91,6 @@ export const EventsMonthSelect = ({
     handleNavigate(d.getFullYear(), d.getMonth());
   };
 
-  const errorMsgStyle: CSSProperties = {
-    position: 'absolute',
-    background: '#f44336',
-    color: 'white',
-    padding: '0.5em 1em',
-    borderRadius: '4px',
-    fontSize: '0.85em',
-    marginTop: '0.5em',
-    zIndex: 1000,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    whiteSpace: 'nowrap',
-  };
-
   return (
     <>
       <form
@@ -123,11 +109,7 @@ export const EventsMonthSelect = ({
             onChange={(event) => setInputValue(event.target.value)}
             onBlur={handleBlur}
             onFocus={handleFocus}
-            className={styles.currentMonthInput}
-            style={{
-              backgroundColor: error ? '#ffebee' : undefined,
-              borderColor: error ? '#f44336' : undefined,
-            }}
+            className={`${styles.currentMonthInput} ${error ? styles.error : ''}`}
             placeholder={"Month YYYY"}
           />
           <button className={styles.navButton} type={"button"} onClick={() => handleCycleMonth(1)}>&#8594;</button>
@@ -135,7 +117,7 @@ export const EventsMonthSelect = ({
         <div className={styles.controlsInfo}>
           <span>Type month and year (e.g., "January {currentYear}" or "1/{currentYear}") and press Enter</span>
         </div>
-        {error && <div style={errorMsgStyle}>{error}</div>}
+        {error && <div className={styles.errorMessage}>{error}</div>}
       </form>
     </>
   );

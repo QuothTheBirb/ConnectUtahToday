@@ -2,7 +2,7 @@
   max-width: 800px;
   margin: 2em auto;
   position: relative;
-  background: #f0f0f0;
+  background: var(--color-bg-muted);
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -54,14 +54,14 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: #ccc;
+      background: var(--color-border);
       margin: 0 5px;
       cursor: pointer;
       transition: background 0.3s ease;
       border: none;
 
       &.active {
-        background: #007bff;
+        background: var(--color-accent);
       }
     }
   }

@@ -1,8 +1,8 @@
-import {CSSProperties, memo, useMemo, useState} from "react";
+import {memo, useMemo, useState} from "react";
 
-import {CalendarEvent} from "@cut/api/types";
 import styles from './Calendar.module.scss';
 import {EventDetailsPopover} from "@/components/Events/Views/Calendar/DayDetails";
+import {CalendarEvent} from "@connect-utah-today/api/types";
 
 type DayEventsProps = {
   events: CalendarEvent[];
@@ -21,18 +21,23 @@ const DayEvents = ({events}: DayEventsProps) => {
   return (
     <>
       <div className={styles.events}>
-        {visibleEvents.map((event) => (
-          <div key={event.id} className={styles.event}>
+        {visibleEvents.map((event, index) => (
+          <div key={index} className={styles.event}>
             {getEventLabel(event)}
           </div>
         ))}
         {remainingEventsCount > 0 && (
-          <div style={{ fontSize: '10px', color: '#1976d2', fontWeight: 'bold' }}>
+          <div className={styles.remaining}>
             +{remainingEventsCount}
           </div>
         )}
       </div>
-      <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
+      <div className={styles.mobileDots}>
+        {events.map((event, index) => (
+          <div key={index} className={styles.dot} />
+        ))}
+      </div>
+      <div className={styles.eventCount}>
         {events.length} event{events.length !== 1 ? 's' : ''}
       </div>
     </>
@@ -48,10 +53,6 @@ type CalendarDayProps = {
 };
 const CalendarDay = ({ dayOfMonth, date, isToday, dayEvents, onDayClick }: CalendarDayProps) => {
   const hasEvents = dayEvents.length > 0;
-  const cellStyle: CSSProperties = {
-    ...(isToday && { background: '#e3f2fd' }),
-    ...(hasEvents && { cursor: 'pointer' }),
-  };
 
   const handleDayClick = () => {
     if (hasEvents && onDayClick) {
@@ -61,11 +62,10 @@ const CalendarDay = ({ dayOfMonth, date, isToday, dayEvents, onDayClick }: Calen
 
   return (
     <div
-      className={styles.calendarCell}
-      style={cellStyle}
+      className={`${styles.calendarCell} ${isToday ? styles.today : ''} ${hasEvents ? styles.hasEvents : ''}`}
       onClick={handleDayClick}
     >
-      <div className={styles.dayNumber} style={{ fontWeight: isToday ? 'bold' : 'normal' }}>{dayOfMonth}</div>
+      <div className={`${styles.dayNumber} ${isToday ? styles.today : ''}`}>{dayOfMonth}</div>
       {hasEvents && <DayEvents events={dayEvents} />}
     </div>
   );
@@ -88,7 +88,7 @@ const CalendarGrid = memo(({
 
   const days = Array.from({ length: firstDay + daysInMonth }, (_, i) => {
     if (i < firstDay) {
-      return <div key={`empty-${i}`} className={styles.calendarCell} style={{ background: '#f9f9f9' }} />;
+      return <div key={`empty-${i}`} className={`${styles.calendarCell} ${styles.empty}`} />;
     }
 
     const dayOfMonth = i - firstDay + 1;

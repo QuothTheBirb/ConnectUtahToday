@@ -33,7 +33,7 @@ export const DateRangeFilter = (
             }))}
           className={styles.dateInput}
         />
-        –
+        <span className={styles.separator}>–</span>
         <input
           type={"date"}
           value={end}

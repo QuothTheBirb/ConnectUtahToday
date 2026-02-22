@@ -1,0 +1,12 @@
+.pageCard {
+  background: var(--color-bg);
+  max-width: 800px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  padding: 2.5em 2em 2em 2em;
+  margin: 0 auto
+}
+
+@media (max-width: 700px) {
+
+}

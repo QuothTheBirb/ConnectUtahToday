@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './RichText.module.scss';
 
 // TODO: Temporary implementation, clean up later
 
@@ -50,7 +51,7 @@ const renderNode = (node: any, index: number) => {
         if (node.format & 2) text = <em key={`i-${index}`}>{text}</em>;
         if (node.format & 4) text = <u key={`u-${index}`}>{text}</u>;
         if (node.format & 8) text = <code key={`c-${index}`}>{text}</code>;
-        if (node.format & 16) text = <span key={`s-${index}`} style={{ textDecoration: 'line-through' }}>{text}</span>;
+        if (node.format & 16) text = <span key={`s-${index}`} className={styles.lineThrough}>{text}</span>;
         return <React.Fragment key={index}>{text}</React.Fragment>;
     case 'link':
       return (

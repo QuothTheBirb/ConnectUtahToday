@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 
 import {LatestUpdates} from "@/components/LatestUpdates";
 import {PageHeading} from "@/components/PageHeading";
+import {PageCard} from "@/components/PageCard";
 
 export const metadata: Metadata = {
   title: "Latest Updates",
@@ -9,12 +10,14 @@ export const metadata: Metadata = {
 
 export default function LatestUpdatesPage() {
   return (
-    <main>
+    <PageCard>
       <PageHeading heading={'h1'}>Latest Updates</PageHeading>
-      <h2 style={{ fontWeight: 400, color: "#555", marginTop: ".5em" }}>
+      <p style={{
+        marginBottom: '1rem'
+      }}>
         Latest updates from local organizations via Instagram.
-      </h2>
+      </p>
       <LatestUpdates />
-    </main>
+    </PageCard>
   );
 }

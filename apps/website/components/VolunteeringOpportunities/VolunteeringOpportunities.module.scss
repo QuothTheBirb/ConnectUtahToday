@@ -1,9 +1,101 @@
-.opportunityList {
-  max-width: 700px;
-  background: #fff;
-  margin: 0 auto;
-  //margin: 0 auto 3em auto;
-  //border-radius: 12px;
-  //box-shadow: 0 4px 24px rgba(0,0,0,0.11);
-  //padding: 2em 1.5em;
+.volunteeringOpportunities {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .opportunityList {
+    max-width: 600px;
+    background: var(--color-bg);
+    //font-size: var(--font-size-sm);
+
+    .opportunityDescription {
+    }
+  }
+}
+
+.opportunityItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.opportunityContent {
+  flex: 1;
+}
+
+.opportunityImg {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+  margin-right: 1.5rem;
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  //padding: 8px;
+}
+
+.opportunityOrg {
+  font-weight: 700;
+  font-size: var(--font-size-xl);
+  margin-bottom: 0.4rem;
+  color: var(--color-text);
+}
+
+.opportunityDescription {
+  margin-bottom: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.opportunityActivities {
+  margin: 0.5rem 0 1rem 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  li {
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+  }
+}
+
+.orgLink {
+  //font-size: var(--font-size-sm);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--color-rose-500);
+  color: var(--color-rose-50);
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--color-rose-600);
+    text-decoration: none;
+  }
+}
+
+.noOppsMsg {
+  text-align: center;
+  color: var(--color-text-muted);
+  margin: 2rem 0 1rem 0;
+  font-size: 1.1rem;
 }

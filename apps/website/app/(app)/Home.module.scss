@@ -9,7 +9,7 @@
 }
 
 .objectives {
-  background: #f8f9fa;
+  background: var(--color-bg-muted);
   padding: 2em;
   margin: 2em 0;
   border-radius: 8px;
@@ -17,7 +17,7 @@
 }
 
 .objectivesTitle {
-  color: #2c3e50;
+  color: var(--color-primary-900);
   margin: 0 0 1.5em 0;
   text-align: center;
   font-weight: 600;
@@ -32,7 +32,7 @@
 }
 
 .objectivesItem {
-  margin: 0 0 1.5em 0;
+  margin: 0 0 0.5em 0;
   padding: 0 0 0 1.5em;
   position: relative;
 }
@@ -40,6 +40,6 @@
 .objectivesBullet {
   position: absolute;
   left: 0;
-  color: #3498db;
+  color: var(--color-accent);
   font-weight: bold;
 }

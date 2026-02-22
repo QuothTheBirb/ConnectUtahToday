@@ -1,13 +1,13 @@
 "use client";
 
 import {useCallback, useMemo, useState} from "react";
-
 import {FiltersForm} from "@/components/FilterForm";
 import {OrganizationFilter} from "@/components/FilterForm/Filters/OrgSelect";
 import ActivitiesSelect from "@/components/FilterForm/Filters/ActivitiesSelect";
-import OpportunityList from "@/components/VolunteeringOpportunities/OpportunityList/OpportunityList";
-import styles from './VolunteeringOpportunities.module.scss';
 import {Organization} from "@/payload-types";
+
+import styles from './VolunteeringOpportunities.module.scss';
+import OpportunityList from "@/components/VolunteeringOpportunities/OpportunityList";
 
 export const VolunteeringOpportunities = ({ organizations }: { organizations: Organization[] }) => {
   const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
@@ -71,7 +71,7 @@ export const VolunteeringOpportunities = ({ organizations }: { organizations: Or
     appliedFilters.activities.length > 0;
 
   return (
-    <>
+    <div className={styles.volunteeringOpportunities}>
       <FiltersForm applyFilters={applyFilters} clearFilters={clearFilters} showClearButton={isClearable}>
         <OrganizationFilter orgOptions={orgOptions} selectedOrgs={selectedOrgs} setSelectedOrgs={setSelectedOrgs} selectMany={true} />
         <ActivitiesSelect activities={activitiesOptions} selectedActivities={selectedActivities} setSelectedActivities={setSelectedActivities} />
@@ -79,6 +79,6 @@ export const VolunteeringOpportunities = ({ organizations }: { organizations: Or
       <section className={styles.opportunityList}>
         <OpportunityList organizations={filteredOrganizations} />
       </section>
-    </>
+    </div>
   )
 }

@@ -22,7 +22,13 @@ export default function RootLayout({
       <body>
         <Providers>
           <SiteHeader />
-          {children}
+          <div
+            style={{
+              padding: '1rem 0.5rem'
+            }}
+          >
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

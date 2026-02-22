@@ -1,21 +1,12 @@
 "use client";
 
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  RefObject,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState} from "react";
 
 import styles from './Disclaimer.module.scss';
+import {usePathname} from "next/navigation";
+import {Popup} from "@/components/Popup";
 
 type DisclaimerContext = {
-  disclaimerRef: RefObject<HTMLDivElement | null>;
   showDisclaimer: boolean;
   setShowDisclaimer: Dispatch<SetStateAction<boolean>>;
 }
@@ -33,24 +24,14 @@ const useDisclaimerContext = () => {
 };
 
 export const DisclaimerProvider = ({children}: { children: ReactNode }) => {
-  const disclaimerRef = useRef<HTMLDivElement | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (disclaimerRef.current && !disclaimerRef.current.contains(event.target as Node)) {
-        setShowDisclaimer(false);
-      }
-    };
+    setShowDisclaimer(false);
+  }, [pathname]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const value = {disclaimerRef, showDisclaimer, setShowDisclaimer};
+  const value = {showDisclaimer, setShowDisclaimer};
 
   return (
     <DisclaimerContext.Provider value={value}>
@@ -72,7 +53,7 @@ export const DisclaimerButton = (
 
   return (
     <button
-      className={className ?? styles.toggleDisclaimer}
+      className={`${styles.toggleDisclaimer}${className ? ` ${className}` : ''}`}
       onClick={() => setShowDisclaimer((open) => !open)}
     >
       {children || 'Disclaimer'}
@@ -89,18 +70,25 @@ export const DisclaimerPopup = (
     className?: string;
   }
 ) => {
-  const {disclaimerRef, showDisclaimer, setShowDisclaimer} = useDisclaimerContext();
+  const {showDisclaimer, setShowDisclaimer} = useDisclaimerContext();
+
+  const onClose = () => setShowDisclaimer(false);
+
+  const footer = (
+    <button className={styles.closeDisclaimer} onClick={onClose}>Close</button>
+  );
 
   return (
-    <div
-      ref={disclaimerRef}
-      className={`${styles.disclaimerPopover}${className ? ` ${className}` : ''}`}
-      style={{display: showDisclaimer ? 'block' : 'none'}}
+    <Popup
+      isOpen={showDisclaimer}
+      onClose={onClose}
+      title="Disclaimer"
+      className={className}
+      footer={footer}
     >
       <div className={styles.disclaimerContent}>
         {children}
       </div>
-      <button className={styles.closeDisclaimer} onClick={() => setShowDisclaimer(false)}>Close</button>
-    </div>
+    </Popup>
   );
 };

@@ -1,8 +1,9 @@
 "use client";
 
-import styles from './OpportunityList.module.scss';
 import {Organization} from "@/payload-types";
 import RichText from "@/components/RichText";
+
+import styles from '../VolunteeringOpportunities.module.scss';
 
 interface OpportunityListProps {
   organizations: Organization[];

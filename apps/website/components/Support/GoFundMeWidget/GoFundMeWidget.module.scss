@@ -1,0 +1,16 @@
+.section {
+  margin-bottom: 2rem;
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.iframe {
+  border: none;
+  display: block;
+  transform-origin: top left;
+}
