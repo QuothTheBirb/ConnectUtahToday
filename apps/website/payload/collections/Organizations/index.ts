@@ -1,15 +1,14 @@
 import {CollectionConfig, slugField} from "payload";
-import {publicAccess} from "@/payload/access/publicAccess";
-import {adminOrOrganizer} from "@/payload/collections/Organizations/access/adminOrOrganizer";
 import {adminOnlyFieldAccess} from "@/payload/access/adminOnlyFieldAccess";
 import {checkRole} from "@/payload/access/utilities";
+import {adminOrOrganizer} from "@/payload/collections/Organizations/access/adminOrOrganizer";
 
 export const Organizations: CollectionConfig = {
   slug: 'organizations',
   access: {
-    create: ({ req: { user } }) => checkRole(["admin", "organizer"], user),
+    create: adminOrOrganizer,
     delete: adminOrOrganizer,
-    read: publicAccess,
+    read: adminOrOrganizer,
     update: adminOrOrganizer,
   },
   admin: {
@@ -44,14 +43,15 @@ export const Organizations: CollectionConfig = {
               // TODO: Add validation to input
             },
             {
-              name: 'organizer',
-              label: 'Organizer',
+              name: 'organizers',
+              label: 'Organizers',
               type: "relationship",
+              hasMany: true,
               relationTo: 'users',
               defaultValue: ({ user }) => {
-                if (checkRole(['organizer'], user)) return {
+                if (checkRole(['organizer'], user)) return [{
                   id: user?.id,
-                }
+                }]
               },
               filterOptions:  {
                 roles: {

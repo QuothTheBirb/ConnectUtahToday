@@ -80,7 +80,11 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    users: {
+      organizations: 'organizations';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     organizations: OrganizationsSelect<false> | OrganizationsSelect<true>;
@@ -124,22 +128,34 @@ export interface Config {
   };
 }
 export interface UserAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
+  forgotPassword:
+    | {
+        email: string;
+      }
+    | {
+        username: string;
+      };
+  login:
+    | {
+        email: string;
+        password: string;
+      }
+    | {
+        password: string;
+        username: string;
+      };
   registerFirstUser: {
-    email: string;
     password: string;
+    username: string;
+    email?: string;
   };
-  unlock: {
-    email: string;
-    password: string;
-  };
+  unlock:
+    | {
+        email: string;
+      }
+    | {
+        username: string;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -147,12 +163,18 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
-  name: string;
   roles: ('admin' | 'organizer')[];
   inviteCode?: string | null;
+  invite?: (string | null) | OrganizationInvite;
+  organizations?: {
+    docs?: (string | Organization)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
-  email: string;
+  email?: string | null;
+  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -171,6 +193,32 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "organization-invites".
+ */
+export interface OrganizationInvite {
+  id: string;
+  /**
+   * The secure code used for the invite link.
+   */
+  code: string;
+  /**
+   * The total number of organizations that the recipient can create after the invite is accepted. Max 10.
+   */
+  organizationTokens: number;
+  expiresIn: '1day' | '3days' | '1week' | '2weeks' | '1month' | 'date';
+  expirationDate?: string | null;
+  status: 'pending' | 'accepted' | 'expired';
+  usedBy?: (string | null) | User;
+  createdBy: string | User;
+  /**
+   * (Optional) Internal notes for this invitation. These are only visible to site administrators.
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "organizations".
  */
 export interface Organization {
@@ -182,7 +230,7 @@ export interface Organization {
   generateSlug?: boolean | null;
   slug: string;
   url: string;
-  organizer: string | User;
+  organizers: (string | User)[];
   logo?: (string | null) | OrganizationAsset;
   description?: {
     root: {
@@ -260,6 +308,10 @@ export interface Event {
   local?: {
     image?: (string | null) | EventAsset;
     organization?: (string | null) | Organization;
+    /**
+     * The user who created this event. This is only visible to site administrators.
+     */
+    createdBy: string | User;
   };
   mobilize?: {
     eventId: number;
@@ -293,32 +345,6 @@ export interface EventAsset {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "organization-invites".
- */
-export interface OrganizationInvite {
-  id: string;
-  /**
-   * The secure code used for the invite link.
-   */
-  code: string;
-  /**
-   * The total number of organizations that the recipient can create after the invite is accepted. Max 10.
-   */
-  organizationTokens: number;
-  expiresIn: '1day' | '3days' | '1week' | '2weeks' | '1month' | 'date';
-  expirationDate?: string | null;
-  status: 'pending' | 'completed' | 'expired';
-  usedBy?: (string | null) | User;
-  createdBy: string | User;
-  /**
-   * (Optional) Internal notes for this invitation. These are only visible to site administrators.
-   */
-  notes?: string | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -525,12 +551,14 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  name?: T;
   roles?: T;
   inviteCode?: T;
+  invite?: T;
+  organizations?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
+  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
@@ -554,7 +582,7 @@ export interface OrganizationsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   url?: T;
-  organizer?: T;
+  organizers?: T;
   logo?: T;
   description?: T;
   opportunities?: T;
@@ -590,6 +618,7 @@ export interface EventsSelect<T extends boolean = true> {
     | {
         image?: T;
         organization?: T;
+        createdBy?: T;
       };
   mobilize?:
     | T
@@ -834,6 +863,13 @@ export interface EventSetting {
       list: string[];
     };
   };
+  /**
+   * The range of how many past and future months are displayed in the calendar view. Max 12 months. For example, a months range of 6 months will display the current month, the past 6 months, and the next 6 months.
+   */
+  monthsRange: number;
+  /**
+   * Synchronize with all event sources and update calendar events.
+   */
   syncInterval: number;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -892,6 +928,7 @@ export interface EventSettingsSelect<T extends boolean = true> {
               list?: T;
             };
       };
+  monthsRange?: T;
   syncInterval?: T;
   updatedAt?: T;
   createdAt?: T;

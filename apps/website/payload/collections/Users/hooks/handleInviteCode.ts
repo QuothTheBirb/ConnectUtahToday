@@ -13,7 +13,7 @@ export const handleInviteCode: CollectionBeforeChangeHook = async ({
         where: {
           code: {equals: data.inviteCode},
           status: {equals: 'pending'},
-          expiresAt: {greater_than: new Date().toISOString()},
+          expirationDate: {greater_than: new Date().toISOString()},
         },
       })
 

@@ -5,7 +5,10 @@ import {publicAccess} from "@/payload/access/publicAccess";
 import {adminOnly} from "@/payload/access/adminOnly";
 import {adminOrSelf} from "@/payload/access/adminOrSelf";
 import {ensureFirstUserIsAdmin} from "@/payload/collections/Users/hooks/ensureFirstUserIsAdmin";
+import {handleInviteCode} from "@/payload/collections/Users/hooks/handleInviteCode";
+import {markInviteUsed} from "@/payload/collections/Users/hooks/markInviteUsed";
 import {publicFieldAccess} from "@/payload/access/publicFieldAccess";
+import {adminSelfOrSameOrganization} from "@/payload/collections/Users/access/adminSelfOrSameOrganization";
 
 export const Users: CollectionConfig = {
   slug: "users",
@@ -13,32 +16,38 @@ export const Users: CollectionConfig = {
     admin: ({ req: { user } }) => checkRole(["admin", "organizer"], user),
     create: publicAccess,
     delete: adminOnly,
-    read: adminOrSelf,
+    read: adminSelfOrSameOrganization,
     update: adminOrSelf,
   },
   admin: {
-    defaultColumns: ["name", "email", "roles", "organization.name"],
-    useAsTitle: "name",
+    defaultColumns: ["username", "email", "roles", "organization.name"],
+    useAsTitle: "username",
     hidden: ({user}) => {
       return !user.roles.includes('admin')
     }
-    // hidden: ({user}) => checkRole(['admin'], user)
   },
   defaultSort: ["-updatedAt", "createdAt"],
   hooks: {
-    // beforeChange: [handleInviteCode],
-    // afterChange: [markInviteUsed],
+    beforeChange: [handleInviteCode],
+    afterChange: [markInviteUsed],
   },
   auth: {
-    // tokenExpiration: 7200, // How many seconds to keep the user logged in
-    // verify: true, // Require email verification before being allowed to authenticate
+    loginWithUsername: {
+      allowEmailLogin: true,
+      requireEmail: false
+    },
   },
   fields: [
     {
-      name: "name",
+      name: "username",
       label: "Username",
       type: "text",
       required: true,
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      type: 'email'
     },
     {
       name: "roles",
@@ -72,36 +81,21 @@ export const Users: CollectionConfig = {
         hidden: true,
       },
     },
-    // {
-    //   name: 'invite',
-    //   type: 'relationship',
-    //   relationTo: 'organization-invites',
-    //   admin: {
-    //     readOnly: true,
-    //     position: 'sidebar',
-    //   },
-    // },
-    // {
-    //   type: 'group',
-    //   name: 'organization',
-    //   label: 'Organization',
-    //   admin: {
-    //     condition: (
-    //       data,
-    //       siblingData,
-    //     ) => {
-    //       return (
-    //         data?.roles?.includes('organizer')
-    //       );
-    //     },
-    //   },
-    //   fields: [
-    //     {
-    //       name: 'name',
-    //       type: 'text',
-    //       required: true,
-    //     }
-    //   ],
-    // }
+    {
+      name: 'invite',
+      type: 'relationship',
+      relationTo: 'organization-invites',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'organizations',
+      type: 'join',
+      hasMany: true,
+      collection: 'organizations',
+      on: 'organizers'
+    }
   ],
 };

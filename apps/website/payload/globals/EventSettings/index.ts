@@ -1,9 +1,14 @@
 import {GlobalConfig} from "payload";
 import {US_STATES} from "@/lib/usStates";
+import {adminOnly} from "@/payload/access/adminOnly";
 
 export const EventSettings: GlobalConfig = {
   slug: "event-settings",
   label: "Event Settings",
+  access: {
+    read: adminOnly,
+    update: adminOnly,
+  },
   admin: {
     group: "Site Settings",
   },
@@ -12,7 +17,7 @@ export const EventSettings: GlobalConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Configuration',
+          label: 'Sources',
           fields: [
             // TODO: Implement event uploads
             {
@@ -198,25 +203,34 @@ export const EventSettings: GlobalConfig = {
           ]
         },
         {
-          label: 'Tools',
+          label: 'Calendar',
           fields: [
             {
-              label: 'Event Sync',
+              label: 'Event Calendar',
               type: 'group',
-              admin: {
-                description: 'Synchronize with all event sources and update calendar events.'
-              },
               fields: [
+                {
+                  name: 'monthsRange',
+                  type: 'number',
+                  label: 'Months Range',
+                  defaultValue: 6,
+                  min: 0,
+                  max: 12,
+                  required: true,
+                  admin: {
+                    description: 'The range of how many past and future months are displayed in the calendar view. Max 12 months. For example, a months range of 6 months will display the current month, the past 6 months, and the next 6 months.'
+                  }
+                },
                 {
                   name: 'syncInterval',
                   label: 'Calendar Update Interval (minutes)',
                   type: 'number',
-                  min: 30,
+                  min: 5,
                   defaultValue: 30,
                   required: true,
                   admin: {
-                    readOnly: true
-                  }
+                    description: 'Synchronize with all event sources and update calendar events.'
+                  },
                 },
                 {
                   name: 'manualSync',

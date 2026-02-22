@@ -22,7 +22,7 @@ export const completeInvite: CollectionAfterChangeHook = async ({
           collection: 'organization-invites',
           id: inviteId,
           data: {
-            status: 'completed',
+            status: 'accepted',
           },
         })
       }

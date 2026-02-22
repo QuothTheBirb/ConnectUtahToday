@@ -12,7 +12,6 @@ export default function RegisterPage() {
     <PageCard>
       <PageHeading heading="h1">Register</PageHeading>
       <RegisterForm />
-
     </PageCard>
   )
 }

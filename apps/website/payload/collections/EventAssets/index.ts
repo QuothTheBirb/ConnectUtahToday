@@ -19,6 +19,11 @@ export const EventAssets: CollectionConfig = {
     read: publicAccess,
     update: adminOnly,
   },
+  admin: {
+    hidden: ({user}) => {
+      return !user.roles.includes('admin')
+    }
+  },
   fields: [
     {
       name: 'alt',

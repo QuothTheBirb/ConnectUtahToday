@@ -1,19 +1,20 @@
 import {CollectionConfig} from "payload";
-import {publicAccess} from "@/payload/access/publicAccess";
-import {adminOrOrganizer} from "@/payload/collections/Organizations/access/adminOrOrganizer";
+import {adminSelfOrOrganizer} from "@/payload/collections/Events/access/adminSelfOrOrganizer";
+import {isOrganizer} from "@/payload/access/isOrganizer";
 
 export const Events: CollectionConfig = {
   slug: 'events',
   access: {
-    create: adminOrOrganizer,
-    delete: adminOrOrganizer,
-    read: publicAccess,
-    update: adminOrOrganizer,
+    create: isOrganizer,
+    delete: adminSelfOrOrganizer,
+    read: adminSelfOrOrganizer,
+    update: adminSelfOrOrganizer,
   },
   admin: {
     defaultColumns: ['title', 'date', 'source', 'organization'],
     useAsTitle: 'title',
   },
+  // enableQueryPresets: true,
   fields: [
     {
       name: 'title',
@@ -106,6 +107,17 @@ export const Events: CollectionConfig = {
           relationTo: 'organizations',
           label: 'Organization',
         },
+        {
+          name: 'createdBy',
+          type: 'relationship',
+          relationTo: 'users',
+          defaultValue: ({ user }) => user?.id,
+          admin: {
+            readOnly: true,
+            description: 'The user who created this event. This is only visible to site administrators.',
+          },
+          required: true,
+        }
       ]
     },
     // Google Calendar

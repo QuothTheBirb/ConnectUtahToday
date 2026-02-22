@@ -8,13 +8,11 @@ import {checkRole} from "@/payload/access/utilities";
  */
 export const adminOrOrganizer: Access = ({ req: { user } }) => {
   if (user) {
-    if (checkRole(["admin"], user)) {
-      return true;
-    }
+    if (checkRole(["admin"], user)) return true;
 
     return {
-      organizer: {
-        equals: user.id
+      'organizers': {
+        contains: user.id
       }
     }
   }

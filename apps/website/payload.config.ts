@@ -44,19 +44,15 @@ export default buildConfig({
     api: '/payload-api'
   },
   jobs: {
-    jobsCollectionOverrides: ({ defaultJobsCollection }) => {
-      if (!defaultJobsCollection.admin) {
-        defaultJobsCollection.admin = {};
+    jobsCollectionOverrides: ({ defaultJobsCollection }) => ({
+      ...defaultJobsCollection,
+      admin: {
+        ...defaultJobsCollection.admin,
+        hidden: ({user}) => {
+          return !user.roles.includes('admin')
+        }
       }
-
-      defaultJobsCollection.admin.hidden = false;
-
-      defaultJobsCollection.hooks = {
-        ...defaultJobsCollection.hooks,
-      }
-
-      return defaultJobsCollection;
-    },
+    }),
     enableConcurrencyControl: true,
     autoRun: [
       {

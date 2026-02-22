@@ -60,7 +60,7 @@ export const SyncEvents: UIFieldClientComponent = ({ path }: UIFieldClientProps)
 
   return (
     <div className={`${styles.syncEvents} field-type`}>
-      <button onClick={handleClick} disabled={disabled} className={`btn btn--icon btn--size-small btn--style-primary btn--no-margin btn--icon-style-without-border btn--icon-position-left${disabled ? ' btn--disabled' : ''}`}>
+      <button onClick={handleClick} disabled={disabled} className={`btn btn--icon btn--size-medium btn--style-primary btn--no-margin btn--icon-style-without-border btn--icon-position-left${disabled ? ' btn--disabled' : ''}`}>
         <span className={'btn__content'}>
           <span className={'btn__label'}>{syncing ? 'Syncing Events…' : 'Manual Sync'}</span>
           <span className={'btn__icon'}>

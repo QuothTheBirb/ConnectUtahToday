@@ -77,9 +77,12 @@ export const Opportunities: CollectionConfig = {
         }
       },
       access: {
+        create: adminOnlyFieldAccess,
         update: adminOnlyFieldAccess,
       },
-
+      admin: {
+        condition: ({ user }) => checkRole(['admin'], user)
+      }
     }
   ],
 }

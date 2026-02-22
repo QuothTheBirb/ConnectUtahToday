@@ -10,7 +10,7 @@ export const markInviteUsed: CollectionAfterChangeHook = async ({
       collection: 'organization-invites',
       id: req.context.inviteId as string,
       data: {
-        status: 'registered',
+        status: 'accepted',
         usedBy: doc.id,
       },
     })

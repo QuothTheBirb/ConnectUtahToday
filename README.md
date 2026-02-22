@@ -5,4 +5,6 @@
 - Add tests
 - Add CI/CD pipeline for deployments
 - Implement google calendar support
-- Add organization invite page on the frontend
+- Add site disclaimer
+- Update events list
+

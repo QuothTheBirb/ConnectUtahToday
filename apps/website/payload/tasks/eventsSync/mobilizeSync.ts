@@ -58,21 +58,6 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
       }
     });
 
-    // let mobilizeEvents = [];
-    // try {
-    //   mobilizeEvents = await
-    //
-    //   console.log(mobilizeEvents)
-    // } catch (error) {
-    //   if (error instanceof Error) {
-    //     console.error('Failed to fetch events from Mobilize:', error.message);
-    //
-    //     throw new Error(`Failed to fetch events from Mobilize: ${error.message ?? 'Unknown error'}`);
-    //   }
-    //
-    //   throw error;
-    // }
-
     let itemsSynced = 0;
     const syncedMobilizeIds: number[] = [];
 
