@@ -108,7 +108,7 @@ export const fetchEventsForMonth = async ({ year, month }: { year: number; month
         image: event.mobilize.image || undefined,
         mobilizeId: event.mobilize.eventId,
         organization: {
-          id: organization.orgId,
+          id: organization.id,
           name: organization.name,
           slug: organization.slug,
           url: organization.url,
