@@ -1,8 +1,8 @@
 import {
-  CalendarEvents,
-  LocalCalendarEvent,
-  MobilizeCalendarEvent,
-  MobilizeEventType
+	CalendarEvents,
+	LocalCalendarEvent,
+	MobilizeCalendarEvent,
+	MobilizeEventType
 } from "@connect-utah-today/api/types";
 import {getPayload} from "payload";
 import config from "@/payload.config";
@@ -45,7 +45,9 @@ export const fetchEventsForMonth = async ({ year, month }: { year: number; month
       if (event.source !== 'local' || !event.local) return [];
 
       const organization = event.local.organization && typeof event.local.organization === 'object' ? event.local.organization : undefined;
-      const image = event.local.image ? typeof event.local.image === "object" ? event.local.image.url : event.local.image : undefined;
+      const images = event.local.images;
+      const firstImage = Array.isArray(images) && images.length > 0 ? images[0] : undefined;
+      const image = firstImage ? (typeof firstImage === "object" ? (firstImage as any).url : firstImage) : undefined;
 
       return {
         id: event.id,
@@ -106,7 +108,7 @@ export const fetchEventsForMonth = async ({ year, month }: { year: number; month
         image: event.mobilize.image || undefined,
         mobilizeId: event.mobilize.eventId,
         organization: {
-          id: organization.id,
+          id: organization.orgId,
           name: organization.name,
           slug: organization.slug,
           url: organization.url,

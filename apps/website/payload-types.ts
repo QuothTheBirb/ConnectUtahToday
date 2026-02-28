@@ -303,10 +303,72 @@ export interface Event {
   url: string;
   date: string;
   endDate?: string | null;
+  location?: {
+    country?: 'US' | null;
+    state?:
+      | (
+          | 'AL'
+          | 'AK'
+          | 'AZ'
+          | 'AR'
+          | 'CA'
+          | 'CO'
+          | 'CT'
+          | 'DE'
+          | 'DC'
+          | 'FL'
+          | 'GA'
+          | 'HI'
+          | 'ID'
+          | 'IL'
+          | 'IN'
+          | 'IA'
+          | 'KS'
+          | 'KY'
+          | 'LA'
+          | 'ME'
+          | 'MD'
+          | 'MA'
+          | 'MI'
+          | 'MN'
+          | 'MS'
+          | 'MO'
+          | 'MT'
+          | 'NE'
+          | 'NV'
+          | 'NH'
+          | 'NJ'
+          | 'NM'
+          | 'NY'
+          | 'NC'
+          | 'ND'
+          | 'OH'
+          | 'OK'
+          | 'OR'
+          | 'PA'
+          | 'RI'
+          | 'SC'
+          | 'SD'
+          | 'TN'
+          | 'TX'
+          | 'UT'
+          | 'VT'
+          | 'VA'
+          | 'WA'
+          | 'WV'
+          | 'WI'
+          | 'WY'
+        )
+      | null;
+    city?: string | null;
+    address?: string | null;
+    postalCode?: string | null;
+    venue?: string | null;
+  };
   eventType?: string | null;
   source?: ('local' | 'googleCalendar' | 'mobilize') | null;
   local?: {
-    image?: (string | null) | EventAsset;
+    images?: (string | EventAsset)[] | null;
     organization?: (string | null) | Organization;
     /**
      * The user who created this event. This is only visible to site administrators.
@@ -317,11 +379,10 @@ export interface Event {
     eventId: number;
     image?: string | null;
     organization: {
-      id: number;
+      orgId: number;
       name: string;
       slug: string;
       url: string;
-      state?: string | null;
     };
   };
   updatedAt: string;
@@ -611,12 +672,22 @@ export interface EventsSelect<T extends boolean = true> {
   url?: T;
   date?: T;
   endDate?: T;
+  location?:
+    | T
+    | {
+        country?: T;
+        state?: T;
+        city?: T;
+        address?: T;
+        postalCode?: T;
+        venue?: T;
+      };
   eventType?: T;
   source?: T;
   local?:
     | T
     | {
-        image?: T;
+        images?: T;
         organization?: T;
         createdBy?: T;
       };
@@ -628,11 +699,10 @@ export interface EventsSelect<T extends boolean = true> {
         organization?:
           | T
           | {
-              id?: T;
+              orgId?: T;
               name?: T;
               slug?: T;
               url?: T;
-              state?: T;
             };
       };
   updatedAt?: T;
@@ -871,6 +941,64 @@ export interface EventSetting {
    * Synchronize with all event sources and update calendar events.
    */
   syncInterval: number;
+  location?: {
+    defaultCountry?: 'US' | null;
+    defaultState?:
+      | (
+          | 'AL'
+          | 'AK'
+          | 'AZ'
+          | 'AR'
+          | 'CA'
+          | 'CO'
+          | 'CT'
+          | 'DE'
+          | 'DC'
+          | 'FL'
+          | 'GA'
+          | 'HI'
+          | 'ID'
+          | 'IL'
+          | 'IN'
+          | 'IA'
+          | 'KS'
+          | 'KY'
+          | 'LA'
+          | 'ME'
+          | 'MD'
+          | 'MA'
+          | 'MI'
+          | 'MN'
+          | 'MS'
+          | 'MO'
+          | 'MT'
+          | 'NE'
+          | 'NV'
+          | 'NH'
+          | 'NJ'
+          | 'NM'
+          | 'NY'
+          | 'NC'
+          | 'ND'
+          | 'OH'
+          | 'OK'
+          | 'OR'
+          | 'PA'
+          | 'RI'
+          | 'SC'
+          | 'SD'
+          | 'TN'
+          | 'TX'
+          | 'UT'
+          | 'VT'
+          | 'VA'
+          | 'WA'
+          | 'WV'
+          | 'WI'
+          | 'WY'
+        )
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -930,6 +1058,12 @@ export interface EventSettingsSelect<T extends boolean = true> {
       };
   monthsRange?: T;
   syncInterval?: T;
+  location?:
+    | T
+    | {
+        defaultCountry?: T;
+        defaultState?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
