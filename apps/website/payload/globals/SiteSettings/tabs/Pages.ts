@@ -1,7 +1,7 @@
-import {Tab} from "payload";
+import { Tab } from "payload";
 
 export const PagesTab: Tab = {
-  name: 'pages',
-  label: 'Pages',
-  fields: []
-}
+	name: "pages",
+	label: "Pages",
+	fields: [],
+};

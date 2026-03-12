@@ -1,10 +1,6 @@
-import {DisclaimerProvider} from "@/components/Disclaimer";
-import {ReactNode} from "react";
+import { DisclaimerProvider } from "@/components/Disclaimer";
+import { ReactNode } from "react";
 
 export const Providers = ({ children }: { children: ReactNode }) => {
-  return (
-    <DisclaimerProvider>
-      {children}
-    </DisclaimerProvider>
-  );
+	return <DisclaimerProvider>{children}</DisclaimerProvider>;
 };

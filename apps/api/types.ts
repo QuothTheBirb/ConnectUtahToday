@@ -1,9 +1,9 @@
-import {calendar_v3} from 'googleapis';
+import { calendar_v3 } from "googleapis"; // Mobilize API Event Types
 
 // Mobilize API Event Types
 // Reference: https://github.com/mobilizeamerica/api?tab=readme-ov-file#events
 export type MobilizeEventType =
-	"CANVASS"
+	| "CANVASS"
 	| "PHONE_BANK"
 	| "TEXT_BANK"
 	| "MEETING"
@@ -41,7 +41,7 @@ export type MobilizeApiEvent = {
 		name: string;
 		event_feed_url: string;
 		slug: string;
-	}
+	};
 	location?: {
 		country: string;
 		region: string; // The state
@@ -53,16 +53,16 @@ export type MobilizeApiEvent = {
 	timeslots: {
 		start_date: number;
 		end_date: number;
-	}[]
+	}[];
 	event_type: MobilizeEventType;
 	browser_url: string;
-}
+};
 export type MobilizeApiEventsResponse = {
 	data: MobilizeApiEvent[];
 	count: number;
 	next: string | null;
 	previous: string | null;
-}
+};
 // Google Calendar API Event Types
 // Reference: https://developers.google.com/calendar/api/v3/reference/events
 export type GoogleCalendarApiEvent = calendar_v3.Schema$Event;
@@ -82,7 +82,7 @@ type BaseCalendarEvent = {
 		postalCode?: string;
 		venue?: string; // Meeting location
 	};
-}
+};
 
 export type LocalCalendarEvent = BaseCalendarEvent & {
 	source: "local";
@@ -94,9 +94,9 @@ export type LocalCalendarEvent = BaseCalendarEvent & {
 		name: string;
 		url?: string;
 		slug?: string;
-	}
+	};
 	eventType?: string;
-}
+};
 export type MobilizeCalendarEvent = BaseCalendarEvent & {
 	source: "mobilize";
 	image?: string;
@@ -107,9 +107,9 @@ export type MobilizeCalendarEvent = BaseCalendarEvent & {
 		name: string;
 		url: string;
 		slug: string;
-	}
+	};
 	eventType?: MobilizeEventType;
-}
+};
 export type GoogleCalendarEvent = BaseCalendarEvent & {
 	source: "google";
 	image?: string;
@@ -120,38 +120,43 @@ export type GoogleCalendarEvent = BaseCalendarEvent & {
 		name?: string;
 		url?: never;
 		slug?: never;
-	}
+	};
 	eventType: "CUTCOMMUNITY";
-}
+};
 
-export type CalendarEvent = LocalCalendarEvent | MobilizeCalendarEvent | GoogleCalendarEvent;
-export type CalendarEvents = Array<LocalCalendarEvent | MobilizeCalendarEvent | GoogleCalendarEvent>;
+export type CalendarEvent =
+	| LocalCalendarEvent
+	| MobilizeCalendarEvent
+	| GoogleCalendarEvent;
+export type CalendarEvents = Array<
+	LocalCalendarEvent | MobilizeCalendarEvent | GoogleCalendarEvent
+>;
 
 // Events API
 export type EventsApiQueryParams = {
 	timeMin?: string;
 	timeMax?: string;
 	state?: string;
-	sources?: ('local' | 'mobilize' | 'googleCalendar')[]
+	sources?: ("local" | "mobilize" | "googleCalendar")[];
 	googleCalendar?: {
 		apiKey?: string;
 		calendarId?: string;
-	}
+	};
 	mobilize?: {
 		apiKey?: string;
 		filters: {
 			state?: string;
 			organizations?: {
-				type: "allowlist" | 'blocklist';
+				type: "allowlist" | "blocklist";
 				list: string[];
-			}
-		}
-	}
-}
+			};
+		};
+	};
+};
 
 export type MobilizeEventsApiResponse = {
 	data: MobilizeCalendarEvent[];
-}
+};
 export type EventsApiResponse = {
 	data: CalendarEvents;
-}
+};

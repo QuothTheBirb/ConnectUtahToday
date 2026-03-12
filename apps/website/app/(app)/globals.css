@@ -2,99 +2,99 @@
 @import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap');
 
 :root {
-  /* Primary theme (cool) */
-  --color-primary-50: #f0fbfb;
-  --color-primary-100: #d9f4f3;
-  --color-primary-200: #a0e3e3;
-  --color-primary-300: #85dadb;
-  --color-primary-400: #4dc0c3;
-  --color-primary-500: #31a4a9;
-  --color-primary-600: #2c858e;
-  --color-primary-700: #296d75;
-  --color-primary-800: #295a61;
-  --color-primary-900: #264c53;
-  --color-primary-950: #153237;
+	/* Primary theme (cool) */
+	--color-primary-50: #f0fbfb;
+	--color-primary-100: #d9f4f3;
+	--color-primary-200: #a0e3e3;
+	--color-primary-300: #85dadb;
+	--color-primary-400: #4dc0c3;
+	--color-primary-500: #31a4a9;
+	--color-primary-600: #2c858e;
+	--color-primary-700: #296d75;
+	--color-primary-800: #295a61;
+	--color-primary-900: #264c53;
+	--color-primary-950: #153237;
 
-  /* Secondary theme (warm) */
-  --color-secondary-50: #fdf5f3;
-  --color-secondary-100: #fbeae5;
-  --color-secondary-200: #f8dad0;
-  --color-secondary-300: #f2bfaf;
-  --color-secondary-400: #e89a81;
-  --color-secondary-500: #dd8163;
-  --color-secondary-600: #c65e3c;
-  --color-secondary-700: #a64c2f;
-  --color-secondary-800: #8a422a;
-  --color-secondary-900: #733b29;
-  --color-secondary-950: #3e1c11;
+	/* Secondary theme (warm) */
+	--color-secondary-50: #fdf5f3;
+	--color-secondary-100: #fbeae5;
+	--color-secondary-200: #f8dad0;
+	--color-secondary-300: #f2bfaf;
+	--color-secondary-400: #e89a81;
+	--color-secondary-500: #dd8163;
+	--color-secondary-600: #c65e3c;
+	--color-secondary-700: #a64c2f;
+	--color-secondary-800: #8a422a;
+	--color-secondary-900: #733b29;
+	--color-secondary-950: #3e1c11;
 
-  /* Slate (gray) */
-  --color-slate-50: #f9fafb;
-  --color-slate-100: #f3f4f6;
-  --color-slate-200: #e5e7eb;
-  --color-slate-300: #c2c8d0;
-  --color-slate-400: #9ba4b0;
-  --color-slate-500: #6a7381;
-  --color-slate-600: #4a5664;
-  --color-slate-700: #364252;
-  --color-slate-800: #1e2a38;
-  --color-slate-900: #101928;
-  --color-slate-950: #030712;
+	/* Slate (gray) */
+	--color-slate-50: #f9fafb;
+	--color-slate-100: #f3f4f6;
+	--color-slate-200: #e5e7eb;
+	--color-slate-300: #c2c8d0;
+	--color-slate-400: #9ba4b0;
+	--color-slate-500: #6a7381;
+	--color-slate-600: #4a5664;
+	--color-slate-700: #364252;
+	--color-slate-800: #1e2a38;
+	--color-slate-900: #101928;
+	--color-slate-950: #030712;
 
 
-  /* Alternative theme (rose) */
-  --color-rose-50: #fef2f3;
-  --color-rose-100: #fde6e7;
-  --color-rose-200: #fbd0d4;
-  --color-rose-300: #f8a9b1;
-  --color-rose-400: #f37989;
-  --color-rose-500: #ea4962;
-  --color-rose-600: #d6284b;
-  --color-rose-700: #c81f45;
-  --color-rose-800: #971a3b;
-  --color-rose-900: #811a38;
-  --color-rose-950: #48091a;
+	/* Alternative theme (rose) */
+	--color-rose-50: #fef2f3;
+	--color-rose-100: #fde6e7;
+	--color-rose-200: #fbd0d4;
+	--color-rose-300: #f8a9b1;
+	--color-rose-400: #f37989;
+	--color-rose-500: #ea4962;
+	--color-rose-600: #d6284b;
+	--color-rose-700: #c81f45;
+	--color-rose-800: #971a3b;
+	--color-rose-900: #811a38;
+	--color-rose-950: #48091a;
 
-  /* Semantic variables */
-  --site-background: #f1ebe8;
+	/* Semantic variables */
+	--site-background: #f1ebe8;
 
-  --color-accent: var(--color-primary-500);
-  --color-accent-hover: var(--color-primary-600);
+	--color-accent: var(--color-primary-500);
+	--color-accent-hover: var(--color-primary-600);
 
-  --color-text: #111;
-  --color-text-muted: #666;
-  --color-bg: var(--color-slate-50);
-  --color-bg-muted: #eeeeee;
-  --color-border: #ddd;
+	--color-text: #111;
+	--color-text-muted: #666;
+	--color-bg: var(--color-slate-50);
+	--color-bg-muted: #eeeeee;
+	--color-border: #ddd;
 
-  /* Border radius */
-  --border-radius-sm: 0.25rem;
-  --border-radius: 0.375rem;
-  --border-radius-full: calc(infinity * 1px);
+	/* Border radius */
+	--border-radius-sm: 0.25rem;
+	--border-radius: 0.375rem;
+	--border-radius-full: calc(infinity * 1px);
 
-  /* Font styles */
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
+	/* Font styles */
+	--font-size-sm: 0.875rem;
+	--font-size-base: 1rem;
+	--font-size-lg: 1.125rem;
+	--font-size-xl: 1.25rem;
 
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
 }
 
 html, body {
-  padding: 0;
-  margin: 0;
-  font-family: 'Segoe UI', 'Arial', sans-serif;
-  background: var(--site-background);
-  color: var(--color-text);
-  min-height: 100vh;
+	padding: 0;
+	margin: 0;
+	font-family: 'Segoe UI', 'Arial', sans-serif;
+	background: var(--site-background);
+	color: var(--color-text);
+	min-height: 100vh;
 }
 
 p {
-  line-height: 1.5;
+	line-height: 1.5;
 }

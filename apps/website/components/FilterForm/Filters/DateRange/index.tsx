@@ -1,50 +1,52 @@
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from "react";
 
-import {FormInput} from "@/components/FormInput";
-import styles from './DateRange.module.scss';
+import { FormInput } from "@/components/FormInput";
+import styles from "./DateRange.module.scss";
 
-export const DateRangeFilter = (
-  {
-    dateRange,
-    setDateRange
-  }: {
-  dateRange: {
-    start: string;
-    end: string;
-  }
-  setDateRange: Dispatch<SetStateAction<{
-    start: string;
-    end: string;
-  }>>
-}
-) => {
-  const { start, end } = dateRange;
+export const DateRangeFilter = ({
+	dateRange,
+	setDateRange,
+}: {
+	dateRange: {
+		start: string;
+		end: string;
+	};
+	setDateRange: Dispatch<
+		SetStateAction<{
+			start: string;
+			end: string;
+		}>
+	>;
+}) => {
+	const { start, end } = dateRange;
 
-  return (
-    <FormInput label={"Date Range"} htmlFor={'date-range'}>
-      <div className={styles.dateRange}>
-        <input
-          type={"date"}
-          value={start}
-          onChange={(event) =>
-            setDateRange((prevState) => ({
-              ...prevState,
-              start: event.target.value
-            }))}
-          className={styles.dateInput}
-        />
-        <span className={styles.separator}>–</span>
-        <input
-          type={"date"}
-          value={end}
-          onChange={(event) =>
-            setDateRange((prevState) => ({
-              ...prevState,
-              end: event.target.value
-            }))}
-          className={styles.dateInput}
-        />
-      </div>
-    </FormInput>
-  )
-}
+	return (
+		<FormInput label={"Date Range"} htmlFor={"date-range"}>
+			<div className={styles.dateRange}>
+				<input
+					type={"date"}
+					value={start}
+					onChange={(event) =>
+						setDateRange((prevState) => ({
+							...prevState,
+							start: event.target.value,
+						}))
+					}
+					className={styles.dateInput}
+				/>
+				<span className={styles.separator}>–</span>
+				<input
+					type={"date"}
+					value={end}
+					onChange={(event) =>
+						setDateRange((prevState) => ({
+							...prevState,
+							end: event.target.value,
+						}))
+					}
+					className={styles.dateInput}
+				/>
+			</div>
+		</FormInput>
+	);
+};

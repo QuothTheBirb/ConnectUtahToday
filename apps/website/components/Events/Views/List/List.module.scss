@@ -1,65 +1,65 @@
 .eventFeed {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  list-style-type: none;
-  padding-left: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	list-style-type: none;
+	padding-left: 0;
 
-  .eventItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+	.eventItem {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
 
-    .eventContent {
-      width: 100%;
-      max-width: 40rem;
+		.eventContent {
+			width: 100%;
+			max-width: 40rem;
 
-      .eventImageContainer {
-        margin: 0 0 1.2rem 0;
+			.eventImageContainer {
+				margin: 0 0 1.2rem 0;
 
-        .eventImage {
-          width: 100%;
-          max-width: 400px;
-          height: auto;
-          border-radius: 8px;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-      }
+				.eventImage {
+					width: 100%;
+					max-width: 400px;
+					height: auto;
+					border-radius: 8px;
+					box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+				}
+			}
 
-      .eventDetails {
-        width: 100%;
+			.eventDetails {
+				width: 100%;
 
-        .eventSummary {
-          font-size: 1.6rem;
-          font-weight: bold;
-          margin-bottom: 1.2rem;
-        }
+				.eventSummary {
+					font-size: 1.6rem;
+					font-weight: bold;
+					margin-bottom: 1.2rem;
+				}
 
-        .eventMeta {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          color: var(--color-text);
-          margin-bottom: 6px;
+				.eventMeta {
+					display: flex;
+					flex-direction: column;
+					gap: 0.5rem;
+					color: var(--color-text);
+					margin-bottom: 6px;
 
-          .eventLink {
-            color: var(--color-accent);
-          }
-        }
+					.eventLink {
+						color: var(--color-accent);
+					}
+				}
 
-        .eventDescription {
-          word-break: break-all;
-        }
-      }
-    }
-  }
+				.eventDescription {
+					word-break: break-all;
+				}
+			}
+		}
+	}
 
-  .eventItem + .eventItem::before {
-    content: '';
-    width: calc(100% - 6rem);
-    height: 1px;
-    background-color: var(--color-border);
-    margin: 1.5rem 0 2rem 0;
-  }
+	.eventItem + .eventItem::before {
+		content: '';
+		width: calc(100% - 6rem);
+		height: 1px;
+		background-color: var(--color-border);
+		margin: 1.5rem 0 2rem 0;
+	}
 }

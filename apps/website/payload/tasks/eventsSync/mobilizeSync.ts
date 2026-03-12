@@ -1,36 +1,36 @@
-import type {PaginatedDocs, TaskConfig} from 'payload'
-import {Event} from "@/payload-types";
-import {fetchMobilizeEvents} from "@/lib/api/fetchMobilizeEvents";
-import {US_STATES} from "@/lib/usStates";
-import {SUPPORTED_COUNTRIES} from "@/lib/supportedCountries";
+import type { PaginatedDocs, TaskConfig } from "payload";
+import { Event } from "@/payload-types";
+import { fetchMobilizeEvents } from "@/lib/api/fetchMobilizeEvents";
+import { US_STATES } from "@/lib/usStates";
+import { SUPPORTED_COUNTRIES } from "@/lib/supportedCountries";
 
-export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
-	slug: 'mobilizeSync',
-	label: 'Sync events from Mobilize',
+export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
+	slug: "mobilizeSync",
+	label: "Sync events from Mobilize",
 	onSuccess: () => {
-		console.log('The task succeeded :)')
+		console.log("The task succeeded :)");
 	},
 	onFail: () => {
-		console.log('The task failed :(')
+		console.log("The task failed :(");
 	},
 	// retries: 3,
-	handler: async ({req}) => {
-		console.log('Syncing Mobilize events…');
+	handler: async ({ req }) => {
+		console.log("Syncing Mobilize events…");
 
 		const settings = await req.payload.findGlobal({
-			slug: 'event-settings',
+			slug: "event-settings",
 		});
 
 		if (!settings.mobilize?.enableMobilize) {
-			console.log('Mobilize integration disabled, skipping…');
+			console.log("Mobilize integration disabled, skipping…");
 
 			return {
 				output: {
 					success: true,
 					itemsSynced: 0,
-					message: 'Mobilize integration disabled, skipping…'
-				}
-			}
+					message: "Mobilize integration disabled, skipping…",
+				},
+			};
 		}
 
 		// Calculate date range (+/- 6 months)
@@ -42,13 +42,18 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
 		timeMax.setMonth(now.getMonth() + dateRange);
 
 		// Event filters
-		const state = settings.mobilize.enableStateFilter ? settings.mobilize.stateFilter?.state : undefined;
-		const orgFilter = settings.mobilize.enableOrganizationFilter && settings.mobilize.organizationFilter?.type && settings.mobilize.organizationFilter?.list
-			? {
-				type: settings.mobilize.organizationFilter.type,
-				list: settings.mobilize.organizationFilter.list
-			}
+		const state = settings.mobilize.enableStateFilter
+			? settings.mobilize.stateFilter?.state
 			: undefined;
+		const orgFilter =
+			settings.mobilize.enableOrganizationFilter &&
+			settings.mobilize.organizationFilter?.type &&
+			settings.mobilize.organizationFilter?.list
+				? {
+						type: settings.mobilize.organizationFilter.type,
+						list: settings.mobilize.organizationFilter.list,
+					}
+				: undefined;
 
 		// Fetch events from Mobilize
 		const mobilizeEvents = await fetchMobilizeEvents({
@@ -56,43 +61,50 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
 			timeMax: timeMax.toISOString(),
 			filters: {
 				state: state,
-				organizations: orgFilter
-			}
+				organizations: orgFilter,
+			},
 		});
 
 		let itemsSynced = 0;
 		const syncedMobilizeIds: number[] = [];
 
-		console.log('Fetched', mobilizeEvents.length, 'events from Mobilize')
+		console.log("Fetched", mobilizeEvents.length, "events from Mobilize");
 
-		const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+		const sleep = (ms: number) =>
+			new Promise((resolve) => setTimeout(resolve, ms));
 
 		for (const event of mobilizeEvents) {
 			if (!event || !event.mobilizeId) continue;
 
-			const {mobilizeId} = event;
+			const { mobilizeId } = event;
 
 			syncedMobilizeIds.push(mobilizeId);
 
 			// Map the API event structure to the Payload event collection structure
 			const payloadData = {
 				title: event.title,
-				description: event.description || '',
+				description: event.description || "",
 				url: event.url,
 				date: event.date,
 				endDate: event.endDate,
 				eventType: event.eventType,
 				location: {
-					country: event.location?.country ?
-						SUPPORTED_COUNTRIES.find((country) => event.location?.country === country.value)?.value
+					country: event.location?.country
+						? SUPPORTED_COUNTRIES.find(
+								(country) =>
+									event.location?.country === country.value,
+							)?.value
 						: undefined,
-					state: event.location?.state ?
-						US_STATES.find((state) => event.location?.state === state.value)?.value
+					state: event.location?.state
+						? US_STATES.find(
+								(state) =>
+									event.location?.state === state.value,
+							)?.value
 						: undefined,
 					city: event.location?.city,
 					address: event.location?.address,
 					postalCode: event.location?.postalCode,
-					venue: event.location?.venue
+					venue: event.location?.venue,
 				},
 				source: event.source,
 				mobilize: {
@@ -103,35 +115,40 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
 						name: event.organization.name,
 						slug: event.organization.slug,
 						url: event.organization.url,
-					}
-				}
+					},
+				},
 			};
 
 			// Check if event exists
-			const existingEventsInDb: PaginatedDocs<Event> = await req.payload.find({
-				collection: 'events',
-				where: {
-					source: {equals: 'mobilize'},
-					'mobilize.eventId': {equals: mobilizeId},
-				},
-				limit: 1,
-			});
-			const eventDb = existingEventsInDb.docs.length ? existingEventsInDb.docs[0] : undefined;
+			const existingEventsInDb: PaginatedDocs<Event> =
+				await req.payload.find({
+					collection: "events",
+					where: {
+						source: { equals: "mobilize" },
+						"mobilize.eventId": { equals: mobilizeId },
+					},
+					limit: 1,
+				});
+			const eventDb = existingEventsInDb.docs.length
+				? existingEventsInDb.docs[0]
+				: undefined;
 
 			try {
 				if (eventDb) {
-					console.log(`Updating existing mobilize event: ${mobilizeId}`);
+					console.log(
+						`Updating existing mobilize event: ${mobilizeId}`,
+					);
 
 					await req.payload.update({
-						collection: 'events',
+						collection: "events",
 						id: eventDb.id,
 						data: payloadData,
-					})
+					});
 				} else {
 					console.log(`Creating new mobilize event: ${mobilizeId}`);
 
 					await req.payload.create({
-						collection: 'events',
+						collection: "events",
 						data: payloadData,
 					});
 				}
@@ -144,7 +161,10 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
 				await sleep(500);
 			} catch (error) {
 				if (error instanceof Error) {
-					console.error(`Failed to sync event ${mobilizeId}:`, error.message);
+					console.error(
+						`Failed to sync event ${mobilizeId}:`,
+						error.message,
+					);
 				}
 			}
 		}
@@ -152,12 +172,12 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
 		// Remove events that no longer exist or are now filtered out
 		try {
 			const allMobilizeEventsInDb = await req.payload.find({
-				collection: 'events',
+				collection: "events",
 				where: {
-					source: {equals: 'mobilize'}
+					source: { equals: "mobilize" },
 				},
-				limit: 0
-			})
+				limit: 0,
+			});
 
 			for (const dbEvent of allMobilizeEventsInDb.docs) {
 				const eventId = dbEvent.mobilize?.eventId;
@@ -166,31 +186,34 @@ export const mobilizeSync: TaskConfig<'mobilizeSync'> = {
 					console.log(`Deleting outdated mobilize event: ${eventId}`);
 
 					await req.payload.delete({
-						collection: 'events',
+						collection: "events",
 						id: dbEvent.id,
-					})
+					});
 				}
 			}
 		} catch (error) {
-			console.error('Failed to cleanup stale events:', error)
+			console.error("Failed to cleanup stale events:", error);
 
 			return {
 				output: {
 					success: false,
 					itemsSynced: itemsSynced,
-					error: error instanceof Error ? error.message : 'Unknown error'
-				}
-			}
+					error:
+						error instanceof Error
+							? error.message
+							: "Unknown error",
+				},
+			};
 		}
 
-		console.log('Mobilize events synced successfully.');
+		console.log("Mobilize events synced successfully.");
 
 		return {
 			output: {
 				success: true,
 				itemsSynced: itemsSynced,
-				message: 'Mobilize events synced successfully.'
-			}
-		}
+				message: "Mobilize events synced successfully.",
+			},
+		};
 	},
-}
+};

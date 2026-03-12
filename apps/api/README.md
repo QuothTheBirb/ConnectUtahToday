@@ -1,7 +1,11 @@
 # API Documentation
+
 ## Reproduction Steps
+
 (work in progress)
+
 ### Database
+
 - Add steps for locally recreating tables here
 - Include examples on how to create entries for testing locally
 - (Later) Add database seeding for local development
@@ -14,7 +18,9 @@ psql
 ```
 
 #### Organizations Table
+
 (This may be inaccurate; I was basing this off of the API code interfacing with it.)
+
 ```
 CREATE TABLE IF NOT EXISTS organizations (
   id bigserial PRIMARY KEY,
@@ -24,6 +30,7 @@ CREATE TABLE IF NOT EXISTS organizations (
 ```
 
 #### Password Table
+
 ```
 CREATE TABLE IF NOT EXISTS password (
   id SERIAL PRIMARY KEY,

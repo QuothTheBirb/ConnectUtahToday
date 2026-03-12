@@ -1,156 +1,156 @@
 .dateHeader {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--color-primary-50);
-  border-radius: 0.25rem;
-  border-left: 4px solid var(--color-primary-500);
+	margin-bottom: 1.5rem;
+	padding: 1rem;
+	background: var(--color-primary-50);
+	border-radius: 0.25rem;
+	border-left: 4px solid var(--color-primary-500);
 
-  .dateHeaderTitle {
-    margin: 0;
-    color: var(--color-primary-900);
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
+	.dateHeaderTitle {
+		margin: 0;
+		color: var(--color-primary-900);
+		font-size: 1.1rem;
+		font-weight: 600;
+	}
 
-  .dateHeaderSubtitle {
-    margin: 0.25rem 0 0 0;
-    color: var(--color-primary-700);
-    font-size: 0.875rem;
-  }
+	.dateHeaderSubtitle {
+		margin: 0.25rem 0 0 0;
+		color: var(--color-primary-700);
+		font-size: 0.875rem;
+	}
 }
 
 .eventSeparator {
-  height: 1px;
-  background: var(--color-slate-200);
-  margin: 1.5rem 0;
+	height: 1px;
+	background: var(--color-slate-200);
+	margin: 1.5rem 0;
 }
 
 .eventCard {
-  display: flex;
-  gap: 1.25rem;
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: visible;
-  border: none;
+	display: flex;
+	gap: 1.25rem;
+	background: transparent;
+	border-radius: 0;
+	box-shadow: none;
+	overflow: visible;
+	border: none;
 
-  @media (max-width: 600px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
+	@media (max-width: 600px) {
+		flex-direction: column;
+		gap: 1rem;
+	}
 
-  .eventImageContainer {
-    flex-shrink: 0;
-    width: 180px;
-    height: 120px;
-    overflow: hidden;
-    border-radius: 0.25rem;
-    border: 1px solid var(--color-slate-200);
+	.eventImageContainer {
+		flex-shrink: 0;
+		width: 180px;
+		height: 120px;
+		overflow: hidden;
+		border-radius: 0.25rem;
+		border: 1px solid var(--color-slate-200);
 
-    @media (max-width: 600px) {
-      width: 100%;
-      height: 160px;
-    }
+		@media (max-width: 600px) {
+			width: 100%;
+			height: 160px;
+		}
 
-    .eventImage {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
+		.eventImage {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
 
-  .eventDetails {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+	.eventDetails {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 
-    .eventOrg {
-      color: var(--color-primary-600);
-      font-weight: 600;
-      font-size: 0.875rem;
-      margin-bottom: 0.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.025em;
-    }
+		.eventOrg {
+			color: var(--color-primary-600);
+			font-weight: 600;
+			font-size: 0.875rem;
+			margin-bottom: 0.25rem;
+			text-transform: uppercase;
+			letter-spacing: 0.025em;
+		}
 
-    .eventSummary {
-      margin: 0 0 0.75rem 0;
-      color: var(--color-slate-900);
-      font-size: 1.25rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
+		.eventSummary {
+			margin: 0 0 0.75rem 0;
+			color: var(--color-slate-900);
+			font-size: 1.25rem;
+			font-weight: 700;
+			line-height: 1.2;
+		}
 
-    .eventGrid {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.25rem 0.75rem;
-      margin-bottom: 1rem;
-      font-size: 0.875rem;
+		.eventGrid {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			gap: 0.25rem 0.75rem;
+			margin-bottom: 1rem;
+			font-size: 0.875rem;
 
-      .eventGridLabel {
-        color: var(--color-slate-500);
-        font-weight: 500;
-      }
+			.eventGridLabel {
+				color: var(--color-slate-500);
+				font-weight: 500;
+			}
 
-      .eventGridValue {
-        color: var(--color-slate-700);
-      }
-    }
+			.eventGridValue {
+				color: var(--color-slate-700);
+			}
+		}
 
-    .eventDescription {
-      color: var(--color-slate-600);
-      line-height: 1.5;
-      margin-bottom: 1.25rem;
-      font-size: 0.875rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
+		.eventDescription {
+			color: var(--color-slate-600);
+			line-height: 1.5;
+			margin-bottom: 1.25rem;
+			font-size: 0.875rem;
+			display: -webkit-box;
+			-webkit-line-clamp: 4;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
 
-    .eventActions {
-      margin-top: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
+		.eventActions {
+			margin-top: auto;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 1rem;
 
-      .viewDetailsButton {
-        background: var(--color-rose-500);
-        color: var(--color-rose-50);
-        padding: 0.5rem 1rem;
-        text-decoration: none;
-        border-radius: 0.25rem;
-        font-weight: 600;
-        font-size: 0.875rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        transition: background 0.2s ease;
+			.viewDetailsButton {
+				background: var(--color-rose-500);
+				color: var(--color-rose-50);
+				padding: 0.5rem 1rem;
+				text-decoration: none;
+				border-radius: 0.25rem;
+				font-weight: 600;
+				font-size: 0.875rem;
+				display: inline-flex;
+				align-items: center;
+				gap: 0.375rem;
+				transition: background 0.2s ease;
 
-        &:hover {
-          background: var(--color-rose-600);
-        }
+				&:hover {
+					background: var(--color-rose-600);
+				}
 
-        .arrow {
-          transition: transform 0.2s ease;
-        }
+				.arrow {
+					transition: transform 0.2s ease;
+				}
 
-        &:hover .arrow {
-          transform: translateX(3px);
-        }
-      }
+				&:hover .arrow {
+					transform: translateX(3px);
+				}
+			}
 
-      .eventTypeTag {
-        background: var(--color-slate-100);
-        color: var(--color-slate-600);
-        padding: 0.25rem 0.625rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        border: 1px solid var(--color-slate-200);
-      }
-    }
-  }
+			.eventTypeTag {
+				background: var(--color-slate-100);
+				color: var(--color-slate-600);
+				padding: 0.25rem 0.625rem;
+				border-radius: 9999px;
+				font-size: 0.75rem;
+				font-weight: 500;
+				border: 1px solid var(--color-slate-200);
+			}
+		}
+	}
 }

@@ -1,10 +1,7 @@
-import {Tab} from "payload";
+import { Tab } from "payload";
 
 export const EventsTab: Tab = {
-  name: 'events',
-  label: 'Events',
-  fields: [
-
-  ],
-
-}
+	name: "events",
+	label: "Events",
+	fields: [],
+};

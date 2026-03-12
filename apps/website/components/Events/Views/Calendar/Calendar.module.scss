@@ -1,141 +1,141 @@
 .calendarContainer {
-  .calendarMonthYear {
-    font-family: 'Staatliches', 'Segoe UI', 'Arial', sans-serif;
-    color: var(--color-primary-700);
-    letter-spacing: 0.04rem;
-    text-align: center;
-    font-size: 2.4rem;
-    margin: 0.4rem 0 0.8rem 0;
-  }
+	.calendarMonthYear {
+		font-family: 'Staatliches', 'Segoe UI', 'Arial', sans-serif;
+		color: var(--color-primary-700);
+		letter-spacing: 0.04rem;
+		text-align: center;
+		font-size: 2.4rem;
+		margin: 0.4rem 0 0.8rem 0;
+	}
 
-  .calendarGrid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1px;
-    max-width: 900px;
-    margin: 0 auto;
-    background: var(--color-border);
-    border: 1px solid var(--color-border);
+	.calendarGrid {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 1px;
+		max-width: 900px;
+		margin: 0 auto;
+		background: var(--color-border);
+		border: 1px solid var(--color-border);
 
-    .dayHeader {
-      background: var(--color-bg-muted);
-      padding: 12px;
-      text-align: center;
-      font-weight: bold;
-    }
+		.dayHeader {
+			background: var(--color-bg-muted);
+			padding: 12px;
+			text-align: center;
+			font-weight: bold;
+		}
 
-    .calendarGridDays {
-      grid-column: 1 / -1;
-      display: contents;
+		.calendarGridDays {
+			grid-column: 1 / -1;
+			display: contents;
 
-      .calendarCell {
-        background: var(--color-bg);
-        padding: 5px;
-        min-height: 125px;
-        border: 1px solid var(--color-border);
-        position: relative;
+			.calendarCell {
+				background: var(--color-bg);
+				padding: 5px;
+				min-height: 125px;
+				border: 1px solid var(--color-border);
+				position: relative;
 
-        &.today {
-          background: var(--color-primary-50);
-        }
+				&.today {
+					background: var(--color-primary-50);
+				}
 
-        &.hasEvents {
-          cursor: pointer;
-        }
+				&.hasEvents {
+					cursor: pointer;
+				}
 
-        &.empty {
-          background: var(--color-bg-muted);
-        }
+				&.empty {
+					background: var(--color-bg-muted);
+				}
 
-        .dayNumber {
-          font-size: 0.8rem;
-          padding: 0.1rem 0 0.2rem 0;
-          text-align: center;
+				.dayNumber {
+					font-size: 0.8rem;
+					padding: 0.1rem 0 0.2rem 0;
+					text-align: center;
 
-          &.today {
-            font-weight: bold;
-          }
-        }
+					&.today {
+						font-weight: bold;
+					}
+				}
 
-        .events {
-          .event {
-            font-size: 0.625rem;
-            background: var(--color-primary-500);
-            color: var(--color-slate-50);
-            padding: 1px 4px;
-            margin: 1px 0;
-            border-radius: 2px;
-            overflow: hidden;
-          }
+				.events {
+					.event {
+						font-size: 0.625rem;
+						background: var(--color-primary-500);
+						color: var(--color-slate-50);
+						padding: 1px 4px;
+						margin: 1px 0;
+						border-radius: 2px;
+						overflow: hidden;
+					}
 
-          .remaining {
-            font-size: 10px;
-            color: var(--color-primary-500);
-            font-weight: bold;
-          }
-        }
+					.remaining {
+						font-size: 10px;
+						color: var(--color-primary-500);
+						font-weight: bold;
+					}
+				}
 
-        .mobileDots {
-          display: none;
-        }
+				.mobileDots {
+					display: none;
+				}
 
-        .eventCount {
-          font-size: 10px;
-          color: var(--color-text-muted);
-          margin-top: 2px;
-        }
-      }
-    }
-  }
+				.eventCount {
+					font-size: 10px;
+					color: var(--color-text-muted);
+					margin-top: 2px;
+				}
+			}
+		}
+	}
 
-  @media (max-width: 768px) {
-    .calendarMonthYear {
-      font-size: 1.8rem;
-    }
+	@media (max-width: 768px) {
+		.calendarMonthYear {
+			font-size: 1.8rem;
+		}
 
-    .calendarGrid {
-      .dayHeader {
-        padding: 8px 4px;
-        font-size: 0.8rem;
-      }
+		.calendarGrid {
+			.dayHeader {
+				padding: 8px 4px;
+				font-size: 0.8rem;
+			}
 
-      .calendarGridDays {
-        .calendarCell {
-          min-height: 40px;
-          padding: 2px;
+			.calendarGridDays {
+				.calendarCell {
+					min-height: 40px;
+					padding: 2px;
 
-          .events, .eventCount {
-            display: none;
-          }
+					.events, .eventCount {
+						display: none;
+					}
 
-          .mobileDots {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px;
-            justify-content: center;
-            padding-top: 2px;
+					.mobileDots {
+						display: flex;
+						flex-wrap: wrap;
+						gap: 2px;
+						justify-content: center;
+						padding-top: 2px;
 
-            .dot {
-              width: 5px;
-              height: 5px;
-              border-radius: 50%;
-              background: var(--color-primary-500);
-            }
-          }
-        }
-      }
-    }
-  }
+						.dot {
+							width: 5px;
+							height: 5px;
+							border-radius: 50%;
+							background: var(--color-primary-500);
+						}
+					}
+				}
+			}
+		}
+	}
 
-  .controlsInfo {
-    text-align: center;
-    margin-bottom: 1em;
-    font-size: 0.9em;
-    color: var(--color-text-muted);
-  }
+	.controlsInfo {
+		text-align: center;
+		margin-bottom: 1em;
+		font-size: 0.9em;
+		color: var(--color-text-muted);
+	}
 
-  .detailsInfo {
-    margin-top: 1em;
-    text-align: center;
-  }
+	.detailsInfo {
+		margin-top: 1em;
+		text-align: center;
+	}
 }

@@ -1,22 +1,22 @@
 import config from "@payload-config";
-import {getPayload} from "payload";
-import {Organization} from "@/payload-types";
+import { getPayload } from "payload";
+import { Organization } from "@/payload-types";
 
 export const fetchOrganizations = async (): Promise<Organization[]> => {
-  const payload = await getPayload({ config });
+	const payload = await getPayload({ config });
 
-  try {
-    const organizations = await payload.find({
-      collection: 'organizations',
-      depth: 1,
-      pagination: false
-    });
+	try {
+		const organizations = await payload.find({
+			collection: "organizations",
+			depth: 1,
+			pagination: false,
+		});
 
-    if (!organizations.docs) return [];
+		if (!organizations.docs) return [];
 
-    return organizations.docs;
-  } catch (error) {
-    console.error('Error fetching organizations:', error);
-    return [];
-  }
-}
+		return organizations.docs;
+	} catch (error) {
+		console.error("Error fetching organizations:", error);
+		return [];
+	}
+};

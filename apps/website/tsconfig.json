@@ -1,14 +1,14 @@
 {
-  "extends": "@connect-utah-today/tsconfig/nextjs.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "paths": {
+	"extends": "@connect-utah-today/tsconfig/nextjs.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"paths": {
 			"@/*": ["./*"],
 			"@/fonts": ["./styles/fonts"],
 			"@payload-config": ["./payload.config.ts"],
-			"@connect-utah-today/api/*": ["../api/*"],
+			"@connect-utah-today/api/*": ["../api/*"]
 		}
-  },
-  "include": ["index.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+	},
+	"include": ["index.d.ts", "**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

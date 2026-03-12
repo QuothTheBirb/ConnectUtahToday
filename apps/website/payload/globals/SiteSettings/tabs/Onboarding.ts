@@ -1,7 +1,7 @@
-import {Tab} from "payload";
+import { Tab } from "payload";
 
 export const OnboardingTab: Tab = {
-  name: 'onboarding',
-  label: 'Onboarding & Invites',
-  fields: []
-}
+	name: "onboarding",
+	label: "Onboarding & Invites",
+	fields: [],
+};
