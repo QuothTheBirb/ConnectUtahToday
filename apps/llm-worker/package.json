@@ -1,0 +1,12 @@
+{
+	"name": "@connect-utah-today/llm-worker",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+	}
+}

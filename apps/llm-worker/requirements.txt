@@ -1,0 +1,13 @@
+transformers==4.44.2
+runpod[api]==1.8.1
+torch==2.6.0
+torchaudio==2.6.0
+Pillow==10.0.0
+accelerate==1.12.0
+hf-transfer==0.1.9
+timm==0.9.10
+sentencepiece==0.2.0
+librosa==0.9.0
+bitsandbytes==0.43.3
+fastapi
+uvicorn
