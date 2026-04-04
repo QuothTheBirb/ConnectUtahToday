@@ -1,79 +1,139 @@
 "use client";
 
-import { SyntheticEvent, useEffect, useState } from "react";
+import { toast } from "@payloadcms/ui";
 import { CalendarSync, RefreshCw } from "lucide-react";
-import { UIFieldClientComponent, UIFieldClientProps } from "payload";
-import { usePayloadAPI } from "@payloadcms/ui";
+import { UIFieldClientComponent } from "payload";
+import {
+	SyntheticEvent,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 import styles from "./SyncEvents.module.scss";
 
-export const SyncEvents: UIFieldClientComponent = ({
-	path,
-}: UIFieldClientProps) => {
-	const [{ data: processingJobs, isError, isLoading }, { setParams }] =
-		usePayloadAPI(
-			"/payload-api/payload-jobs?where[queue][equals]=sync-events&where[processing][equals]=true&limit=10",
-			{},
-		);
-	const isProcessing = processingJobs?.docs?.length > 0;
+const MANUAL_SYNC_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+const POLL_INTERVAL_MS = 5_000; // 5 seconds
 
-	const [syncing, setSyncing] = useState(false);
-	const [disabled, setDisabled] = useState(true);
+export const SyncEvents: UIFieldClientComponent = () => {
+	const [isProcessing, setIsProcessing] = useState(false);
+	const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-	// const disabled = isLoading || isError || syncing;
+	const stopPolling = useCallback(() => {
+		if (pollRef.current) {
+			clearInterval(pollRef.current);
+			pollRef.current = null;
+		}
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = null;
+		}
+	}, []);
 
+	const startPolling = useCallback(
+		(startedAt: number) => {
+			stopPolling();
+
+			pollRef.current = setInterval(async () => {
+				try {
+					const res = await fetch("/api/sync-events");
+					if (!res.ok) return;
+					const data = await res.json();
+					if (data.status === "idle") {
+						setIsProcessing(false);
+						stopPolling();
+					}
+				} catch {
+					// Ignore transient poll errors
+				}
+			}, POLL_INTERVAL_MS);
+
+			// Unlock the button after 5 minutes regardless of job state
+			const remaining = MANUAL_SYNC_TIMEOUT_MS - (Date.now() - startedAt);
+			if (remaining > 0) {
+				timeoutRef.current = setTimeout(() => {
+					setIsProcessing(false);
+					stopPolling();
+				}, remaining);
+			} else {
+				setIsProcessing(false);
+			}
+		},
+		[stopPolling],
+	);
+
+	// On mount, check if a manual sync is already running
 	useEffect(() => {
-		console.log(processingJobs);
-	}, [processingJobs]);
+		const checkStatus = async () => {
+			try {
+				const res = await fetch("/api/sync-events");
+				if (!res.ok) return;
+				const data = await res.json();
+				if (data.status === "processing" && data.startedAt) {
+					const startedAt = new Date(data.startedAt).getTime();
+					if (Date.now() - startedAt < MANUAL_SYNC_TIMEOUT_MS) {
+						setIsProcessing(true);
+						startPolling(startedAt);
+					}
+				}
+			} catch {
+				// Ignore errors on mount check
+			}
+		};
 
-	useEffect(() => {
-		console.log(isProcessing);
-
-		setSyncing(isProcessing);
-		setDisabled(isProcessing);
-	}, [isProcessing]);
+		checkStatus();
+		return () => stopPolling();
+	}, [startPolling, stopPolling]);
 
 	const handleClick = async (event: SyntheticEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 
-		console.log("Client-side request to sync events...");
-		setSyncing(true);
-		setDisabled(true);
-
 		try {
-			const response = await fetch("/api/sync-events", {
-				method: "POST",
-			});
+			const res = await fetch("/api/sync-events", { method: "POST" });
 
-			if (!response.ok) {
-				return new Error("Failed to sync events");
+			if (res.status === 409) {
+				const data = await res.json();
+				toast.error(
+					data.error ?? "A manual sync is already in progress.",
+				);
+				return;
 			}
 
-			const res = await response.json();
-			console.log(res);
+			if (!res.ok) {
+				throw new Error("Failed to start sync");
+			}
+
+			const data = await res.json();
+			toast.success(data.message ?? "Sync successfully started.");
+
+			const startedAt = Date.now();
+			window.dispatchEvent(
+				new CustomEvent("manualSyncStarted", { detail: startedAt }),
+			);
+			setIsProcessing(true);
+			startPolling(startedAt);
 		} catch (error) {
-			console.error("Error syncing events:", error);
-		} finally {
-			setSyncing(false);
-			setDisabled(false);
+			if ((error as Error).name === "AbortError") return;
+			console.error("Error starting sync:", error);
+			toast.error("Failed to start sync.");
 		}
 	};
-
-	if (isLoading) return null;
 
 	return (
 		<div className={`${styles.syncEvents} field-type`}>
 			<button
 				onClick={handleClick}
-				disabled={disabled}
-				className={`btn btn--icon btn--size-medium btn--style-primary btn--no-margin btn--icon-style-without-border btn--icon-position-left${disabled ? " btn--disabled" : ""}`}
+				disabled={isProcessing}
+				className={`btn btn--icon btn--size-medium btn--style-primary btn--no-margin btn--icon-style-without-border btn--icon-position-left${isProcessing ? " btn--disabled" : ""}`}
 			>
 				<span className={"btn__content"}>
 					<span className={"btn__label"}>
-						{syncing ? "Syncing Events…" : "Manual Sync"}
+						{isProcessing ? "Syncing Events…" : "Manual Sync"}
 					</span>
 					<span className={"btn__icon"}>
-						{syncing ? (
+						{isProcessing ? (
 							<RefreshCw className={styles.syncAnimation} />
 						) : (
 							<CalendarSync />

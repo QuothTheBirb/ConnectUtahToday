@@ -1,21 +1,22 @@
-import sharp from "sharp";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
-import { buildConfig } from "payload";
-import { postgresAdapter } from "@payloadcms/db-postgres";
 import path from "path";
 import { fileURLToPath } from "url";
-
-import { Users } from "@/payload/collections/Users";
-import { Organizations } from "@/payload/collections/Organizations";
-import { Opportunities } from "@/payload/collections/Opportunities";
-import { EventSettings } from "@/payload/globals/EventSettings";
-import { Events } from "@/payload/collections/Events";
+import { postgresAdapter } from "@payloadcms/db-postgres";
+import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { buildConfig } from "payload";
+import sharp from "sharp";
 import { EventAssets } from "@/payload/collections/EventAssets";
-import { mobilizeSync } from "@/payload/tasks/eventsSync/mobilizeSync";
-import { googleCalendarSync } from "@/payload/tasks/eventsSync/googleCalendarSync";
-import { syncEvents } from "@/payload/workflows/syncEvents";
+import { Events } from "@/payload/collections/Events";
+import { Opportunities } from "@/payload/collections/Opportunities";
 import { OrganizationAssets } from "@/payload/collections/OrganizationAssets";
 import { OrganizationInvites } from "@/payload/collections/OrganizationInvites";
+import { Organizations } from "@/payload/collections/Organizations";
+import { Users } from "@/payload/collections/Users";
+import { EventSettings } from "@/payload/globals/EventSettings";
+import { SiteSettings } from "@/payload/globals/SiteSettings";
+import { googleCalendarSync } from "@/payload/tasks/eventsSync/googleCalendarSync";
+import { mobilizeSync } from "@/payload/tasks/eventsSync/mobilizeSync";
+import { manualSyncEvents } from "@/payload/workflows/manualSyncEvents";
+import { syncEvents } from "@/payload/workflows/syncEvents";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -24,6 +25,11 @@ export default buildConfig({
 	admin: {
 		importMap: {
 			baseDir: path.resolve(dirname),
+		},
+		components: {
+			providers: [
+				"@/payload/components/SyncEventsNotifier#SyncEventsNotifier",
+			],
 		},
 	},
 	editor: lexicalEditor(),
@@ -48,6 +54,32 @@ export default buildConfig({
 		outputFile: path.resolve(dirname, "payload-types.ts"),
 	},
 	sharp,
+	onInit: async (payload) => {
+		try {
+			// Mark all "processing" sync-events and manual-sync-events jobs as "failed"
+			// on server start since they were likely interrupted by a server restart.
+			await payload.update({
+				collection: "payload-jobs",
+				where: {
+					queue: { in: ["sync-events", "manual-sync-events"] },
+					processing: { equals: true },
+				},
+				data: {
+					processing: false,
+					hasError: true,
+					error: {
+						message: "Job was interrupted by a server restart.",
+					},
+				},
+				overrideAccess: true,
+			});
+		} catch (error) {
+			payload.logger.error({
+				err: error,
+				msg: "Error clearing stuck sync-events jobs",
+			});
+		}
+	},
 	routes: {
 		admin: "/dashboard",
 		api: "/payload-api",
@@ -68,14 +100,19 @@ export default buildConfig({
 				cron: "* * * * *",
 				queue: "sync-events",
 			},
+			{
+				cron: "* * * * *",
+				queue: "manual-sync-events",
+			},
 		],
 		processingOrder: {
 			default: "createdAt",
 			queues: {
-				"sync-events": "-createdAt",
+				"sync-events": "createdAt",
+				"manual-sync-events": "createdAt",
 			},
 		},
-		workflows: [syncEvents],
+		workflows: [syncEvents, manualSyncEvents],
 		tasks: [mobilizeSync, googleCalendarSync],
 	},
 });

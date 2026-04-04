@@ -26,6 +26,7 @@ import { UploadPosterEvents as UploadPosterEvents_50fbb2d4a31cacf753ee1b73cfed94
 import { InviteLinkField as InviteLinkField_78b3dca25bffc6c0e441b51de8cd3c0c } from '@/payload/collections/OrganizationInvites/components/InviteLink'
 import { OrganizationSelect as OrganizationSelect_7e3e0640ea1be80de11683336492abe8 } from '../../../payload/fields/OrganizationSelect'
 import { SyncEvents as SyncEvents_48892358d935fc873f03c0c608fa105e } from '../../../payload/fields/syncEvents/component'
+import { SyncEventsNotifier as SyncEventsNotifier_c9ea33c8fbd476ad7a4e287dad4a4d31 } from '@/payload/components/SyncEventsNotifier'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -57,5 +58,6 @@ export const importMap = {
   "@/payload/collections/OrganizationInvites/components/InviteLink#InviteLinkField": InviteLinkField_78b3dca25bffc6c0e441b51de8cd3c0c,
   "/payload/fields/OrganizationSelect#OrganizationSelect": OrganizationSelect_7e3e0640ea1be80de11683336492abe8,
   "/payload/fields/syncEvents/component#SyncEvents": SyncEvents_48892358d935fc873f03c0c608fa105e,
+  "@/payload/components/SyncEventsNotifier#SyncEventsNotifier": SyncEventsNotifier_c9ea33c8fbd476ad7a4e287dad4a4d31,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
