@@ -105,10 +105,12 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'event-settings': EventSetting;
+    'site-settings': SiteSetting;
     'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     'event-settings': EventSettingsSelect<false> | EventSettingsSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
@@ -124,6 +126,7 @@ export interface Config {
     };
     workflows: {
       syncEvents: WorkflowSyncEvents;
+      manualSyncEvents: WorkflowManualSyncEvents;
     };
   };
 }
@@ -165,6 +168,20 @@ export interface User {
   id: string;
   roles: ('admin' | 'organizer')[];
   inviteCode?: string | null;
+  organizationName?: string | null;
+  organizationDescription?: string | null;
+  organizationContactMethods?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  organizationContactEmail?: string | null;
+  organizationContactPhone?: string | null;
+  organizationContactPage?: string | null;
   invite?: (string | null) | OrganizationInvite;
   organizations?: {
     docs?: (string | Organization)[];
@@ -230,8 +247,26 @@ export interface Organization {
   generateSlug?: boolean | null;
   slug: string;
   url: string;
+  mobilizeSlug?: string | null;
   organizers: (string | User)[];
+  /**
+   * Allow this organization to sync events from a Google Calendar. This feature must be enabled in the global Event Settings.
+   */
+  enableGoogleCalendarSync?: boolean | null;
+  googleCalendarId?: string | null;
+  /**
+   * A default image used for calendar events from this organization when no event-specific image is available.
+   */
+  defaultEventImage?: (string | null) | OrganizationAsset;
   logo?: (string | null) | OrganizationAsset;
+  publicContactMethods?: {
+    showEmail?: boolean | null;
+    contactEmail?: string | null;
+    showPhone?: boolean | null;
+    contactPhone?: string | null;
+    showWebsite?: boolean | null;
+    contactWebsite?: string | null;
+  };
   description?: {
     root: {
       type: string;
@@ -375,6 +410,11 @@ export interface Event {
      */
     createdBy: string | User;
   };
+  googleCalendar?: {
+    eventId: string;
+    calendarId: string;
+    organization?: (string | null) | Organization;
+  };
   mobilize?: {
     eventId: number;
     image?: string | null;
@@ -509,7 +549,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  workflowSlug?: 'syncEvents' | null;
+  workflowSlug?: ('syncEvents' | 'manualSyncEvents') | null;
   taskSlug?: ('inline' | 'mobilizeSync' | 'googleCalendarSync') | null;
   queue?: string | null;
   waitUntil?: string | null;
@@ -614,6 +654,12 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   roles?: T;
   inviteCode?: T;
+  organizationName?: T;
+  organizationDescription?: T;
+  organizationContactMethods?: T;
+  organizationContactEmail?: T;
+  organizationContactPhone?: T;
+  organizationContactPage?: T;
   invite?: T;
   organizations?: T;
   updatedAt?: T;
@@ -643,8 +689,22 @@ export interface OrganizationsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   url?: T;
+  mobilizeSlug?: T;
   organizers?: T;
+  enableGoogleCalendarSync?: T;
+  googleCalendarId?: T;
+  defaultEventImage?: T;
   logo?: T;
+  publicContactMethods?:
+    | T
+    | {
+        showEmail?: T;
+        contactEmail?: T;
+        showPhone?: T;
+        contactPhone?: T;
+        showWebsite?: T;
+        contactWebsite?: T;
+      };
   description?: T;
   opportunities?: T;
   updatedAt?: T;
@@ -690,6 +750,13 @@ export interface EventsSelect<T extends boolean = true> {
         images?: T;
         organization?: T;
         createdBy?: T;
+      };
+  googleCalendar?:
+    | T
+    | {
+        eventId?: T;
+        calendarId?: T;
+        organization?: T;
       };
   mobilize?:
     | T
@@ -840,107 +907,136 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface EventSetting {
   id: string;
-  /**
-   * Configure site settings for events uploaded to the site through the dashboard.
-   */
-  localEvents?: {
-    enableLocalEvents?: boolean | null;
-  };
-  /**
-   * Configure site settings for Google Calendar events.
-   */
-  googleCalendar?: {
-    enableGoogleCalendar?: boolean | null;
+  events: {
     /**
-     * Get an API key from https://developers.google.com/calendar/quickstart/js
+     * Configure site settings for events uploaded to the site through the dashboard.
      */
-    googleCalendarApiKey?: string | null;
-    /**
-     * Get your calendar ID from https://calendar.google.com/calendar/r/settings/addbyurl
-     */
-    googleCalendarId?: string | null;
-  };
-  /**
-   * Configure site settings for Mobilize events. Syncs with event calendar every 4 hours by default.
-   */
-  mobilize: {
-    enableMobilize?: boolean | null;
-    /**
-     * Optional, currently unused.
-     */
-    mobilizeApiKey?: string | null;
-    enableStateFilter: boolean;
-    /**
-     * Filter events by state. Required by default when enabling mobilize integration to limit total number of events fetched.
-     */
-    stateFilter?: {
-      state:
-        | 'AL'
-        | 'AK'
-        | 'AZ'
-        | 'AR'
-        | 'CA'
-        | 'CO'
-        | 'CT'
-        | 'DE'
-        | 'DC'
-        | 'FL'
-        | 'GA'
-        | 'HI'
-        | 'ID'
-        | 'IL'
-        | 'IN'
-        | 'IA'
-        | 'KS'
-        | 'KY'
-        | 'LA'
-        | 'ME'
-        | 'MD'
-        | 'MA'
-        | 'MI'
-        | 'MN'
-        | 'MS'
-        | 'MO'
-        | 'MT'
-        | 'NE'
-        | 'NV'
-        | 'NH'
-        | 'NJ'
-        | 'NM'
-        | 'NY'
-        | 'NC'
-        | 'ND'
-        | 'OH'
-        | 'OK'
-        | 'OR'
-        | 'PA'
-        | 'RI'
-        | 'SC'
-        | 'SD'
-        | 'TN'
-        | 'TX'
-        | 'UT'
-        | 'VT'
-        | 'VA'
-        | 'WA'
-        | 'WV'
-        | 'WI'
-        | 'WY';
+    localEvents?: {
+      enableLocalEvents?: boolean | null;
     };
-    enableOrganizationFilter?: boolean | null;
-    organizationFilter?: {
-      type: 'allowlist' | 'blocklist';
-      list: string[];
+    /**
+     * Configure site settings for Google Calendar events. Syncs with event calendar every 4 hours by default.
+     */
+    googleCalendar?: {
+      enableGoogleCalendar?: boolean | null;
+      /**
+       * Get an API key from https://developers.google.com/calendar/quickstart/js
+       */
+      googleCalendarApiKey?: string | null;
+      /**
+       * Allow organizers to add Google Calendar synchronization for their organization's events. This will allow them to add events to the organization's calendar and automatically update the events on the site.
+       */
+      enableOrganizationCalendars?: boolean | null;
+      /**
+       * Global calendars included in the event synchronization.
+       */
+      googleCalendars?:
+        | {
+            name?: string | null;
+            calendarId: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Configure site settings for Mobilize events. Syncs with event calendar every 4 hours by default.
+     */
+    mobilize: {
+      enableMobilize?: boolean | null;
+      /**
+       * Optional, currently unused.
+       */
+      mobilizeApiKey?: string | null;
+      enableStateFilter: boolean;
+      /**
+       * Filter events by state. Required by default when enabling mobilize integration to limit total number of events fetched.
+       */
+      stateFilter?: {
+        state:
+          | 'AL'
+          | 'AK'
+          | 'AZ'
+          | 'AR'
+          | 'CA'
+          | 'CO'
+          | 'CT'
+          | 'DE'
+          | 'DC'
+          | 'FL'
+          | 'GA'
+          | 'HI'
+          | 'ID'
+          | 'IL'
+          | 'IN'
+          | 'IA'
+          | 'KS'
+          | 'KY'
+          | 'LA'
+          | 'ME'
+          | 'MD'
+          | 'MA'
+          | 'MI'
+          | 'MN'
+          | 'MS'
+          | 'MO'
+          | 'MT'
+          | 'NE'
+          | 'NV'
+          | 'NH'
+          | 'NJ'
+          | 'NM'
+          | 'NY'
+          | 'NC'
+          | 'ND'
+          | 'OH'
+          | 'OK'
+          | 'OR'
+          | 'PA'
+          | 'RI'
+          | 'SC'
+          | 'SD'
+          | 'TN'
+          | 'TX'
+          | 'UT'
+          | 'VT'
+          | 'VA'
+          | 'WA'
+          | 'WV'
+          | 'WI'
+          | 'WY';
+      };
+      enableOrganizationFilter?: boolean | null;
+      organizationFilter?: {
+        type: 'allowlist' | 'blocklist';
+        list: string[];
+      };
     };
   };
-  /**
-   * The range of how many past and future months are displayed in the calendar view. Max 12 months. For example, a months range of 6 months will display the current month, the past 6 months, and the next 6 months.
-   */
-  monthsRange: number;
-  /**
-   * Synchronize with all event sources and update calendar events.
-   */
-  syncInterval: number;
+  calendar: {
+    /**
+     * The range of how many past and future months are displayed in the calendar view. Max 12 months. For example, a months range of 6 months will display the current month, the past 6 months, and the next 6 months.
+     */
+    monthsRange: number;
+    /**
+     * Synchronize with all event sources and update calendar events.
+     */
+    syncInterval: number;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  'site-disclaimer'?: {
+    enableSiteDisclaimer?: boolean | null;
+    title?: string | null;
+    message?: string | null;
+    buttonText?: string | null;
+  };
   location?: {
     defaultCountry?: 'US' | null;
     defaultState?:
@@ -1025,39 +1121,71 @@ export interface PayloadJobsStat {
  * via the `definition` "event-settings_select".
  */
 export interface EventSettingsSelect<T extends boolean = true> {
-  localEvents?:
+  events?:
     | T
     | {
-        enableLocalEvents?: T;
-      };
-  googleCalendar?:
-    | T
-    | {
-        enableGoogleCalendar?: T;
-        googleCalendarApiKey?: T;
-        googleCalendarId?: T;
-      };
-  mobilize?:
-    | T
-    | {
-        enableMobilize?: T;
-        mobilizeApiKey?: T;
-        enableStateFilter?: T;
-        stateFilter?:
+        localEvents?:
           | T
           | {
-              state?: T;
+              enableLocalEvents?: T;
             };
-        enableOrganizationFilter?: T;
-        organizationFilter?:
+        googleCalendar?:
           | T
           | {
-              type?: T;
-              list?: T;
+              enableGoogleCalendar?: T;
+              googleCalendarApiKey?: T;
+              enableOrganizationCalendars?: T;
+              googleCalendars?:
+                | T
+                | {
+                    name?: T;
+                    calendarId?: T;
+                    id?: T;
+                  };
+            };
+        mobilize?:
+          | T
+          | {
+              enableMobilize?: T;
+              mobilizeApiKey?: T;
+              enableStateFilter?: T;
+              stateFilter?:
+                | T
+                | {
+                    state?: T;
+                  };
+              enableOrganizationFilter?: T;
+              organizationFilter?:
+                | T
+                | {
+                    type?: T;
+                    list?: T;
+                  };
             };
       };
-  monthsRange?: T;
-  syncInterval?: T;
+  calendar?:
+    | T
+    | {
+        monthsRange?: T;
+        syncInterval?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  'site-disclaimer'?:
+    | T
+    | {
+        enableSiteDisclaimer?: T;
+        title?: T;
+        message?: T;
+        buttonText?: T;
+      };
   location?:
     | T
     | {
@@ -1100,6 +1228,15 @@ export interface TaskGoogleCalendarSync {
  */
 export interface WorkflowSyncEvents {
   input?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WorkflowManualSyncEvents".
+ */
+export interface WorkflowManualSyncEvents {
+  input: {
+    userId: string;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,11 +1,12 @@
-import styles from "./EventsPage.module.scss";
-
 import type { Metadata } from "next";
-import { fetchEventsForMonth } from "@/lib/api/fetchEventsForMonth";
-import { Events } from "@/components/Events";
-import { PageHeading } from "@/components/PageHeading";
+
 import { DisclaimerButton, DisclaimerPopup } from "@/components/Disclaimer";
+import { Events } from "@/components/Events";
 import { PageCard } from "@/components/PageCard";
+import { PageHeading } from "@/components/PageHeading";
+import { getEventsForMonth } from "@/lib/api/getEventsForMonth";
+
+import styles from "./EventsPage.module.scss";
 
 export const metadata: Metadata = {
 	title: "Events",
@@ -22,7 +23,7 @@ const EventsPage = async ({
 	const year = params.year ? Number(params.year) : now.getFullYear();
 	const month = params.month ? Number(params.month) - 1 : now.getMonth();
 
-	const events = await fetchEventsForMonth({ year, month });
+	const events = await getEventsForMonth({ year, month });
 
 	return (
 		<PageCard>

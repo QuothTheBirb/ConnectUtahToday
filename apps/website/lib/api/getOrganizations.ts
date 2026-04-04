@@ -2,7 +2,7 @@ import config from "@payload-config";
 import { getPayload } from "payload";
 import { Organization } from "@/payload-types";
 
-export const fetchOrganizations = async (): Promise<Organization[]> => {
+export const getOrganizations = async (): Promise<Organization[]> => {
 	const payload = await getPayload({ config });
 
 	try {

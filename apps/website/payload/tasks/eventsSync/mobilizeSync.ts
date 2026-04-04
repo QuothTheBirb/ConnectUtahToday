@@ -1,19 +1,14 @@
-import type { PaginatedDocs, TaskConfig } from "payload";
-import { Event } from "@/payload-types";
+import type { RequiredDataFromCollectionSlug, TaskConfig } from "payload";
+
 import { fetchMobilizeEvents } from "@/lib/api/fetchMobilizeEvents";
-import { US_STATES } from "@/lib/usStates";
 import { SUPPORTED_COUNTRIES } from "@/lib/supportedCountries";
+import { US_STATES } from "@/lib/usStates";
+
+import { cleanupStaleEvents, syncEvents, SyncItem } from "./syncEvents";
 
 export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 	slug: "mobilizeSync",
 	label: "Sync events from Mobilize",
-	onSuccess: () => {
-		console.log("The task succeeded :)");
-	},
-	onFail: () => {
-		console.log("The task failed :(");
-	},
-	// retries: 3,
 	handler: async ({ req }) => {
 		console.log("Syncing Mobilize events…");
 
@@ -21,7 +16,7 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 			slug: "event-settings",
 		});
 
-		if (!settings.mobilize?.enableMobilize) {
+		if (!settings.events.mobilize?.enableMobilize) {
 			console.log("Mobilize integration disabled, skipping…");
 
 			return {
@@ -33,7 +28,30 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 			};
 		}
 
-		// Calculate date range (+/- 6 months)
+		let totalSynced = 0;
+		const syncedMobilizeIds: (string | number)[] = [];
+
+		// Fetch organizations that have Google Calendar sync enabled and should be excluded from Mobilize sync
+		const excludedOrgs = await req.payload.find({
+			collection: "organizations",
+			where: {
+				enableGoogleCalendarSync: { equals: true },
+				mobilizeSlug: { exists: true },
+			},
+			limit: 0,
+			depth: 0,
+		});
+
+		const excludedMobilizeSlugs = excludedOrgs.docs
+			.map((org) => org.mobilizeSlug)
+			.filter(Boolean) as string[];
+
+		console.log(
+			"Excluded Mobilize slugs (Google Calendar sync enabled):",
+			excludedMobilizeSlugs,
+		);
+
+		// Use 3 months range to total 6 months (+/- 3 months)
 		const dateRange = 3;
 		const now = new Date();
 		const timeMin = new Date(now);
@@ -42,16 +60,16 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 		timeMax.setMonth(now.getMonth() + dateRange);
 
 		// Event filters
-		const state = settings.mobilize.enableStateFilter
-			? settings.mobilize.stateFilter?.state
+		const state = settings.events.mobilize.enableStateFilter
+			? settings.events.mobilize.stateFilter?.state
 			: undefined;
 		const orgFilter =
-			settings.mobilize.enableOrganizationFilter &&
-			settings.mobilize.organizationFilter?.type &&
-			settings.mobilize.organizationFilter?.list
+			settings.events.mobilize.enableOrganizationFilter &&
+			settings.events.mobilize.organizationFilter?.type &&
+			settings.events.mobilize.organizationFilter?.list
 				? {
-						type: settings.mobilize.organizationFilter.type,
-						list: settings.mobilize.organizationFilter.list,
+						type: settings.events.mobilize.organizationFilter.type,
+						list: settings.events.mobilize.organizationFilter.list,
 					}
 				: undefined;
 
@@ -65,139 +83,102 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 			},
 		});
 
-		let itemsSynced = 0;
-		const syncedMobilizeIds: number[] = [];
-
 		console.log("Fetched", mobilizeEvents.length, "events from Mobilize");
 
-		const sleep = (ms: number) =>
-			new Promise((resolve) => setTimeout(resolve, ms));
+		const syncItems: SyncItem[] = mobilizeEvents
+			.map((event) => {
+				if (!event || !event.mobilizeId) return null;
 
-		for (const event of mobilizeEvents) {
-			if (!event || !event.mobilizeId) continue;
+				// Skip events from organizations that have Google Calendar sync enabled
+				// by matching the mobilize slug/url
+				const mobilizeOrgSlug = event.organization.slug;
+				const mobilizeOrgUrl = event.organization.url;
 
-			const { mobilizeId } = event;
+				const isExcluded = excludedMobilizeSlugs.some(
+					(excluded) =>
+						excluded === mobilizeOrgSlug ||
+						excluded === mobilizeOrgUrl,
+				);
 
-			syncedMobilizeIds.push(mobilizeId);
+				if (isExcluded) {
+					console.log(
+						`Skipping mobilize event ${event.mobilizeId} from excluded organization: ${mobilizeOrgSlug}`,
+					);
+					return null;
+				}
 
-			// Map the API event structure to the Payload event collection structure
-			const payloadData = {
-				title: event.title,
-				description: event.description || "",
-				url: event.url,
-				date: event.date,
-				endDate: event.endDate,
-				eventType: event.eventType,
-				location: {
-					country: event.location?.country
-						? SUPPORTED_COUNTRIES.find(
-								(country) =>
-									event.location?.country === country.value,
-							)?.value
-						: undefined,
-					state: event.location?.state
-						? US_STATES.find(
-								(state) =>
-									event.location?.state === state.value,
-							)?.value
-						: undefined,
-					city: event.location?.city,
-					address: event.location?.address,
-					postalCode: event.location?.postalCode,
-					venue: event.location?.venue,
-				},
-				source: event.source,
-				mobilize: {
-					eventId: event.mobilizeId,
-					image: event.image,
-					organization: {
-						orgId: event.organization.id,
-						name: event.organization.name,
-						slug: event.organization.slug,
-						url: event.organization.url,
+				// Map the API event structure to the Payload event collection structure
+				const payloadData: RequiredDataFromCollectionSlug<"events"> = {
+					title: event.title,
+					description: event.description || "",
+					url: event.url,
+					date: event.date,
+					endDate: event.endDate,
+					eventType: event.eventType,
+					location: {
+						country: event.location?.country
+							? SUPPORTED_COUNTRIES.find(
+									(country) =>
+										event.location?.country ===
+										country.value,
+								)?.value
+							: undefined,
+						state: event.location?.state
+							? US_STATES.find(
+									(state) =>
+										event.location?.state === state.value,
+								)?.value
+							: undefined,
+						city: event.location?.city,
+						address: event.location?.address,
+						postalCode: event.location?.postalCode,
+						venue: event.location?.venue,
 					},
-				},
-			};
+					source: event.source,
+					mobilize: {
+						eventId: event.mobilizeId,
+						image: event.image,
+						organization: {
+							orgId: event.organization.id,
+							name: event.organization.name,
+							slug: event.organization.slug,
+							url: event.organization.url,
+						},
+					},
+				};
 
-			// Check if event exists
-			const existingEventsInDb: PaginatedDocs<Event> =
-				await req.payload.find({
-					collection: "events",
+				return {
+					data: payloadData,
 					where: {
 						source: { equals: "mobilize" },
-						"mobilize.eventId": { equals: mobilizeId },
+						"mobilize.eventId": { equals: event.mobilizeId },
 					},
-					limit: 1,
-				});
-			const eventDb = existingEventsInDb.docs.length
-				? existingEventsInDb.docs[0]
-				: undefined;
+					id: event.mobilizeId,
+				};
+			})
+			.filter((item) => item !== null);
 
-			try {
-				if (eventDb) {
-					console.log(
-						`Updating existing mobilize event: ${mobilizeId}`,
-					);
+		const result = await syncEvents({
+			req,
+			items: syncItems,
+		});
 
-					await req.payload.update({
-						collection: "events",
-						id: eventDb.id,
-						data: payloadData,
-					});
-				} else {
-					console.log(`Creating new mobilize event: ${mobilizeId}`);
-
-					await req.payload.create({
-						collection: "events",
-						data: payloadData,
-					});
-				}
-
-				itemsSynced++;
-
-				// Small delay between processing events to reduce CPU usage and database load
-				// Extra slow until I can test performance so that the CPU usage doesn't spike with each sync
-				// await sleep(50);
-				await sleep(500);
-			} catch (error) {
-				if (error instanceof Error) {
-					console.error(
-						`Failed to sync event ${mobilizeId}:`,
-						error.message,
-					);
-				}
-			}
-		}
+		totalSynced = result.itemsSynced;
+		syncedMobilizeIds.push(...result.syncedIds);
 
 		// Remove events that no longer exist or are now filtered out
 		try {
-			const allMobilizeEventsInDb = await req.payload.find({
-				collection: "events",
-				where: {
-					source: { equals: "mobilize" },
-				},
-				limit: 0,
+			await cleanupStaleEvents({
+				req,
+				source: "mobilize",
+				syncedIds: syncedMobilizeIds,
+				idField: "mobilize.eventId",
 			});
-
-			for (const dbEvent of allMobilizeEventsInDb.docs) {
-				const eventId = dbEvent.mobilize?.eventId;
-
-				if (eventId && !syncedMobilizeIds.includes(eventId)) {
-					console.log(`Deleting outdated mobilize event: ${eventId}`);
-
-					await req.payload.delete({
-						collection: "events",
-						id: dbEvent.id,
-					});
-				}
-			}
 		} catch (error) {
-			console.error("Failed to cleanup stale events:", error);
-
 			return {
 				output: {
 					success: false,
-					itemsSynced: itemsSynced,
+					itemsSynced: totalSynced,
 					error:
 						error instanceof Error
 							? error.message
@@ -211,7 +192,7 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 		return {
 			output: {
 				success: true,
-				itemsSynced: itemsSynced,
+				itemsSynced: totalSynced,
 				message: "Mobilize events synced successfully.",
 			},
 		};

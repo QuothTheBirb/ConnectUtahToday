@@ -36,7 +36,7 @@ export default buildConfig({
 		OrganizationAssets,
 		OrganizationInvites,
 	],
-	globals: [EventSettings],
+	globals: [EventSettings, SiteSettings],
 	secret: process.env.PAYLOAD_SECRET || "",
 	db: postgresAdapter({
 		pool: {

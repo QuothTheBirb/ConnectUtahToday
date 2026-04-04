@@ -1,8 +1,7 @@
 import { GlobalConfig } from "payload";
-import { BrandingTab } from "@/payload/globals/SiteSettings/tabs/Branding";
-import { EventsTab } from "@/payload/globals/SiteSettings/tabs/Events";
-import { OnboardingTab } from "@/payload/globals/SiteSettings/tabs/Onboarding";
-import { PagesTab } from "@/payload/globals/SiteSettings/tabs/Pages";
+import { adminOnly } from "@/payload/access/adminOnly";
+import { LocationTab } from "@/payload/globals/SiteSettings/tabs/Location";
+import { SiteDisclaimerTab } from "@/payload/globals/SiteSettings/tabs/SiteDisclaimer";
 
 // TODO: Create custom description component: https://payloadcms.com/docs/fields/overview#description
 
@@ -12,10 +11,14 @@ export const SiteSettings: GlobalConfig = {
 	admin: {
 		group: "Settings",
 	},
+	access: {
+		read: adminOnly,
+		update: adminOnly,
+	},
 	fields: [
 		{
 			type: "tabs",
-			tabs: [BrandingTab, PagesTab, EventsTab, OnboardingTab],
+			tabs: [SiteDisclaimerTab, LocationTab],
 		},
 	],
 };

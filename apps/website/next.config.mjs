@@ -1,8 +1,13 @@
+;
 /** @type {import("next").NextConfig} */
 
-import { withPayload } from "@payloadcms/next/withPayload";
 import path from "path";
 import { fileURLToPath } from "url";
+import { withPayload } from "@payloadcms/next/withPayload";
+
+
+
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,14 +16,6 @@ const nextConfig = {
 	outputFileTracingRoot: path.join(__dirname, "../../"),
 	images: {
 		unoptimized: true,
-	},
-	async rewrites() {
-		return [
-			{
-				source: "/api/:path*",
-				destination: "http://localhost:3001/:path*",
-			},
-		];
 	},
 };
 

@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import { fetchOrganizations } from "@/lib/api/fetchOrganizations";
-import { VolunteeringOpportunities } from "@/components/VolunteeringOpportunities";
-import { PageHeading } from "@/components/PageHeading";
 import { DisclaimerButton, DisclaimerPopup } from "@/components/Disclaimer";
 import { PageCard } from "@/components/PageCard";
+import { PageHeading } from "@/components/PageHeading";
+import { VolunteeringOpportunities } from "@/components/VolunteeringOpportunities";
+import { getOrganizations } from "@/lib/api/getOrganizations";
 
 export const metadata: Metadata = {
 	title: "Volunteering",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const VolunteerPage = async () => {
-	const organizations = await fetchOrganizations();
+	const organizations = await getOrganizations();
 
 	return (
 		<PageCard>

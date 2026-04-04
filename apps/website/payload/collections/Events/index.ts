@@ -1,5 +1,4 @@
 import { CollectionConfig } from "payload";
-
 import { SUPPORTED_COUNTRIES } from "@/lib/supportedCountries";
 import { US_STATES } from "@/lib/usStates";
 import { isOrganizer } from "@/payload/access/isOrganizer";
@@ -10,7 +9,7 @@ export const Events: CollectionConfig = {
 	access: {
 		create: isOrganizer,
 		delete: adminSelfOrOrganizer,
-		read: adminSelfOrOrganizer,
+		read: () => true,
 		update: adminSelfOrOrganizer,
 	},
 	admin: {
@@ -112,6 +111,11 @@ export const Events: CollectionConfig = {
 			name: "eventType",
 			label: "Event Type",
 			type: "text",
+			admin: {
+				condition: (_, siblingData) =>
+					siblingData?.source !== "local" &&
+					siblingData?.source !== "googleCalendar", // Add this back later when the event type is better implemented
+			},
 		},
 		{
 			name: "source",
@@ -170,6 +174,36 @@ export const Events: CollectionConfig = {
 			],
 		},
 		// Google Calendar
+		{
+			name: "googleCalendar",
+			label: "Google Calendar",
+			type: "group",
+			admin: {
+				condition: (_, siblingData) =>
+					siblingData?.source === "googleCalendar",
+				readOnly: true,
+			},
+			fields: [
+				{
+					name: "eventId",
+					label: "Event ID",
+					type: "text",
+					required: true,
+				},
+				{
+					name: "calendarId",
+					label: "Calendar ID",
+					type: "text",
+					required: true,
+				},
+				{
+					name: "organization",
+					type: "relationship",
+					relationTo: "organizations",
+					label: "Organization",
+				},
+			],
+		},
 		// Mobilize
 		{
 			name: "mobilize",

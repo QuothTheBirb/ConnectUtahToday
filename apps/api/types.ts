@@ -1,5 +1,9 @@
 import { calendar_v3 } from "googleapis"; // Mobilize API Event Types
 
+
+
+
+
 // Mobilize API Event Types
 // Reference: https://github.com/mobilizeamerica/api?tab=readme-ov-file#events
 export type MobilizeEventType =
@@ -86,22 +90,20 @@ type BaseCalendarEvent = {
 
 export type LocalCalendarEvent = BaseCalendarEvent & {
 	source: "local";
+	image?: string; // Unsure on this type
+	organization: {
+		id: string;
+		name: string;
+		url: string;
+		slug: string;
+	};
+	eventType?: never;
 	mobilizeId?: never;
 	googleCalendarId?: never;
-	image?: string;
-	organization?: {
-		id?: string;
-		name: string;
-		url?: string;
-		slug?: string;
-	};
-	eventType?: string;
 };
 export type MobilizeCalendarEvent = BaseCalendarEvent & {
 	source: "mobilize";
 	image?: string;
-	mobilizeId: number;
-	googleCalendarId?: never;
 	organization: {
 		id: number;
 		name: string;
@@ -109,19 +111,21 @@ export type MobilizeCalendarEvent = BaseCalendarEvent & {
 		slug: string;
 	};
 	eventType?: MobilizeEventType;
+	googleCalendarId?: never;
+	mobilizeId: number;
 };
 export type GoogleCalendarEvent = BaseCalendarEvent & {
-	source: "google";
+	source: "googleCalendar";
 	image?: string;
+	organization?: {
+		id: string;
+		name: string;
+		url: string;
+		slug: string;
+	};
 	mobilizeId?: never;
 	googleCalendarId: string;
-	organization: {
-		id?: string;
-		name?: string;
-		url?: never;
-		slug?: never;
-	};
-	eventType: "CUTCOMMUNITY";
+	eventType?: never;
 };
 
 export type CalendarEvent =
@@ -131,32 +135,3 @@ export type CalendarEvent =
 export type CalendarEvents = Array<
 	LocalCalendarEvent | MobilizeCalendarEvent | GoogleCalendarEvent
 >;
-
-// Events API
-export type EventsApiQueryParams = {
-	timeMin?: string;
-	timeMax?: string;
-	state?: string;
-	sources?: ("local" | "mobilize" | "googleCalendar")[];
-	googleCalendar?: {
-		apiKey?: string;
-		calendarId?: string;
-	};
-	mobilize?: {
-		apiKey?: string;
-		filters: {
-			state?: string;
-			organizations?: {
-				type: "allowlist" | "blocklist";
-				list: string[];
-			};
-		};
-	};
-};
-
-export type MobilizeEventsApiResponse = {
-	data: MobilizeCalendarEvent[];
-};
-export type EventsApiResponse = {
-	data: CalendarEvents;
-};
