@@ -1,9 +1,11 @@
 "use client";
 
-import React, { Suspense, SyntheticEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense, SyntheticEvent, useState } from "react";
+import { Form } from "@/components/form/Form";
+import FormButton from "@/components/form/inputs/FormButton";
+import FormInput from "@/components/form/inputs/FormInput";
 
-import { FormInput } from "@/components/FormInput";
 import styles from "./Auth.module.scss";
 
 const LoginFormInner = () => {
@@ -50,43 +52,40 @@ const LoginFormInner = () => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className={styles.form}>
+		<Form onSubmit={handleSubmit}>
 			{message && <div className={styles.successMessage}>{message}</div>}
 			{error && <div className={styles.errorMessage}>{error}</div>}
-			<FormInput label="Username" htmlFor="username">
-				<input
-					type="text"
-					id="username"
-					value={username}
-					onChange={(event) => setUsername(event.target.value)}
-					required
-					className={styles.input}
-				/>
-			</FormInput>
-			<FormInput label="Password" htmlFor="password">
-				<input
-					type="password"
-					id="password"
-					value={password}
-					onChange={(event) => setPassword(event.target.value)}
-					required
-					className={styles.input}
-				/>
-			</FormInput>
-			<button
-				type="submit"
-				disabled={loading}
-				className={styles.submitButton}
-			>
+			<FormInput
+				type={"text"}
+				label={"Username"}
+				id={"username"}
+				value={username}
+				onChange={(event) => setUsername(event.target.value)}
+				required
+				placeholder="Your username"
+			/>
+			<FormInput
+				type={"password"}
+				label={"Password"}
+				id={"password"}
+				value={password}
+				onChange={(event) => setPassword(event.target.value)}
+				required
+				placeholder="Your password"
+			/>
+			<FormButton type="submit" disabled={loading}>
 				{loading ? "Logging in..." : "Log In"}
-			</button>
+			</FormButton>
 			<div className={styles.links}>
 				<p>
 					Don't have an account?{" "}
-					<a href="/register">Register with invite code</a>
+					<a href="/register">
+						{/* TODO: Replace this link with a link to a email or messaging form */}
+						Request an invitation for your organization
+					</a>
 				</p>
 			</div>
-		</form>
+		</Form>
 	);
 };
 

@@ -1,7 +1,8 @@
 import { Metadata } from "next";
-import { PageHeading } from "@/components/PageHeading";
+
 import { LoginForm } from "@/components/Auth/LoginForm";
 import { PageCard } from "@/components/PageCard";
+import { PageHeading } from "@/components/PageHeading";
 
 export const metadata: Metadata = {
 	title: "Login",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
 	return (
 		<PageCard>
-			<PageHeading heading="h1">Login</PageHeading>
+			<PageHeading heading="h1">Organizer Login</PageHeading>
 			<LoginForm />
 		</PageCard>
 	);

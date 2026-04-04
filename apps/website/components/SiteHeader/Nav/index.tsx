@@ -1,16 +1,19 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { User } from "@/payload-types";
 
 import styles from "../SiteHeader.module.scss";
 
 export const Nav = ({
 	navOpen,
 	smoothTransition,
+	user,
 }: {
 	navOpen: boolean;
 	smoothTransition?: boolean;
+	user: User | null;
 }) => {
 	const pathname = usePathname();
 
@@ -83,6 +86,23 @@ export const Nav = ({
 						Local Issues
 					</Link>
 				</div>
+				{user &&
+					(user.roles?.includes("admin") ||
+						user.roles?.includes("organizer")) && (
+						<div className={styles.linkWrapper}>
+							<Link
+								href={"/dashboard"}
+								className={styles.siteNavLink}
+								aria-current={
+									pathname === "/dashboard"
+										? "page"
+										: undefined
+								}
+							>
+								Dashboard
+							</Link>
+						</div>
+					)}
 			</div>
 		</nav>
 	);

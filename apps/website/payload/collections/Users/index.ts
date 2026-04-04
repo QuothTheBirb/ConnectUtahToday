@@ -1,5 +1,4 @@
 import { CollectionConfig } from "payload";
-
 import { adminOnly } from "@/payload/access/adminOnly";
 import { adminOnlyFieldAccess } from "@/payload/access/adminOnlyFieldAccess";
 import { adminOrSelf } from "@/payload/access/adminOrSelf";
@@ -7,6 +6,7 @@ import { publicAccess } from "@/payload/access/publicAccess";
 import { publicFieldAccess } from "@/payload/access/publicFieldAccess";
 import { checkRole } from "@/payload/access/utilities";
 import { adminSelfOrSameOrganization } from "@/payload/collections/Users/access/adminSelfOrSameOrganization";
+import { createOrganizationOnRegister } from "@/payload/collections/Users/hooks/createOrganizationOnRegister";
 import { ensureFirstUserIsAdmin } from "@/payload/collections/Users/hooks/ensureFirstUserIsAdmin";
 import { handleInviteCode } from "@/payload/collections/Users/hooks/handleInviteCode";
 import { markInviteUsed } from "@/payload/collections/Users/hooks/markInviteUsed";
@@ -30,7 +30,7 @@ export const Users: CollectionConfig = {
 	defaultSort: ["-updatedAt", "createdAt"],
 	hooks: {
 		beforeChange: [handleInviteCode],
-		afterChange: [markInviteUsed],
+		afterChange: [markInviteUsed, createOrganizationOnRegister],
 	},
 	auth: {
 		loginWithUsername: {
@@ -77,6 +77,48 @@ export const Users: CollectionConfig = {
 		},
 		{
 			name: "inviteCode",
+			type: "text",
+			admin: {
+				hidden: true,
+			},
+		},
+		{
+			name: "organizationName",
+			type: "text",
+			admin: {
+				hidden: true,
+			},
+		},
+		{
+			name: "organizationDescription",
+			type: "textarea",
+			admin: {
+				hidden: true,
+			},
+		},
+		{
+			name: "organizationContactMethods",
+			type: "json",
+			admin: {
+				hidden: true,
+			},
+		},
+		{
+			name: "organizationContactEmail",
+			type: "email",
+			admin: {
+				hidden: true,
+			},
+		},
+		{
+			name: "organizationContactPhone",
+			type: "text",
+			admin: {
+				hidden: true,
+			},
+		},
+		{
+			name: "organizationContactPage",
 			type: "text",
 			admin: {
 				hidden: true,

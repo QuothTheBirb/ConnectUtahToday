@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-
-import { Nav } from "@/components/SiteHeader/Nav";
+import { useEffect, useState } from "react";
 import { MenuButton } from "@/components/SiteHeader/MenuButton";
+import { Nav } from "@/components/SiteHeader/Nav";
+import { User } from "@/payload-types";
+
 import styles from "./SiteHeader.module.scss";
 
-export const SiteHeader = () => {
+export const SiteHeader = ({ user }: { user: User | null }) => {
 	const [navOpen, setNavOpen] = useState(false);
 	const [navSmoothTransition, setNavSmoothTransition] = useState(true);
 	const pathname = usePathname();
@@ -36,7 +37,11 @@ export const SiteHeader = () => {
 
 	return (
 		<header className={styles.siteHeader}>
-			<Nav navOpen={navOpen} smoothTransition={navSmoothTransition} />
+			<Nav
+				navOpen={navOpen}
+				smoothTransition={navSmoothTransition}
+				user={user}
+			/>
 			<MenuButton navOpen={navOpen} toggleNav={toggleNav} />
 		</header>
 	);

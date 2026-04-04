@@ -1,9 +1,14 @@
 "use client";
 
-import React, { Suspense, SyntheticEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense, SyntheticEvent, useState } from "react";
+import { Form } from "@/components/form/Form";
+import { FormFieldset } from "@/components/form/FormFieldset";
+import { FormSection } from "@/components/form/FormSection";
+import FormButton from "@/components/form/inputs/FormButton";
+import FormInput from "@/components/form/inputs/FormInput";
+import FormTextarea from "@/components/form/inputs/FormTextarea";
 
-import { FormInput } from "@/components/FormInput";
 import styles from "./Auth.module.scss";
 
 const RegisterFormInner = () => {
@@ -13,14 +18,47 @@ const RegisterFormInner = () => {
 
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+
+	const [organizationName, setOrganizationName] = useState("");
+	const [organizationContactMethods, setOrganizationContactMethods] =
+		useState({
+			email: false,
+			phone: false,
+			website: false,
+		});
+	const [organizationContactEmail, setOrganizationContactEmail] = useState<
+		string | null
+	>(null);
+	const [organizationContactPhone, setOrganizationContactPhone] = useState<
+		string | null
+	>(null);
+	const [organizationContactPage, setOrganizationContactPage] = useState<
+		string | null
+	>(null);
+	const [organizationDescription, setOrganizationDescription] = useState("");
+
 	const [name, setName] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (event: SyntheticEvent) => {
 		event.preventDefault();
+
 		setLoading(true);
 		setError(null);
+
+		if (password.length < 6) {
+			setError("Password must be at least 6 characters long");
+			setLoading(false);
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			setError("Passwords do not match");
+			setLoading(false);
+			return;
+		}
 
 		try {
 			const res = await fetch("/payload-api/users", {
@@ -33,6 +71,12 @@ const RegisterFormInner = () => {
 					password,
 					name,
 					inviteCode,
+					organizationName,
+					organizationDescription,
+					organizationContactMethods,
+					organizationContactEmail,
+					organizationContactPhone,
+					organizationContactPage,
 				}),
 			});
 
@@ -61,50 +105,163 @@ const RegisterFormInner = () => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className={styles.form}>
+		<Form onSubmit={handleSubmit}>
 			{error && <div className={styles.errorMessage}>{error}</div>}
-			<FormInput label="Username" htmlFor="username">
-				<input
-					type="text"
-					id="username"
+			{/* User details */}
+			<FormSection label={"User Details"}>
+				<FormInput
+					type={"text"}
+					id={"username"}
+					label={"Username"}
 					value={username}
 					onChange={(event) => setUsername(event.target.value)}
 					required
-					className={styles.input}
+					autoFocus
 				/>
-			</FormInput>
-			<FormInput label="Password" htmlFor="password">
-				<input
-					type="password"
-					id="password"
+				<FormInput
+					type={"password"}
+					id={"password"}
+					label={"Password"}
 					value={password}
 					onChange={(event) => setPassword(event.target.value)}
 					required
-					className={styles.input}
+					placeholder={"Minimum 6 characters required"}
 				/>
-			</FormInput>
-			<FormInput label="Full Name (Optional)" htmlFor="name">
-				<input
-					type="text"
-					id="name"
+				<FormInput
+					type={"password"}
+					id={"confirmPassword"}
+					label={"Confirm Password"}
+					value={confirmPassword}
+					onChange={(event) => setConfirmPassword(event.target.value)}
+					required
+				/>
+				<FormInput
+					type={"text"}
+					id={"name"}
+					label={"Full name (optional)"}
 					value={name}
 					onChange={(event) => setName(event.target.value)}
-					className={styles.input}
 				/>
-			</FormInput>
-			<button
-				type="submit"
-				disabled={loading}
-				className={styles.submitButton}
-			>
+			</FormSection>
+			{/* Organization details */}
+			<FormSection label={"Organization"}>
+				<FormInput
+					type={"text"}
+					id={"organizationName"}
+					label={"Organization name"}
+					value={organizationName}
+					onChange={(event) =>
+						setOrganizationName(event.target.value)
+					}
+					required
+				/>
+				<FormTextarea
+					id={"organizationDescription"}
+					label={"Organization description (optional)"}
+					value={organizationDescription}
+					onChange={(event) =>
+						setOrganizationDescription(event.target.value)
+					}
+					placeholder="Describe your organization's mission and activities…"
+				/>
+				<FormFieldset
+					legend={"Public contact methods for organization page"}
+					description={
+						"Contact methods listed on the public organization page."
+					}
+				>
+					<FormInput
+						type={"checkbox"}
+						id={"enableContactEmail"}
+						label={"Email"}
+						checked={organizationContactMethods.email}
+						onChange={(event) =>
+							setOrganizationContactMethods((prevState) => ({
+								...prevState,
+								email: event.target.checked,
+							}))
+						}
+					/>
+					{organizationContactMethods.email && (
+						<div className={styles.nested}>
+							<FormInput
+								type={"email"}
+								id={"organizationContactEmail"}
+								label={"Contact Email"}
+								value={organizationContactEmail || ""}
+								onChange={(e) =>
+									setOrganizationContactEmail(e.target.value)
+								}
+								required
+								placeholder="email@example.org"
+							/>
+						</div>
+					)}
+					<FormInput
+						type={"checkbox"}
+						id={"enableContactPhone"}
+						label={"Phone"}
+						checked={organizationContactMethods.phone}
+						onChange={(event) =>
+							setOrganizationContactMethods((prevState) => ({
+								...prevState,
+								phone: event.target.checked,
+							}))
+						}
+					/>
+					{organizationContactMethods.phone && (
+						<div className={styles.nested}>
+							<FormInput
+								type={"tel"}
+								id={"organizationContactPhone"}
+								label={"Contact Phone"}
+								value={organizationContactPhone || ""}
+								onChange={(e) =>
+									setOrganizationContactPhone(e.target.value)
+								}
+								required
+								placeholder="555-555-5555"
+							/>
+						</div>
+					)}
+					<FormInput
+						type={"checkbox"}
+						id={"enableContactWebpage"}
+						label={"Webpage"}
+						checked={organizationContactMethods.website}
+						onChange={(event) =>
+							setOrganizationContactMethods((prevState) => ({
+								...prevState,
+								website: event.target.checked,
+							}))
+						}
+					/>
+					{organizationContactMethods.website && (
+						<div className={styles.nested}>
+							<FormInput
+								type={"url"}
+								id={"organizationContactPage"}
+								label={"Website URL"}
+								value={organizationContactPage || ""}
+								onChange={(e) =>
+									setOrganizationContactPage(e.target.value)
+								}
+								required
+								placeholder="https://example.org"
+							/>
+						</div>
+					)}
+				</FormFieldset>
+			</FormSection>
+			<FormButton type="submit" disabled={loading}>
 				{loading ? "Registering..." : "Register"}
-			</button>
+			</FormButton>
 			<div className={styles.links}>
 				<p>
 					Already have an account? <a href="/login">Sign in</a>
 				</p>
 			</div>
-		</form>
+		</Form>
 	);
 };
 
