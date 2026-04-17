@@ -34,7 +34,7 @@ RUN pip install --upgrade -r requirements.txt --no-cache-dir
 
 # Apparently, this thing does in fact thinks it's special and needs to be here.
 # If this breaks in the future? No, we shant humor such a grim possibility.
-RUN FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn==2.7.3 --no-cache-dir --no-build-isolation
+# RUN FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn==2.7.3 --no-cache-dir --no-build-isolation
 
 # Copy the application code and assets
 COPY handler.py .
