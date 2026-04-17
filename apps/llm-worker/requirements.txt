@@ -1,7 +1,9 @@
+accelerate==1.2.1
 transformers==4.44.2
 runpod[api]==1.8.1
 torch==2.6.0
 torchaudio==2.6.0
+torchvision==0.26.0
 Pillow==10.0.0
 accelerate==1.12.0
 hf-transfer==0.1.9
