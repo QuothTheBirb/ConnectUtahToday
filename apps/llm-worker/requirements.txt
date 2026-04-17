@@ -1,4 +1,3 @@
-accelerate==1.2.1
 transformers==4.44.2
 runpod[api]==1.8.1
 torch==2.6.0
