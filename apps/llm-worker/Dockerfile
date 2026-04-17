@@ -1,5 +1,4 @@
-FROM nvidia/cuda:12.1.0-base-ubuntu22.04
-#FROM nvidia/cuda:13.1.1-base-ubuntu24.04
+FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
 
 # Override the default huggingface cache directory.
 ENV HF_HOME="/runpod-volume/.cache/huggingface/"
@@ -19,8 +18,12 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
+    python3-dev \
     git \
     g++ \
+    ffmpeg \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /

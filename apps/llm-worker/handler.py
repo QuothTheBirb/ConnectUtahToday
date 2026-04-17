@@ -1,13 +1,12 @@
 import base64
 import io
-import json
 import os
 
 import runpod
 import torch
 from PIL import Image
 from runpod import RunPodLogger
-from transformers import AutoModel, AutoProcessor, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer
 
 logger = RunPodLogger()
 
@@ -19,15 +18,15 @@ MAX_DIM = 1280
 
 # Initialize model and tokenizer once at startup
 logger.info("Initializing model and tokenizer at startup...")
-MODEL = None
-TOKENIZER = None
-SYSTEM_PROMPT = None
 
 
 def load_system_prompt():
 	"""
 	Load and return the system prompt from a text file.
 	"""
+	if not os.path.exists(SYSTEM_PROMPT_PATH):
+		logger.warn(f"System prompt file not found at {SYSTEM_PROMPT_PATH}, using default.")
+		return "You are a helpful assistant that extracts event details from posters."
 	with open(SYSTEM_PROMPT_PATH, "r") as f:
 		return f.read().strip()
 
@@ -48,7 +47,7 @@ def initialize_model():
 		init_tts=False,
 	)
 
-	model = model.eval().cuda()  # Add if device_map="auto" is unset
+	model = model.eval().cuda()
 
 	return model
 
@@ -58,6 +57,18 @@ def initialize_tokenizer():
 	Initialize and return the processor for the model.
 	"""
 	return AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+
+
+# Global instances
+try:
+	MODEL = initialize_model()
+	TOKENIZER = initialize_tokenizer()
+	SYSTEM_PROMPT = load_system_prompt()
+except Exception as e:
+	logger.error(f"Failed to initialize model/tokenizer: {e}")
+	MODEL = None
+	TOKENIZER = None
+	SYSTEM_PROMPT = ""
 
 
 def handle_inference(event):
@@ -70,26 +81,15 @@ def handle_inference(event):
 	"""
 	logger.info(f"Received event: {event}")
 
-	input = event.get("input")
+	if MODEL is None or TOKENIZER is None:
+		return {"error": "Model not initialized correctly."}
 
-	try:
-		model = initialize_model()
-		tokenizer = initialize_tokenizer()
-	except Exception as e:
-		msg = f"Error initializing model: {e}"
-		logger.error(msg)
-		return {"error": msg}
-
-	try:
-		system_prompt = load_system_prompt()
-		few_shot_examples = []
-	except Exception as e:
-		msg = f"Error loading system prompt: {e}"
-		logger.error(msg)
-		return {"error": msg}
+	input_data = event.get("input")
+	if not input_data:
+		return {"error": "No input provided"}
 
 	parsed_event_results = []
-	images_b64 = input.get("images", [])
+	images_b64 = input_data.get("images", [])
 
 	if not images_b64:
 		logger.error("No images provided in input")
@@ -102,7 +102,7 @@ def handle_inference(event):
 		for idx, img_b64 in enumerate(images_b64):
 			logger.info(f"Decoding image {idx + 1}/{len(images_b64)}")
 			img_bytes = base64.b64decode(img_b64)
-			image = Image.open(io.BytesIO(img_bytes))
+			image = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 			image.thumbnail((MAX_DIM, MAX_DIM))
 			images.append(image)
 	except Exception as e:
@@ -110,8 +110,8 @@ def handle_inference(event):
 		return {"error": f"Error decoding images: {e}"}
 
 	# Prepare the chat messages with few-shot examples and current prompt.
+	# For MiniCPM-V models, images are usually passed in the content list
 	msgs = [
-		*few_shot_examples,
 		{"role": "user", "content": [*images, SYSTEM_PROMPT]},
 	]
 
@@ -120,7 +120,6 @@ def handle_inference(event):
 
 	try:
 		answer = MODEL.chat(msgs=msgs, tokenizer=TOKENIZER)
-		parsed_event_results.append(answer)
 		logger.info(f"Model response: {answer}")
 		return answer
 	except Exception as e:
