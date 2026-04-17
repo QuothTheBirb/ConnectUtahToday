@@ -8,6 +8,10 @@ Output must strictly conform to the following JSON structure with exactly these 
 {
   "title": "",
   "description": "",
+  "date": {
+    "start": "",
+    "end": ""
+  },
   "location": {
     "country": "",
     "state": "",
@@ -15,10 +19,6 @@ Output must strictly conform to the following JSON structure with exactly these 
     "postalCode": "",
     "address": "",
     "venue": ""
-  },
-  "date": {
-    "start": "",
-    "end": ""
   },
   "time": {
     "start": "",
