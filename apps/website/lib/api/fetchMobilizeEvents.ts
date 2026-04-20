@@ -1,7 +1,4 @@
-import {
-	MobilizeApiEventsResponse,
-	MobilizeCalendarEvent,
-} from "@connect-utah-today/api/types";
+import { MobilizeApiEventsResponse, MobilizeCalendarEvent } from "@connect-utah-today/api/types";
 import { mobilizeTimestampToUtcIso } from "@connect-utah-today/utils/toUtcIsoString";
 
 export interface GetMobilizeEventsOptions {
@@ -30,10 +27,11 @@ export async function fetchMobilizeEvents(
 		: undefined;
 
 	// Use production or staging API based on the environment
-	const mobilizeApiBase =
-		process.env.NODE_ENV !== "production"
-			? "https://api.mobilize.us"
-			: "https://staging-api.mobilize.us";
+	// const mobilizeApiBase =
+	// 	process.env.NODE_ENV === "production"
+	// 		? "https://api.mobilize.us"
+	// 		: "https://staging-api.mobilize.us";
+	const mobilizeApiBase = "https://api.mobilize.us"; // Currently using main api for both production and development so there are enough events to properly test with.
 
 	const baseUrl = `${mobilizeApiBase}/v1/organizations/1/events?`;
 
