@@ -4,6 +4,7 @@ import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 import sharp from "sharp";
+import { migrations } from "@/migrations";
 import { EventAssets } from "@/payload/collections/EventAssets";
 import { Events } from "@/payload/collections/Events";
 import { Opportunities } from "@/payload/collections/Opportunities";
@@ -50,6 +51,8 @@ export default buildConfig({
 			connectionString: process.env.DATABASE_URL,
 		},
 		idType: "uuid",
+		migrationDir: "./migrations",
+		prodMigrations: migrations,
 	}),
 	typescript: {
 		outputFile: path.resolve(dirname, "payload-types.ts"),

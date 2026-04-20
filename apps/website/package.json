@@ -11,6 +11,7 @@
 		"check-types": "tsc --noEmit",
 		"generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
 		"generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+		"payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload",
 		"encrypt-env": "cp .env.production.local .env.production && dotenvx encrypt -f .env.production"
 	},
 	"dependencies": {
