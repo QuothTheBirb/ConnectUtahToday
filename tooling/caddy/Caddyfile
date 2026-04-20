@@ -3,7 +3,7 @@
 }
 
 {$DOMAIN_SECONDARY} {
-	redir {$DOMAIN_PRIMARY}{uri} permanent
+	redir https://{$DOMAIN_PRIMARY}{uri} permanent
 }
 
 www.{$DOMAIN_PRIMARY},
