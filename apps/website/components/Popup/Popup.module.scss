@@ -1,3 +1,6 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .popupOverlay {
 	display: none;
 	position: fixed;
@@ -20,8 +23,8 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background: var(--color-bg);
-	border: 1px solid var(--color-slate-200);
+	background: $color-bg;
+	border: 1px solid $color-slate-200;
 	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 	padding: 0;
 	max-width: 800px;
@@ -43,8 +46,8 @@
 
 	.popoverHeader {
 		padding: 1.25rem 1.5rem;
-		border-bottom: 1px solid var(--color-slate-200);
-		background: var(--color-slate-50);
+		border-bottom: 1px solid $color-slate-200;
+		background: $color-slate-50;
 		flex-shrink: 0;
 
 		.popoverHeaderFlex {
@@ -54,7 +57,7 @@
 
 			.popoverTitle {
 				margin: 0;
-				color: var(--color-slate-800);
+				color: $color-slate-800;
 				font-size: 1.5rem;
 				font-weight: 700;
 				font-family: 'Staatliches', sans-serif;
@@ -69,7 +72,7 @@
 				background: transparent;
 				border: none;
 				font-size: 2rem;
-				color: var(--color-slate-400);
+				color: $color-slate-400;
 				cursor: pointer;
 				display: flex;
 				align-items: center;
@@ -79,7 +82,7 @@
 				transition: color 0.2s ease;
 
 				&:hover {
-					color: var(--color-rose-500);
+					color: $color-rose-500;
 				}
 			}
 		}

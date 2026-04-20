@@ -1,3 +1,6 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 $menuButtonSize: 48px;
 $menuButtonOffset: 16px;
 
@@ -6,7 +9,7 @@ $menuButtonOffset: 16px;
 	width: 100%;
 
 	.nav {
-		background: var(--color-primary-300);
+		background: $color-primary-300;
 		padding: 1rem 1rem;
 		display: flex;
 		width: 100%;
@@ -20,28 +23,28 @@ $menuButtonOffset: 16px;
 			.linkWrapper {
 				& + .linkWrapper::before {
 					content: '';
-					border-left: var(--color-primary-500) 1px solid;
+					border-left: $color-primary-500 1px solid;
 					padding: 0.125rem 0;
 				}
 
 				.siteNavLink {
-					color: var(--color-primary-700);
+					color: $color-primary-700;
 					text-decoration: none;
 					font-weight: 600;
 					margin: 0 1rem;
 					padding: 0.5rem 1rem;
-					border-radius: var(--border-radius-full);
+					border-radius: $border-radius-full;
 					transition: background 0.2s, color 0.2s;
 					white-space: nowrap;
 					letter-spacing: 0.025em;
 
 					&[aria-current="page"] {
-						color: var(--color-slate-900);
+						color: $color-slate-900;
 					}
 
 					&:hover {
-						background: var(--color-primary-50);
-						color: var(--color-primary-900);
+						background: $color-primary-50;
+						color: $color-primary-900;
 					}
 				}
 			}
@@ -108,7 +111,7 @@ $menuButtonOffset: 16px;
 		}
 
 		button.toggleSiteNav {
-			background: var(--color-primary-700);
+			background: $color-primary-700;
 			box-shadow: 6px 4px 24px 0 rgba(0, 0, 0, 0.3);
 			display: flex;
 			flex-direction: column;
@@ -129,11 +132,30 @@ $menuButtonOffset: 16px;
 				width: 18px;
 				height: 2px;
 				border-radius: 2px;
-				background: var(--color-bg-muted);
+				background: $color-bg-muted;
+				transition: transform 0.2s ease, opacity 0.2s ease;
+
+				@media (prefers-reduced-motion: reduce) {
+					transition: none;
+				}
 			}
 
 			span + span {
 				margin-top: 4px;
+			}
+
+			&.navOpened {
+				span:nth-child(1) {
+					transform: translateY(6px) rotate(45deg);
+				}
+
+				span:nth-child(2) {
+					opacity: 0;
+				}
+
+				span:nth-child(3) {
+					transform: translateY(-6px) rotate(-45deg);
+				}
 			}
 		}
 	}

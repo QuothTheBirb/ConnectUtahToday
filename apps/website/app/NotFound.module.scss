@@ -1,0 +1,33 @@
+@use "@/styles/colors" as *;
+
+.notFoundContainer {
+	text-align: center;
+	padding: 4rem 2rem;
+}
+
+.logoContainer {
+	text-align: center;
+	margin: 1em 0 2em 0;
+}
+
+.logoImage {
+	max-width: 300px;
+	height: auto;
+}
+
+.text {
+	margin: 1.5rem 0 2.5rem 0;
+	color: $color-text-muted;
+	font-size: 1.2rem;
+}
+
+.link {
+	color: $color-primary-600;
+	text-decoration: underline;
+	font-weight: bold;
+	font-size: 1.1rem;
+
+	&:hover {
+		color: $color-primary-800;
+	}
+}

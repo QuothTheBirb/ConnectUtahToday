@@ -15,6 +15,7 @@ import { EventSettings } from "@/payload/globals/EventSettings";
 import { SiteSettings } from "@/payload/globals/SiteSettings";
 import { googleCalendarSync } from "@/payload/tasks/eventsSync/googleCalendarSync";
 import { mobilizeSync } from "@/payload/tasks/eventsSync/mobilizeSync";
+import { scanPosterTask } from "@/payload/tasks/scanPoster";
 import { manualSyncEvents } from "@/payload/workflows/manualSyncEvents";
 import { syncEvents } from "@/payload/workflows/syncEvents";
 
@@ -104,15 +105,20 @@ export default buildConfig({
 				cron: "* * * * *",
 				queue: "manual-sync-events",
 			},
+			{
+				cron: "* * * * *",
+				queue: "posters",
+			},
 		],
 		processingOrder: {
 			default: "createdAt",
 			queues: {
 				"sync-events": "createdAt",
 				"manual-sync-events": "createdAt",
+				posters: "createdAt",
 			},
 		},
 		workflows: [syncEvents, manualSyncEvents],
-		tasks: [mobilizeSync, googleCalendarSync],
+		tasks: [mobilizeSync, googleCalendarSync, scanPosterTask],
 	},
 });

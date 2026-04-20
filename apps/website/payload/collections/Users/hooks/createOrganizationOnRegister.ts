@@ -39,10 +39,11 @@ export const createOrganizationOnRegister: CollectionAfterChangeHook = async ({
 				}
 			: null;
 
-		const organization: RequiredDataFromCollectionSlug<"organizations"> = {
+		const organization: Omit<
+			RequiredDataFromCollectionSlug<"organizations">,
+			"slug"
+		> = {
 			name: doc.organizationName,
-			slug: doc.slug,
-			url: doc.organizationContactPage,
 			description: description,
 			organizers: [doc.id],
 			publicContactMethods: {
@@ -55,6 +56,7 @@ export const createOrganizationOnRegister: CollectionAfterChangeHook = async ({
 			},
 		};
 
+		// @ts-ignore
 		await req.payload.create({
 			collection: "organizations",
 			data: organization,

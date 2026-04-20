@@ -1,65 +1,202 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .eventFeed {
+	list-style-type: none;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	list-style-type: none;
-	padding-left: 0;
+	gap: 1rem;
+	width: 100%;
+
+	@media (min-width: $breakpoint-md) {
+		display: grid;
+		gap: 1.5rem;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@media (min-width: $breakpoint-xl) {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
 
 	.eventItem {
+		background: $color-slate-50;
+		border: 1px solid $color-slate-300;
+		border-radius: $border-radius;
+		cursor: pointer;
+		width: 100%;
+		overflow: hidden;
+		padding: 1.5rem;
+		gap: 1rem;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		width: 100%;
+		transition: box-shadow 0.2s ease, border-color 0.2s ease;
 
-		.eventContent {
+		&:hover {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+			border: 1px solid $color-slate-400;
+		}
+
+		&:focus-visible {
+			outline: 2px solid $color-accent;
+			outline-offset: 2px;
+		}
+
+		.eventImageContainer {
+			position: relative;
+			width: fit-content;
+			height: fit-content;
+			max-width: 100%;
+			max-height: 16rem;
+			overflow: hidden;
+			border: 1px solid $color-slate-200;
+			border-radius: $border-radius-sm;
+
+			.eventImage {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
+		}
+
+		.eventDetails {
 			width: 100%;
-			max-width: 40rem;
+			display: flex;
+			flex-direction: column;
 
-			.eventImageContainer {
-				margin: 0 0 1.2rem 0;
-
-				.eventImage {
-					width: 100%;
-					max-width: 400px;
-					height: auto;
-					border-radius: 8px;
-					box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-				}
+			.eventOrg {
+				color: $color-primary-600;
+				font-weight: 600;
+				font-size: $font-size-sm;
+				text-transform: uppercase;
+				margin: 0 0 0.25em 0;
+				letter-spacing: 0.025em;
 			}
 
-			.eventDetails {
-				width: 100%;
+			.eventTitle {
+				margin: 0 0 0.75em 0;
+				color: $color-slate-900;
+				font-size: $font-size-xl;
+				font-weight: 700;
+				line-height: 1.2;
+			}
 
-				.eventSummary {
-					font-size: 1.6rem;
-					font-weight: bold;
-					margin-bottom: 1.2rem;
-				}
-
-				.eventMeta {
-					display: flex;
-					flex-direction: column;
-					gap: 0.5rem;
-					color: var(--color-text);
-					margin-bottom: 6px;
-
-					.eventLink {
-						color: var(--color-accent);
-					}
-				}
-
-				.eventDescription {
-					word-break: break-all;
-				}
+			.eventDescription {
+				color: $color-slate-600;
+				line-height: 1.5;
+				font-size: $font-size-base;
+				word-break: break-word;
+				display: -webkit-box;
+				-webkit-line-clamp: 4;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
 			}
 		}
 	}
+}
 
-	.eventItem + .eventItem::before {
-		content: '';
-		width: calc(100% - 6rem);
-		height: 1px;
-		background-color: var(--color-border);
-		margin: 1.5rem 0 2rem 0;
+.popupContent {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+
+	.popupImageContainer {
+		margin-bottom: 1.25rem;
+		display: flex;
+
+		.popupImage {
+			width: auto;
+			max-width: 100%;
+			max-height: 300px;
+			height: auto;
+			display: block;
+			object-fit: contain;
+			border-radius: $border-radius-sm;
+			overflow: hidden;
+			border: 1px solid $color-slate-200;
+			background: $color-slate-100;
+		}
+	}
+
+	.popupBody {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+
+		.eventOrg {
+			color: $color-primary-600;
+			font-weight: 600;
+			font-size: $font-size-base;
+			margin-bottom: 0.25em;
+			text-transform: uppercase;
+			letter-spacing: 0.025em;
+		}
+
+		.eventTitle {
+			font-weight: 700;
+			font-size: $font-size-2xl;
+			margin-bottom: 1rem;
+		}
+
+		.eventInfo {
+			margin-bottom: 1rem;
+		}
+
+		.popupDescription {
+			color: $color-slate-600;
+			line-height: 1.5;
+			font-size: $font-size-base;
+			word-break: break-word;
+			margin-bottom: 1.25rem;
+
+			p {
+				margin-bottom: 0.75rem;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+
+			ul, ol {
+				padding-left: 1.5rem;
+				margin-bottom: 0.75rem;
+			}
+
+			a {
+				color: $color-accent;
+				text-decoration: underline;
+			}
+		}
+
+		.popupActions {
+			display: flex;
+			align-items: center;
+		}
+	}
+}
+
+.viewDetailsButton {
+	background: $color-rose-500;
+	color: $color-rose-50;
+	padding: 0.5rem 1rem;
+	text-decoration: none;
+	border-radius: $border-radius-sm;
+	font-weight: 600;
+	font-size: $font-size-sm;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	transition: background 0.2s ease;
+
+	&:hover {
+		background: $color-rose-600;
+	}
+
+	.arrow {
+		transition: transform 0.2s ease;
+	}
+
+	&:hover .arrow {
+		transform: translateX(3px);
 	}
 }

@@ -1,6 +1,9 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .heading {
 	font-family: 'Staatliches', 'Segoe UI', 'Arial', sans-serif;
-	color: var(--color-primary-700);
+	color: $color-primary-700;
 	letter-spacing: 0.02em;
 }
 

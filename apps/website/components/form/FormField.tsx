@@ -18,7 +18,7 @@ export const FormField = ({
 			<label htmlFor={id} className={styles.label}>
 				{label}
 			</label>
-			{children}
+			<div className={styles.content}>{children}</div>
 		</div>
 	);
 };

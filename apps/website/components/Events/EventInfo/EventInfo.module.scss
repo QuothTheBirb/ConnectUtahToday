@@ -1,0 +1,17 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
+.eventInfo {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 0.5em;
+	font-size: $font-size-sm;
+
+	.eventGridLabel {
+		color: $color-slate-500;
+	}
+
+	.eventGridValue {
+		color: $color-slate-700;
+	}
+}

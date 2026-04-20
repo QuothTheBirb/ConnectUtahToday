@@ -1,12 +1,33 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .pageCard {
-	background: var(--color-bg);
-	max-width: 800px;
-	border-radius: var(--border-radius);
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
-	padding: 2.5em 2em 2em 2em;
-	margin: 0 auto
+	display: flex;
+	flex-direction: column;
+	background: $color-bg;
+	width: 100%;
+	max-width: 48rem;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+	padding: 1.5rem 1rem;
+	margin: 0 auto;
+	border: 1px solid $color-slate-300;
 }
 
-@media (max-width: 700px) {
+@media (min-width: $breakpoint-sm) {
+	.pageCard {
+		padding: 3rem 2.5rem;
+	}
+}
 
+@media (min-width: $breakpoint-md) {
+	.pageCard {
+		max-width: 64rem;
+	}
+}
+
+@media (min-width: $breakpoint-xl) {
+	.pageCard {
+		max-width: 72rem;
+		padding: 4rem 3rem;
+	}
 }

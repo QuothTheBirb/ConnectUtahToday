@@ -119,6 +119,7 @@ export interface Config {
     tasks: {
       mobilizeSync: TaskMobilizeSync;
       googleCalendarSync: TaskGoogleCalendarSync;
+      scanPoster: TaskScanPoster;
       inline: {
         input: unknown;
         output: unknown;
@@ -246,26 +247,22 @@ export interface Organization {
    */
   generateSlug?: boolean | null;
   slug: string;
-  url: string;
+  /**
+   * If your organization has events on Mobilize, please provide the slug or URL for your organization on Mobilize. This prevents duplicate events from being created from Mobilize if you use Google Calendar integration and ensures accurate event listings.
+   */
   mobilizeSlug?: string | null;
   organizers: (string | User)[];
-  /**
-   * Allow this organization to sync events from a Google Calendar. This feature must be enabled in the global Event Settings.
-   */
-  enableGoogleCalendarSync?: boolean | null;
-  googleCalendarId?: string | null;
-  /**
-   * A default image used for calendar events from this organization when no event-specific image is available.
-   */
-  defaultEventImage?: (string | null) | OrganizationAsset;
   logo?: (string | null) | OrganizationAsset;
   publicContactMethods?: {
     showEmail?: boolean | null;
     contactEmail?: string | null;
+    contactEmailLabel?: string | null;
     showPhone?: boolean | null;
     contactPhone?: string | null;
+    contactPhoneLabel?: string | null;
     showWebsite?: boolean | null;
     contactWebsite?: string | null;
+    contactWebsiteLabel?: string | null;
   };
   description?: {
     root: {
@@ -283,6 +280,15 @@ export interface Organization {
     [k: string]: unknown;
   } | null;
   opportunities?: (string | Opportunity)[] | null;
+  /**
+   * Allow this organization to sync events from a Google Calendar.
+   */
+  enableGoogleCalendarSync?: boolean | null;
+  googleCalendarId?: string | null;
+  /**
+   * A default image used for calendar events from this organization when no event-specific image is available.
+   */
+  defaultEventImage?: (string | null) | OrganizationAsset;
   updatedAt: string;
   createdAt: string;
 }
@@ -516,7 +522,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'mobilizeSync' | 'googleCalendarSync';
+        taskSlug: 'inline' | 'mobilizeSync' | 'googleCalendarSync' | 'scanPoster';
         taskID: string;
         input?:
           | {
@@ -550,7 +556,7 @@ export interface PayloadJob {
       }[]
     | null;
   workflowSlug?: ('syncEvents' | 'manualSyncEvents') | null;
-  taskSlug?: ('inline' | 'mobilizeSync' | 'googleCalendarSync') | null;
+  taskSlug?: ('inline' | 'mobilizeSync' | 'googleCalendarSync' | 'scanPoster') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -688,25 +694,27 @@ export interface OrganizationsSelect<T extends boolean = true> {
   name?: T;
   generateSlug?: T;
   slug?: T;
-  url?: T;
   mobilizeSlug?: T;
   organizers?: T;
-  enableGoogleCalendarSync?: T;
-  googleCalendarId?: T;
-  defaultEventImage?: T;
   logo?: T;
   publicContactMethods?:
     | T
     | {
         showEmail?: T;
         contactEmail?: T;
+        contactEmailLabel?: T;
         showPhone?: T;
         contactPhone?: T;
+        contactPhoneLabel?: T;
         showWebsite?: T;
         contactWebsite?: T;
+        contactWebsiteLabel?: T;
       };
   description?: T;
   opportunities?: T;
+  enableGoogleCalendarSync?: T;
+  googleCalendarId?: T;
+  defaultEventImage?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1220,6 +1228,19 @@ export interface TaskMobilizeSync {
  */
 export interface TaskGoogleCalendarSync {
   input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskScanPoster".
+ */
+export interface TaskScanPoster {
+  input: {
+    imageIds: {
+      id: string;
+    }[];
+    userId: string;
+  };
   output?: unknown;
 }
 /**

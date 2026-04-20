@@ -89,7 +89,8 @@ export async function fetchGoogleCalendarEvents(
 							organization: {
 								id: organization.id,
 								name: organization.name,
-								url: organization.url,
+								url: organization.publicContactMethods
+									?.contactWebsite,
 								slug: organization.slug,
 							},
 							googleCalendarId: event.id,

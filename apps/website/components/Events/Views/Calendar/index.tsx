@@ -1,7 +1,7 @@
 import { memo, useMemo, useState } from "react";
-
-import { EventDetailsPopover } from "@/components/Events/Views/Calendar/DayDetails";
 import { CalendarEvent } from "@connect-utah-today/api/types";
+import { EventDetailsPopover } from "@/components/Events/Views/Calendar/DayDetails";
+
 import styles from "./Calendar.module.scss";
 
 type DayEventsProps = {
@@ -50,6 +50,7 @@ type CalendarDayProps = {
 	isToday: boolean;
 	dayEvents: CalendarEvent[];
 	onDayClick?: (events: CalendarEvent[], date: Date) => void;
+	isPast: boolean;
 };
 const CalendarDay = ({
 	dayOfMonth,
@@ -57,6 +58,7 @@ const CalendarDay = ({
 	isToday,
 	dayEvents,
 	onDayClick,
+	isPast,
 }: CalendarDayProps) => {
 	const hasEvents = dayEvents.length > 0;
 
@@ -68,7 +70,7 @@ const CalendarDay = ({
 
 	return (
 		<div
-			className={`${styles.calendarCell} ${isToday ? styles.today : ""} ${hasEvents ? styles.hasEvents : ""}`}
+			className={`${styles.calendarCell} ${isToday ? styles.today : ""} ${hasEvents ? styles.hasEvents : ""} ${isPast ? styles.past : ""}`}
 			onClick={handleDayClick}
 		>
 			<div
@@ -87,15 +89,19 @@ const CalendarGrid = memo(
 		month,
 		eventsByDate,
 		onDayClick,
+		upcomingOnly,
 	}: {
 		year: number;
 		month: number;
 		eventsByDate: Record<string, CalendarEvent[]>;
 		onDayClick?: (events: CalendarEvent[], date: Date) => void;
+		upcomingOnly: boolean;
 	}) => {
 		const firstDay = new Date(year, month, 1).getDay();
 		const daysInMonth = new Date(year, month + 1, 0).getDate();
 		const today = new Date();
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
 
 		const days = Array.from({ length: firstDay + daysInMonth }, (_, i) => {
 			if (i < firstDay) {
@@ -111,6 +117,7 @@ const CalendarGrid = memo(
 			const date = new Date(year, month, dayOfMonth);
 			const dayEvents = eventsByDate[date.toDateString()] || [];
 			const isToday = date.toDateString() === today.toDateString();
+			const isPast = upcomingOnly && date < now;
 
 			return (
 				<CalendarDay
@@ -120,6 +127,7 @@ const CalendarGrid = memo(
 					isToday={isToday}
 					dayEvents={dayEvents}
 					onDayClick={onDayClick}
+					isPast={isPast}
 				/>
 			);
 		});
@@ -146,8 +154,13 @@ type CalendarProps = {
 		year: number;
 		month: number;
 	};
+	upcomingOnly?: boolean;
 };
-export const EventCalendar = ({ events, date }: CalendarProps) => {
+export const EventCalendar = ({
+	events,
+	date,
+	upcomingOnly = false,
+}: CalendarProps) => {
 	const { year, month } = date;
 	const [eventDetails, setEventDetails] = useState<{
 		events: CalendarEvent[];
@@ -191,6 +204,7 @@ export const EventCalendar = ({ events, date }: CalendarProps) => {
 				month={month}
 				eventsByDate={eventsByDate}
 				onDayClick={handleDayClick}
+				upcomingOnly={upcomingOnly}
 			/>
 			<EventDetailsPopover
 				eventDetails={eventDetails}

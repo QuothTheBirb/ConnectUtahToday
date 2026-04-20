@@ -36,16 +36,13 @@ export const Organizations: CollectionConfig = {
 							useAsSlug: "name",
 						}),
 						{
-							name: "url",
-							label: "Organization Link",
-							type: "text",
-							required: true,
-							// TODO: Add validation to input
-						},
-						{
 							name: "mobilizeSlug",
 							label: "Mobilize Organization Slug/URL",
 							type: "text",
+							admin: {
+								description:
+									"If your organization has events on Mobilize, please provide the slug or URL for your organization on Mobilize. This prevents duplicate events from being created from Mobilize if you use Google Calendar integration and ensures accurate event listings.",
+							},
 						},
 						{
 							name: "organizers",
@@ -69,56 +66,6 @@ export const Organizations: CollectionConfig = {
 							required: true,
 							access: {
 								update: adminOnlyFieldAccess,
-							},
-						},
-					],
-				},
-				{
-					label: "Calendar Sync",
-					fields: [
-						{
-							name: "enableGoogleCalendarSync",
-							label: "Enable Google Calendar Sync",
-							type: "checkbox",
-							defaultValue: false,
-							admin: {
-								description:
-									"Allow this organization to sync events from a Google Calendar. This feature must be enabled in the global Event Settings.",
-							},
-							validate: async (val, { req }) => {
-								if (val === true) {
-									const settings =
-										await req.payload.findGlobal({
-											slug: "event-settings",
-										});
-									if (
-										!settings.events.googleCalendar
-											?.enableOrganizationCalendars
-									) {
-										return "Organization Google Calendar synchronization is disabled in Event Settings.";
-									}
-								}
-								return true;
-							},
-						},
-						{
-							name: "googleCalendarId",
-							label: "Google Calendar ID",
-							type: "text",
-							required: true,
-							admin: {
-								condition: (data) =>
-									data?.enableGoogleCalendarSync === true,
-							},
-						},
-						{
-							name: "defaultEventImage",
-							label: "Default Event Image",
-							type: "upload",
-							relationTo: "organization-assets",
-							admin: {
-								description:
-									"A default image used for calendar events from this organization when no event-specific image is available.",
 							},
 						},
 					],
@@ -152,6 +99,17 @@ export const Organizations: CollectionConfig = {
 									},
 								},
 								{
+									name: "contactEmailLabel",
+									label: "Public Contact Email Label",
+									type: "text",
+									admin: {
+										condition: (data, siblingData) =>
+											siblingData?.showEmail,
+										placeholder:
+											"The label shown on the link to the email. Leave blank to use the default value: 'Email'.",
+									},
+								},
+								{
 									name: "showPhone",
 									label: "Show Contact Phone",
 									type: "checkbox",
@@ -167,6 +125,17 @@ export const Organizations: CollectionConfig = {
 									},
 								},
 								{
+									name: "contactPhoneLabel",
+									label: "Public Contact Phone Label",
+									type: "text",
+									admin: {
+										condition: (data, siblingData) =>
+											siblingData?.showPhone,
+										placeholder:
+											"The label shown on the link to the phone number. Leave blank to use the default value: 'Phone'.",
+									},
+								},
+								{
 									name: "showWebsite",
 									label: "Show Website URL",
 									type: "checkbox",
@@ -179,6 +148,17 @@ export const Organizations: CollectionConfig = {
 									admin: {
 										condition: (data, siblingData) =>
 											siblingData?.showWebsite,
+									},
+								},
+								{
+									name: "contactWebsiteLabel",
+									label: "Public Website Label",
+									type: "text",
+									admin: {
+										condition: (data, siblingData) =>
+											siblingData?.showWebsite,
+										placeholder:
+											"The label shown on the link to the website. Examples: 'Join us', 'Sign up', 'Learn more'. Leave blank to use the default value: 'Website'.",
 									},
 								},
 							],
@@ -201,6 +181,56 @@ export const Organizations: CollectionConfig = {
 							hasMany: true,
 							admin: {
 								sortOptions: "name",
+							},
+						},
+					],
+				},
+				{
+					label: "Calendar Sync",
+					fields: [
+						{
+							name: "enableGoogleCalendarSync",
+							label: "Enable Google Calendar Sync",
+							type: "checkbox",
+							defaultValue: false,
+							admin: {
+								description:
+									"Allow this organization to sync events from a Google Calendar.",
+							},
+							validate: async (value, { req }) => {
+								if (value === true) {
+									const settings =
+										await req.payload.findGlobal({
+											slug: "event-settings",
+										});
+									if (
+										!settings.events.googleCalendar
+											?.enableOrganizationCalendars
+									) {
+										return "Organization Google Calendar synchronization is disabled in Event Settings.";
+									}
+								}
+								return true;
+							},
+						},
+						{
+							name: "googleCalendarId",
+							label: "Google Calendar ID",
+							type: "text",
+							required: true,
+							admin: {
+								condition: (data) =>
+									data?.enableGoogleCalendarSync === true,
+							},
+						},
+						{
+							name: "defaultEventImage",
+							label: "Default Event Image",
+							type: "upload",
+							relationTo: "organization-assets",
+							admin: {
+								description:
+									"A default image used for calendar events from this organization when no event-specific image is available.",
 							},
 						},
 					],

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef, useState } from "react";
 import { Button } from "@payloadcms/ui";
 import { CalendarPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ChangeEvent, useRef, useState } from "react";
 
 import { uploadPosterEventsAction } from "../actions";
 
@@ -12,8 +12,8 @@ export const UploadPosterEvents = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const router = useRouter();
 
-	const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const files = e.target.files;
+	const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+		const files = event.target.files;
 		if (!files || files.length === 0) return;
 
 		setLoading(true);
@@ -23,12 +23,23 @@ export const UploadPosterEvents = () => {
 				formData.append("file", file);
 			}
 
-			const result = await uploadPosterEventsAction(formData);
+			const result = (await uploadPosterEventsAction(formData)) as {
+				success: boolean;
+				count?: number;
+				queued?: boolean;
+				error?: string;
+			};
 
 			if (result.success) {
-				alert(
-					`Successfully created ${result.count} event(s) from posters!`,
-				);
+				if (result.queued) {
+					alert(
+						`Successfully uploaded ${result.count} poster(s). Scanning and event creation are processing in the background.`,
+					);
+				} else {
+					alert(
+						`Successfully created ${result.count} event(s) from posters!`,
+					);
+				}
 				router.refresh();
 			} else {
 				alert(

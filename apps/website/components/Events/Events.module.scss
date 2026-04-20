@@ -1,36 +1,81 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .events {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: 1rem; // Consistent gap
 
-	.eventsView {
+	.orgFilter {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		position: relative;
+		width: 100%;
 
-		.viewTabs {
-			display: flex;
-			align-items: start;
+		.orgSelect {
 			width: 100%;
-			background: var(--color-primary-50);
-			position: relative;
-			border-radius: 0.25rem 0.25rem 0 0;
-			border-bottom: 2px solid var(--color-primary-700);
+		}
 
-			.viewTab {
-				padding: 1rem 1.5rem;
-				cursor: pointer;
-				text-decoration: none;
-				color: var(--color-primary-700);
-				border-radius: 0.25rem 0.25rem 0 0; // 4px
+		.orgTypeSelect {
+			width: 100%;
+		}
 
-				&.active {
-					background: var(--color-primary-700);
-					color: var(--color-slate-50);
-				}
+		@media (min-width: $breakpoint-md) {
+			flex-direction: row;
+
+			.orgSelect {
+				width: 70%;
+			}
+
+			.orgTypeSelect {
+				width: 30%;
 			}
 		}
 	}
-}
 
+	.upcomingCheckbox {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: 0.65rem 1rem;
+		background: $color-slate-100;
+		border: 1.5px solid $color-slate-200;
+		border-radius: $border-radius-sm;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		height: 38px; // Match react-select height approximately
+
+		&:hover {
+			background: $color-slate-200;
+			border-color: $color-slate-300;
+		}
+
+		&:has(input:checked) {
+			background: $color-primary-100;
+			border-color: $color-primary-400;
+			color: $color-primary-900;
+
+			&:hover {
+				background: $color-primary-200;
+			}
+		}
+
+		// Override FormField default styles
+		& > label {
+			margin-bottom: 0;
+			cursor: pointer;
+			font-weight: 500;
+			font-size: 0.875rem;
+			order: 2;
+			color: inherit;
+		}
+
+		& > input {
+			order: 1;
+		}
+
+		& > span {
+			order: 1;
+		}
+	}
+}

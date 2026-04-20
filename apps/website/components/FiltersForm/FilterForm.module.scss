@@ -1,17 +1,20 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .filterForm {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
 
-	background: var(--color-slate-100);
+	background: $color-slate-100;
 	border-radius: 0.25rem;
-	border: 1px solid var(--color-slate-200);
+	border: 1px solid $color-slate-200;
 
 	transition: border 0.2s ease;
 
 	&:has(.legendButton:hover) {
-		border: 1px solid var(--color-slate-300);
+		border: 1px solid $color-slate-300;
 	}
 
 	&.collapsed {
@@ -52,25 +55,25 @@
 				border: none;
 				padding: 0.875rem 1.5rem;
 				background: transparent;
-				color: var(--color-slate-600);
+				color: $color-slate-600;
 				font: inherit;
 				cursor: pointer;
 
 				&.collapsed {
-					color: var(--color-slate-500);
+					color: $color-slate-500;
 				}
 			}
 
 			.toggleIcon {
 				width: 1.1rem;
 				height: 1.1rem;
-				color: var(--color-slate-600);
+				color: $color-slate-600;
 				//transition: transform 0.2s ease;
 				//display: inline-block;
 
 				&.collapsed {
 					//transform: rotate(-90deg);
-					color: var(--color-slate-500);
+					color: $color-slate-500;
 				}
 			}
 		}
@@ -92,8 +95,8 @@
 		padding: 0.5rem 1.5rem;
 
 		button.applyFiltersButton {
-			background: var(--color-rose-500);
-			color: var(--color-rose-50);
+			background: $color-rose-500;
+			color: $color-rose-50;
 			padding: 0.5rem 1rem;
 			border-radius: 6px;
 			font-size: 0.825rem;
@@ -103,9 +106,9 @@
 		}
 
 		button.clearFiltersButton {
-			background: var(--color-bg);
-			color: var(--color-slate-700);
-			border: 1px solid var(--color-border);
+			background: $color-bg;
+			color: $color-slate-700;
+			border: 1px solid $color-border;
 			padding: 0.5rem 1rem;
 			border-radius: 6px;
 			font-size: 0.825rem;

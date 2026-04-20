@@ -1,7 +1,15 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
 .calendarContainer {
+	padding: 1.5rem;
+	background: $color-slate-50;
+	border: 1px solid $color-slate-300;
+	border-radius: $border-radius;
+
 	.calendarMonthYear {
 		font-family: 'Staatliches', 'Segoe UI', 'Arial', sans-serif;
-		color: var(--color-primary-700);
+		color: $color-primary-700;
 		letter-spacing: 0.04rem;
 		text-align: center;
 		font-size: 2.4rem;
@@ -14,11 +22,13 @@
 		gap: 1px;
 		max-width: 900px;
 		margin: 0 auto;
-		background: var(--color-border);
-		border: 1px solid var(--color-border);
+		background: $color-border;
+		border: 1px solid $color-border;
+		border-radius: $border-radius-sm;
+		overflow: hidden;
 
 		.dayHeader {
-			background: var(--color-bg-muted);
+			background: $color-slate-200;
 			padding: 12px;
 			text-align: center;
 			font-weight: bold;
@@ -29,14 +39,14 @@
 			display: contents;
 
 			.calendarCell {
-				background: var(--color-bg);
+				background: $color-bg;
 				padding: 5px;
 				min-height: 125px;
-				border: 1px solid var(--color-border);
+				border: 1px solid $color-border;
 				position: relative;
 
 				&.today {
-					background: var(--color-primary-50);
+					background: $color-primary-50;
 				}
 
 				&.hasEvents {
@@ -44,7 +54,29 @@
 				}
 
 				&.empty {
-					background: var(--color-bg-muted);
+					background: $color-slate-300;
+				}
+
+				&.past {
+					background: $color-slate-100;
+					color: $color-slate-400;
+
+					.dayNumber {
+						color: $color-slate-400;
+					}
+
+					.events {
+						.event {
+							background: $color-slate-300;
+							color: $color-slate-500;
+						}
+					}
+
+					.mobileDots {
+						.dot {
+							background: $color-slate-300;
+						}
+					}
 				}
 
 				.dayNumber {
@@ -60,8 +92,8 @@
 				.events {
 					.event {
 						font-size: 0.625rem;
-						background: var(--color-primary-500);
-						color: var(--color-slate-50);
+						background: $color-primary-500;
+						color: $color-slate-50;
 						padding: 1px 4px;
 						margin: 1px 0;
 						border-radius: 2px;
@@ -70,7 +102,7 @@
 
 					.remaining {
 						font-size: 10px;
-						color: var(--color-primary-500);
+						color: $color-primary-500;
 						font-weight: bold;
 					}
 				}
@@ -81,14 +113,14 @@
 
 				.eventCount {
 					font-size: 10px;
-					color: var(--color-text-muted);
+					color: $color-text-muted;
 					margin-top: 2px;
 				}
 			}
 		}
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: $breakpoint-md) {
 		.calendarMonthYear {
 			font-size: 1.8rem;
 		}
@@ -119,7 +151,7 @@
 							width: 5px;
 							height: 5px;
 							border-radius: 50%;
-							background: var(--color-primary-500);
+							background: $color-primary-500;
 						}
 					}
 				}
@@ -131,7 +163,7 @@
 		text-align: center;
 		margin-bottom: 1em;
 		font-size: 0.9em;
-		color: var(--color-text-muted);
+		color: $color-text-muted;
 	}
 
 	.detailsInfo {

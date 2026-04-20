@@ -1,11 +1,12 @@
 "use server";
 
-import fs from "fs/promises";
-import path from "path";
-import { headers } from "next/headers";
+import type { RequiredDataFromCollectionSlug } from "payload";
 import { getPayload } from "payload";
 
+import fs from "fs/promises";
+import path from "path";
 import configPromise from "@payload-config";
+import { headers } from "next/headers";
 import { scanPosterWithRunpod } from "@/lib/api/scanPoster";
 
 export async function uploadPosterEventsAction(formData: FormData) {
@@ -23,7 +24,6 @@ export async function uploadPosterEventsAction(formData: FormData) {
 		}
 
 		const imageIds: string[] = [];
-		const buffers: Buffer[] = [];
 
 		for (const file of files) {
 			const buffer = Buffer.from(await file.arrayBuffer());
@@ -43,77 +43,18 @@ export async function uploadPosterEventsAction(formData: FormData) {
 			});
 
 			imageIds.push(uploadedImage.id as string);
-			buffers.push(buffer);
 		}
 
-		const scanResult = await scanPosterWithRunpod(buffers);
-		if (!Array.isArray(scanResult)) {
-			throw new Error("Invalid scan result format");
-		}
+		// Queue the scanPoster task
+		await payload.jobs.queue({
+			task: "scanPoster",
+			input: {
+				imageIds: imageIds.map((id) => ({ id })),
+				userId: user.id,
+			},
+		});
 
-		const createdEvents = [];
-
-		for (let i = 0; i < scanResult.length; i++) {
-			const item = scanResult[i];
-			const imageId = imageIds[i];
-
-			if (item.status !== "success") {
-				console.warn(`Scan failed for image ${imageId}:`, item.error);
-				continue;
-			}
-
-			// Find default organization for the user
-			let organizationId = null;
-			if (user.roles?.includes("organizer")) {
-				const orgs = await payload.find({
-					collection: "organizations",
-					where: {
-						organizers: {
-							contains: user.id,
-						},
-					},
-					limit: 1,
-				});
-				if (orgs.docs.length > 0) {
-					organizationId = orgs.docs[0].id;
-				}
-			}
-
-			const eventData: any = {
-				title: item.title || "Untitled Event",
-				description: item.description || "",
-				url:
-					item.links && item.links.length > 0
-						? item.links[0]
-						: "https://example.com", // url is required
-				date: item.date?.start || new Date().toISOString(), // date is required
-				endDate: item.date?.end,
-				location: {
-					country: item.location?.country || "US",
-					state: item.location?.state || "UT",
-					city: item.location?.city,
-					address: item.location?.address,
-					postalCode: item.location?.postalCode,
-					venue: item.location?.venue,
-				},
-				source: "local",
-				local: {
-					images: [imageId],
-					organization: organizationId,
-					createdBy: user.id,
-				},
-			};
-
-			const event = await payload.create({
-				collection: "events",
-				data: eventData,
-				user, // Pass user for access control and hooks
-			});
-
-			createdEvents.push(event);
-		}
-
-		return { success: true, count: createdEvents.length };
+		return { success: true, count: imageIds.length, queued: true };
 	} catch (error) {
 		console.error("Upload and scan poster action failed:", error);
 		return {
@@ -219,7 +160,7 @@ export async function scanAndCreateEventsAction(imageIds: string[]) {
 				}
 			}
 
-			const eventData: any = {
+			const eventData: RequiredDataFromCollectionSlug<"events"> = {
 				title: item.title || "Untitled Event",
 				description: item.description || "",
 				url:

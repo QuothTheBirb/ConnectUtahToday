@@ -9,7 +9,7 @@ export const MenuButton = ({
 }) => {
 	return (
 		<button
-			className={styles.toggleSiteNav}
+			className={`${styles.toggleSiteNav}${navOpen ? ` ${styles.navOpened}` : ""}`}
 			aria-label={"Toggle Site Navigation"}
 			aria-expanded={navOpen ? "true" : "false"}
 			aria-controls={"site-navigation"}

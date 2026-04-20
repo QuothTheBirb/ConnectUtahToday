@@ -69,9 +69,7 @@ export async function scanPosterWithRunpod(images: Buffer | Buffer[]) {
 		// RunPod returns the handler's return value (list) in the 'output' field
 		const output = result.output || result;
 		try {
-			const parsed =
-				typeof output === "string" ? JSON.parse(output) : output;
-			return parsed;
+			return typeof output === "string" ? JSON.parse(output) : output;
 		} catch (e) {
 			console.error("Failed to parse scan output as JSON:", output);
 			return output;

@@ -1,0 +1,55 @@
+name: connect-utah-today
+
+services:
+    website:
+        build:
+            context: .
+            dockerfile: apps/website/Dockerfile
+        image: ${WEBSITE_IMAGE:-ghcr.io/quoththebirb/connect-utah-today/website:latest}
+        restart: unless-stopped
+        env_file:
+            - .env.production
+        volumes:
+            - payload-data:/app/apps/website/public
+        working_dir: /app
+        depends_on:
+            - postgres
+
+    postgres:
+        restart: always
+        image: postgres:latest
+        environment:
+            - POSTGRES_PASSWORD=postgres # Default password
+            - POSTGRES_DB=postgres
+        volumes:
+            - data:/var/lib/postgresql/data
+
+    caddy:
+        restart: unless-stopped
+        image: ${CADDY_IMAGE:-ghcr.io/quoththebirb/connect-utah-today/caddy:latest}
+        ports:
+            - "80:80"
+            - "443:443"
+            - "443:443/udp"
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+        depends_on:
+            - website
+        environment:
+            - DOMAIN_PRIMARY=connectutah.today
+            - DOMAIN_SECONDARY=connectutahtoday.org
+
+volumes:
+    data:
+        external: true
+    payload-data:
+        external: true
+    caddy_data:
+        name: "caddy_data"
+    caddy_config:
+        name: "caddy_config"
+    llm_model_storage:
+        external: true
+
+# No secrets needed here as they are handled via env_file

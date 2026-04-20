@@ -1,6 +1,18 @@
-import styles from "./PageCard.module.scss";
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef } from "react";
 
-export const PageCard = ({ children }: { children?: ReactNode }) => {
-	return <main className={styles.pageCard}>{children}</main>;
+import styles from "./PageCard.module.scss";
+
+export const PageCard = ({
+	children,
+	className,
+	...props
+}: ComponentPropsWithoutRef<"main">) => {
+	return (
+		<main
+			className={`${styles.pageCard}${className ? ` ${className}` : ""}`}
+			{...props}
+		>
+			{children}
+		</main>
+	);
 };

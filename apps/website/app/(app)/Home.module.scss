@@ -1,45 +1,85 @@
-.logoContainer {
-	text-align: center;
-	margin: 1em 0 0.5em 0;
-}
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
 
-.logoImage {
-	max-width: 300px;
-	height: auto;
-}
+.home {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
-.objectives {
-	background: var(--color-bg-muted);
-	padding: 2em;
-	margin: 2em 0;
-	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+	.content {
+		display: flex;
+		flex-direction: column;
+		max-width: 48rem;
 
-.objectivesTitle {
-	color: var(--color-primary-900);
-	margin: 0 0 1.5em 0;
-	text-align: center;
-	font-weight: 600;
-}
+		.logoContainer {
+			text-align: center;
+			margin-bottom: 1rem;
 
-.objectivesList {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	line-height: 1.8;
-	font-size: 1.05em;
-}
+			.logoImage {
+				max-height: 20vh;
+				width: auto;
+			}
+		}
 
-.objectivesItem {
-	margin: 0 0 0.5em 0;
-	padding: 0 0 0 1.5em;
-	position: relative;
-}
+		.heading {
+			font-size: $font-size-4xl;
+			margin-bottom: 1rem;
+			text-align: center;
+		}
 
-.objectivesBullet {
-	position: absolute;
-	left: 0;
-	color: var(--color-accent);
-	font-weight: bold;
+		.about {
+			font-size: $font-size-base;
+			line-height: 2;
+			width: 100%;
+			margin-bottom: 1rem;
+
+			.eventsLink {
+				display: inline-flex;
+				color: $color-primary-500;
+				font-size: $font-size-base;
+				text-decoration: underline;
+				white-space: nowrap;
+				padding: 0 0.5rem;
+				background: $color-primary-100;
+				transition: background 0.2s;
+				text-transform: capitalize;
+
+				&:hover {
+					color: $color-primary-600;
+				}
+			}
+		}
+
+		.objectives {
+			background: $color-slate-100;
+			width: 100%;
+			padding: 2rem;
+			border-radius: $border-radius;
+			border: 1px solid $color-slate-200;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+			.objectivesTitle {
+				margin-bottom: 0.5em;
+			}
+
+			.objectivesList {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5em;
+				list-style: none;
+				line-height: 1.6;
+
+				.objectivesItem {
+					padding: 0 0 0 1em;
+					position: relative;
+
+					.objectivesBullet {
+						position: absolute;
+						left: 0;
+						color: $color-primary-500;
+					}
+				}
+			}
+		}
+	}
 }

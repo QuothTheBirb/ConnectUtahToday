@@ -1,0 +1,53 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10000;
+	padding: 1rem;
+}
+
+.modal {
+	background-color: white;
+	padding: 2rem;
+	border-radius: 8px;
+	max-width: 500px;
+	width: 100%;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	text-align: center;
+}
+
+.title {
+	margin-top: 0;
+	color: #333;
+}
+
+.message {
+	margin: 1.5rem 0;
+	color: #666;
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+.button {
+	background-color: $color-rose-600;
+	color: $color-rose-50;
+	border: none;
+	padding: 0.75rem 2rem;
+	border-radius: 4px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: $color-rose-700;
+	}
+}

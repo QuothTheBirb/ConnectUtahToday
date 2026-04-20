@@ -4,8 +4,8 @@ import React, {
 	InputHTMLAttributes,
 	ReactNode,
 } from "react";
-
 import { FormField } from "@/components/form/FormField";
+
 import styles from "../Form.module.scss";
 
 type FormInputProps = {
@@ -20,6 +20,7 @@ const FormInput = ({
 	label,
 	id,
 	invalid,
+	className,
 	...inputProps
 }: FormInputProps) => {
 	if (type === "checkbox" || type === "radio") {
@@ -27,11 +28,11 @@ const FormInput = ({
 			<FormField
 				label={label}
 				id={id}
-				className={
+				className={`${
 					type === "radio"
 						? styles.radioWrapper
 						: styles.checkboxWrapper
-				}
+				}${className ? ` ${className}` : ""}`}
 			>
 				<input
 					type={type}
@@ -39,7 +40,8 @@ const FormInput = ({
 					className={styles.input}
 					{...inputProps}
 				/>
-				<span
+				<label
+					htmlFor={id}
 					className={
 						type === "radio"
 							? styles.customRadio
@@ -51,7 +53,11 @@ const FormInput = ({
 	}
 
 	return (
-		<FormField label={label} id={id} className={styles.inputWrapper}>
+		<FormField
+			label={label}
+			id={id}
+			className={`${styles.inputWrapper}${className ? ` ${className}` : ""}`}
+		>
 			<input
 				type={type}
 				id={id}

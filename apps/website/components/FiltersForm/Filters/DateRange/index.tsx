@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
+import { FormField } from "@/components/form/FormField";
 
-import { FormInput } from "@/components/FormInput";
 import styles from "./DateRange.module.scss";
 
 export const DateRangeFilter = ({
 	dateRange,
 	setDateRange,
+	className,
 }: {
 	dateRange: {
 		start: string;
@@ -17,11 +18,12 @@ export const DateRangeFilter = ({
 			end: string;
 		}>
 	>;
+	className?: string;
 }) => {
 	const { start, end } = dateRange;
 
 	return (
-		<FormInput label={"Date Range"} htmlFor={"date-range"}>
+		<FormField label={"Date Range"} id={"date-range"} className={className}>
 			<div className={styles.dateRange}>
 				<input
 					type={"date"}
@@ -47,6 +49,6 @@ export const DateRangeFilter = ({
 					className={styles.dateInput}
 				/>
 			</div>
-		</FormInput>
+		</FormField>
 	);
 };

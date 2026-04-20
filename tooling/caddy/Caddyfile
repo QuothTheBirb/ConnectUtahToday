@@ -1,7 +1,12 @@
-{$DOMAIN} {
+{$DOMAIN_PRIMARY} {
 	reverse_proxy /* website:3000
 }
 
-www.{$DOMAIN} {
-	redir https://{$DOMAIN}{uri}
+{$DOMAIN_SECONDARY} {
+	redir {$DOMAIN_PRIMARY}{uri} permanent
+}
+
+www.{$DOMAIN_PRIMARY},
+www.{$DOMAIN_SECONDARY} {
+	redir https://{$DOMAIN_PRIMARY}{uri} permanent
 }

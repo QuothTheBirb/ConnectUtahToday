@@ -1,12 +1,13 @@
+import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
-
-import { getEventImage } from "@/lib/getEventImage";
 import { CalendarEvent } from "@connect-utah-today/api/types";
 import {
 	eventDateString,
 	eventTimeString,
 } from "@connect-utah-today/utils/eventDateString";
+import { EventInfo } from "@/components/Events/EventInfo";
 import { Popup } from "@/components/Popup";
+
 import styles from "./EventDetails.module.scss";
 
 export const EventDetailsPopover = ({
@@ -59,11 +60,12 @@ export const EventDetailsPopover = ({
 			{events.map((event, index) => {
 				const dateString = eventDateString(event.date, event.endDate);
 				const timeString = eventTimeString(event.date, event.endDate);
-				const shortDesc =
-					event.description && event.description.length > 300
-						? event.description.substring(0, 300) + "..."
-						: event.description;
-				const eventImage = getEventImage(event);
+				const description = event.description;
+				const image = event.image;
+
+				const organization = event.organization
+					? event.organization
+					: null;
 
 				return (
 					<div key={index}>
@@ -72,86 +74,41 @@ export const EventDetailsPopover = ({
 						)}
 						<div className={styles.eventCard}>
 							<div className={styles.eventImageContainer}>
-								<img
-									src={eventImage}
-									alt={event.title || "Event image"}
-									className={styles.eventImage}
-									onError={(event) =>
-										(event.currentTarget.src =
-											"/assets/placeholder.jpg")
-									}
-								/>
+								{image && (
+									<Image
+										src={image}
+										alt={event.title || "Event image"}
+										width={0}
+										height={0}
+										sizes="100vw"
+										className={styles.eventImage}
+										onError={(event) =>
+											(event.currentTarget.src =
+												"/assets/placeholder.jpg")
+										}
+									/>
+								)}
 							</div>
 							<div className={styles.eventDetails}>
-								{event.organization?.name && (
-									<div className={styles.eventOrg}>
-										{event.organization.name}
-									</div>
-								)}
-								<h4 className={styles.eventSummary}>
-									{event.title}
-								</h4>
-								<div className={styles.eventGrid}>
-									{event.date && (
-										<>
-											<span
-												className={
-													styles.eventGridLabel
-												}
-											>
-												📅 Date:
-											</span>
-											<span
-												className={
-													styles.eventGridValue
-												}
-											>
-												{dateString}
-											</span>
-											<span
-												className={
-													styles.eventGridLabel
-												}
-											>
-												🕐 Time:
-											</span>
-											<span
-												className={
-													styles.eventGridValue
-												}
-											>
-												{timeString}
-											</span>
-										</>
+								<hgroup>
+									{organization?.name && (
+										<p className={styles.eventOrg}>
+											{organization?.name}
+										</p>
 									)}
-									{/* Location is not currently returned from the API, to be implemented later. */}
-									{/*{event.location && (*/}
-									{/*  <>*/}
-									{/*    <span>📍 Location:</span>*/}
-									{/*    <span>{event.location}</span>*/}
-									{/*  </>*/}
-									{/*)}*/}
-									<span className={styles.eventGridLabel}>
-										{event.source === "google"
-											? "📅"
-											: event.source === "local"
-												? "🏠"
-												: "📢"}{" "}
-										Source:
-									</span>
-									<span className={styles.eventGridValue}>
-										{event.source === "google"
-											? "Google Calendar"
-											: event.source === "local"
-												? "Local"
-												: "Mobilize"}
-									</span>
-								</div>
-								{shortDesc && (
+									<h3 className={styles.eventTitle}>
+										{event.title}
+									</h3>
+								</hgroup>
+								<EventInfo
+									event={event}
+									className={styles.eventInfo}
+								/>
+								{description && (
 									<div
 										className={styles.eventDescription}
 										dangerouslySetInnerHTML={{
-											__html: shortDesc,
+											__html: description,
 										}}
 									></div>
 								)}

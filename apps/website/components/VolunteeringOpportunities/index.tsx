@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-
-import { FiltersForm } from "@/components/FilterForm";
-import ActivitiesSelect from "@/components/FilterForm/Filters/ActivitiesSelect";
-import { OrganizationFilter } from "@/components/FilterForm/Filters/OrgSelect";
-import OpportunityList from "@/components/VolunteeringOpportunities/OpportunityList";
 import type { Organization } from "@/payload-types";
+
+import { useCallback, useMemo, useState } from "react";
+import { FiltersForm } from "@/components/FiltersForm";
+import ActivitiesSelect from "@/components/FiltersForm/Filters/ActivitiesSelect";
+import { OrganizationFilter } from "@/components/FiltersForm/Filters/OrgSelect";
+import OpportunityList from "@/components/VolunteeringOpportunities/OpportunityList";
+
 import styles from "./VolunteeringOpportunities.module.scss";
 
 export const VolunteeringOpportunities = ({
@@ -16,9 +17,12 @@ export const VolunteeringOpportunities = ({
 }) => {
 	const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
 	const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
-	const [appliedFilters, setAppliedFilters] = useState({
-		orgs: [] as string[],
-		activities: [] as string[],
+	const [appliedFilters, setAppliedFilters] = useState<{
+		orgs: string[];
+		activities: string[];
+	}>({
+		orgs: [],
+		activities: [],
 	});
 
 	const filteredOrganizations = useMemo(() => {

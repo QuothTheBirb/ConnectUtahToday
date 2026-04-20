@@ -1,0 +1,53 @@
+@use "@/styles/colors" as *;
+@use "@/styles/variables" as *;
+
+.eventsView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	position: relative;
+	background: $color-slate-200;
+	padding: 0.75rem;
+	border-radius: $border-radius;
+
+	@media (min-width: $breakpoint-sm) {
+		padding: 1rem 1rem;
+	}
+
+	.viewTabs {
+		display: flex;
+		width: 100%;
+		max-width: 24rem;
+		position: relative;
+		overflow: hidden;
+		background: $color-slate-50;
+		border: 1px solid $color-slate-300;
+		border-radius: $border-radius;
+		margin-bottom: 1rem;
+
+		.viewTab {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			width: 100%;
+			padding: 1em 1.5em;
+			gap: 0.5em;
+			font-size: $font-size-sm;
+			cursor: pointer;
+			text-decoration: none;
+			border-radius: $border-radius;
+			color: $color-slate-700;
+
+			.viewTabText {
+				font-weight: 600;
+			}
+
+			&.active {
+				background: $color-primary-700;
+				color: $color-slate-50;
+				border: 1px solid $color-primary-700;
+			}
+		}
+	}
+}

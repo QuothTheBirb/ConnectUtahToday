@@ -1,9 +1,5 @@
 import { calendar_v3 } from "googleapis"; // Mobilize API Event Types
 
-
-
-
-
 // Mobilize API Event Types
 // Reference: https://github.com/mobilizeamerica/api?tab=readme-ov-file#events
 export type MobilizeEventType =
@@ -94,7 +90,7 @@ export type LocalCalendarEvent = BaseCalendarEvent & {
 	organization: {
 		id: string;
 		name: string;
-		url: string;
+		url?: string; // TODO: Unsure on this one, is it url for the site or for the contact page (as currently implemented)?
 		slug: string;
 	};
 	eventType?: never;
@@ -120,7 +116,7 @@ export type GoogleCalendarEvent = BaseCalendarEvent & {
 	organization?: {
 		id: string;
 		name: string;
-		url: string;
+		url?: string;
 		slug: string;
 	};
 	mobilizeId?: never;

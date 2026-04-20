@@ -1,6 +1,6 @@
-import Select from "react-select";
+import { MultiValue, SingleValue } from "react-select";
 
-import { FormInput } from "@/components/FormInput";
+import { FormSelect, SelectOption } from "@/components/form/inputs/FormSelect";
 import styles from "./ActivitiesSelect.module.scss";
 
 type ActivitiesSelectProps = {
@@ -27,26 +27,25 @@ export const ActivitiesSelect = ({
 		label: activity,
 	}));
 
-	const handleChange = (
-		selected: readonly { value: string; label: string }[],
+	const onChange = (
+		newValue: SingleValue<SelectOption> | MultiValue<SelectOption>,
 	) => {
 		setSelectedActivities(
-			selected ? selected.map((option) => option.value) : [],
+			Array.isArray(newValue)
+				? newValue?.map((option) => option.value)
+				: [newValue],
 		);
 	};
 
 	return (
-		<FormInput label={"Activities"} htmlFor={"activities"}>
-			<Select
-				inputId={"activities"}
-				isMulti={true}
-				options={options}
-				value={selectedOptions}
-				onChange={handleChange}
-				placeholder={"Any"}
-				isClearable={true}
-			/>
-		</FormInput>
+		<FormSelect
+			label={"Activities"}
+			id={"activities"}
+			isMulti={true}
+			options={options}
+			value={selectedOptions}
+			onChange={onChange}
+		/>
 	);
 };
 

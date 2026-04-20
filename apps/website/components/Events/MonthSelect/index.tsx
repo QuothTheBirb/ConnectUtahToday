@@ -1,9 +1,10 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FocusEvent, useCallback, useEffect, useRef, useState } from "react";
-
 import { parseMonthYear } from "@connect-utah-today/utils/parseMonthYear";
+
 import styles from "./MonthSelect.module.scss";
 
 export const EventsMonthSelect = ({
@@ -111,7 +112,7 @@ export const EventsMonthSelect = ({
 						type={"button"}
 						onClick={() => handleCycleMonth(-1)}
 					>
-						&#8592;
+						<ChevronLeft size={16} />
 					</button>
 					<input
 						ref={inputRef}
@@ -128,7 +129,7 @@ export const EventsMonthSelect = ({
 						type={"button"}
 						onClick={() => handleCycleMonth(1)}
 					>
-						&#8594;
+						<ChevronRight size={16} />
 					</button>
 				</div>
 				<div className={styles.controlsInfo}>

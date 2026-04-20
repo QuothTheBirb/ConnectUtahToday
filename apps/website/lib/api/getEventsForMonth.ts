@@ -4,7 +4,7 @@ import {
 	GoogleCalendarEvent,
 	LocalCalendarEvent,
 	MobilizeCalendarEvent,
-	MobilizeEventType
+	MobilizeEventType,
 } from "@connect-utah-today/api/types";
 import config from "@/payload.config";
 
@@ -111,7 +111,9 @@ export const getEventsForMonth = async ({
 						id: organization.id,
 						name: organization.name,
 						slug: organization.slug,
-						url: organization.url,
+						url:
+							organization.publicContactMethods?.contactWebsite ||
+							undefined,
 					},
 				};
 			},
@@ -253,7 +255,9 @@ export const getEventsForMonth = async ({
 								id: organization.id,
 								name: organization.name,
 								slug: organization.slug,
-								url: organization.url,
+								url:
+									organization.publicContactMethods
+										?.contactWebsite || undefined,
 							}
 						: undefined,
 					googleCalendarId: event.googleCalendar.eventId,
