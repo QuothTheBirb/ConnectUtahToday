@@ -151,7 +151,7 @@ jobs:
                     WEBSITE_IMAGE="$WEBSITE_IMAGE" \
                     CADDY_IMAGE="$CADDY_IMAGE" \
                     DOTENV_PRIVATE_KEY_PRODUCTION="$DOTENV_PRIVATE_KEY_PRODUCTION" \
-                    << 'EOF'
+                    "bash -s" << 'EOF'
                         set -e
                     
                         cd ${{ secrets.WORK_DIR }}
