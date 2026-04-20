@@ -6,7 +6,7 @@
 	"scripts": {
 		"dotenvx": "dotenvx",
 		"dev": "dotenvx run --convention=nextjs -- next dev",
-		"build": "SKIP_YARN_COREPACK_CHECK=0 dotenvx run -f .env.production -- next build",
+		"build": "SKIP_YARN_COREPACK_CHECK=0 dotenvx run -f .env.production -- next build --experimental-build-mode compile",
 		"start": "dotenvx run --convention=nextjs -- next start",
 		"check-types": "tsc --noEmit",
 		"generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",

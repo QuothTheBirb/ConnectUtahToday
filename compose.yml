@@ -22,7 +22,7 @@ services:
             - POSTGRES_PASSWORD=postgres # Default password
             - POSTGRES_DB=postgres
         volumes:
-            - data:/var/lib/postgresql/data
+            - data:/data/db
 
     caddy:
         restart: unless-stopped
