@@ -16,6 +16,17 @@
 	  export const ComponentName = () => {}
 	  ```
 
+## Deployment Instructions
+
+### Server Setup
+
+(This is a work in progress.)
+
+1. Create server, in this example a droplet on digital ocean
+2. SSH access
+3. Install
+   docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04#step-1-installing-docker
+
 ## Credits
 
 - [sayhiben/theblop](https://github.com/sayhiben/theblop): For reference on the AI service implementation, and for

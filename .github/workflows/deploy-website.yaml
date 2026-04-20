@@ -146,6 +146,12 @@ jobs:
                     
                     # Connect to the server to create website directory, move the compose.yml file there, and start the containers
                     ssh root@${{ secrets.SSH_HOST }} << 'EOF'
+                        # Check if docker is installed
+                        if ! command -v docker >/dev/null 2>&1; then
+                            echo "Docker is not installed on the server, but is required for deployment. Please install Docker and try again."
+                            exit 1
+                        fi
+
                         # Exit immediately if a command exits with a non-zero status.
                         set -e
                     
