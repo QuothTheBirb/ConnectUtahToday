@@ -7,7 +7,7 @@
 		"dotenvx": "dotenvx",
 		"dev": "dotenvx run --convention=nextjs -- next dev",
 		"build": "SKIP_YARN_COREPACK_CHECK=0 dotenvx run -f .env.production -- next build --experimental-build-mode compile",
-		"start": "dotenvx run --convention=nextjs -- next start",
+		"start": "next start",
 		"check-types": "tsc --noEmit",
 		"generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
 		"generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
@@ -16,7 +16,6 @@
 	"dependencies": {
 		"@connect-utah-today/api": "*",
 		"@connect-utah-today/utils": "*",
-		"@dotenvx/dotenvx": "^1.61.0",
 		"@payloadcms/db-postgres": "^3.76.1",
 		"@payloadcms/next": "^3.76.1",
 		"@payloadcms/richtext-lexical": "^3.76.1",
@@ -34,6 +33,7 @@
 	},
 	"devDependencies": {
 		"@connect-utah-today/tsconfig": "*",
+		"@dotenvx/dotenvx": "^1.61.0",
 		"@types/node": "25.2.3",
 		"@types/react": "^19.2.14",
 		"postcss": "^8.5.6",

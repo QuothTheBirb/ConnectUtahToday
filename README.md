@@ -26,6 +26,7 @@
 2. SSH access
 3. Install
    docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04#step-1-installing-docker
+4. Install dotenvx: https://dotenvx.com/docs/install#curl
 
 ## Credits
 

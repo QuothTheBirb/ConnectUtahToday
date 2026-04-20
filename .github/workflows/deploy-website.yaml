@@ -139,43 +139,28 @@ jobs:
                     ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
             -   name: Deploy to server
+                env:
+                    WEBSITE_IMAGE: ${{ env.IMAGE_NAME_WEBSITE }}:${{ env.IMAGE_TAG }}
+                    CADDY_IMAGE: ${{ env.IMAGE_NAME_CADDY }}:${{ env.IMAGE_TAG }}
+                    DOTENV_PRIVATE_KEY_PRODUCTION: ${{ secrets.DOTENV_PRIVATE_KEY_WEBSITE_PRODUCTION }}
                 run: |
-                    # Copy the necessary files to the server
-                    scp compose.yml root@${{ secrets.SSH_HOST }}:/tmp/compose.yml
-                    scp apps/website/.env.production root@${{ secrets.SSH_HOST }}:/tmp/.env.production
+                    ssh root@${{ secrets.SSH_HOST }} "mkdir -p ${{ secrets.WORK_DIR }}"
+                    scp compose.yml apps/website/.env.production root@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
                     
-                    # Connect to the server to create website directory, move the compose.yml file there, and start the containers
-                    ssh root@${{ secrets.SSH_HOST }} << 'EOF'
-                        # Check if docker is installed
-                        if ! command -v docker >/dev/null 2>&1; then
-                            echo "Docker is not installed on the server, but is required for deployment. Please install Docker and try again."
-                            exit 1
-                        fi
-
-                        # Exit immediately if a command exits with a non-zero status.
+                    ssh root@${{ secrets.SSH_HOST }} \
+                    WEBSITE_IMAGE="$WEBSITE_IMAGE" \
+                    CADDY_IMAGE="$CADDY_IMAGE" \
+                    DOTENV_PRIVATE_KEY_PRODUCTION="$DOTENV_PRIVATE_KEY_PRODUCTION" \
+                    << 'EOF'
                         set -e
                     
-                        # Ensure the website directory exists
-                        mkdir -p ${{ secrets.WORK_DIR }}
-                    
-                        # Create external volumes if they don't exist
-                        docker volume create data || true
-                        docker volume create payload-data || true
-                        docker volume create llm_model_storage || true
-                    
-                        # Create the .env.local file from the github secret
-                        echo "DOTENV_PRIVATE_KEY_PRODUCTION=${{ secrets.DOTENV_PRIVATE_KEY_WEBSITE_PRODUCTION }}" > ${{ secrets.WORK_DIR }}/.env.local
-                    
-                        # Move the new compose file from /tmp to the website directory
-                        mv /tmp/compose.yml ${{ secrets.WORK_DIR }}/compose.yml
-                        mv /tmp/.env.production ${{ secrets.WORK_DIR }}/.env.production
                         cd ${{ secrets.WORK_DIR }}
                     
-                        WEBSITE_IMAGE=${{ env.IMAGE_NAME_WEBSITE }}:${{ env.IMAGE_TAG }} \
-                        CADDY_IMAGE=${{ env.IMAGE_NAME_CADDY }}:${{ env.IMAGE_TAG }} \
-                        docker compose pull
+                        docker volume create data || true
+                        docker volume create payload-data || true
                     
-                        WEBSITE_IMAGE=${{ env.IMAGE_NAME_WEBSITE }}:${{ env.IMAGE_TAG }} \
-                        CADDY_IMAGE=${{ env.IMAGE_NAME_CADDY }}:${{ env.IMAGE_TAG }} \
-                        docker compose up -d
+                        docker compose pull
+                        dotenvx run -f .env.production -- docker compose up -d --remove-orphans
+                    
+                        rm .env.production
                     EOF
