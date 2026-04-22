@@ -75,17 +75,6 @@ export const Nav = ({
 						Latest Updates
 					</Link>
 				</div>
-				<div className={styles.linkWrapper}>
-					<Link
-						href={"/local-issues"}
-						className={styles.siteNavLink}
-						aria-current={
-							pathname === "/local-issues" ? "page" : undefined
-						}
-					>
-						Local Issues
-					</Link>
-				</div>
 				{user &&
 					(user.roles?.includes("admin") ||
 						user.roles?.includes("organizer")) && (

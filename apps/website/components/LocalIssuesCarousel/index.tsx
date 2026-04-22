@@ -1,3 +1,5 @@
+// TODO: Rework into generic carousel component for future components
+
 "use client";
 
 import { useState } from "react";
