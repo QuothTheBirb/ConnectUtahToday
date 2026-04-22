@@ -45,7 +45,6 @@ def initialize_model():
 		init_vision=True,
 		init_audio=False,
 		init_tts=False,
-		load_in_4bit=True,
 		device_map="cuda",
 		local_files_only=True,
 	)
