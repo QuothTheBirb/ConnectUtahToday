@@ -12,3 +12,5 @@ librosa==0.9.0
 bitsandbytes==0.43.3
 fastapi
 uvicorn
+vector-quantize-pytorch==1.18.5
+vocos==0.1.0
