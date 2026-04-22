@@ -47,6 +47,7 @@ def initialize_model():
 		init_tts=False,
 		load_in_4bit=True,
 		device_map="cuda",
+		local_files_only=True,
 	)
 
 	model = model.eval()
@@ -58,7 +59,7 @@ def initialize_tokenizer():
 	"""
 	Initialize and return the processor for the model.
 	"""
-	return AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+	return AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True, local_files_only=True)
 
 
 # Global instances

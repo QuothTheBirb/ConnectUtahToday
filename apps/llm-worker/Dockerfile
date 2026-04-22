@@ -1,12 +1,12 @@
 FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
 
-# Override the default huggingface cache directory.
-ENV HF_HOME="/runpod-volume/.cache/huggingface/"
-ENV HF_DATASETS_CACHE="/runpod-volume/.cache/huggingface/datasets/"
-ENV DEFAULT_HF_METRICS_CACHE="/runpod-volume/.cache/huggingface/metrics/"
-ENV DEFAULT_HF_MODULES_CACHE="/runpod-volume/.cache/huggingface/modules/"
-ENV HUGGINGFACE_HUB_CACHE="/runpod-volume/.cache/huggingface/hub/"
-ENV HUGGINGFACE_ASSETS_CACHE="/runpod-volume/.cache/huggingface/assets/"
+# Set the Hugging Face cache directory to a local path within the image.
+ENV HF_HOME="/app/.cache/huggingface/"
+ENV HF_DATASETS_CACHE="/app/.cache/huggingface/datasets/"
+ENV DEFAULT_HF_METRICS_CACHE="/app/.cache/huggingface/metrics/"
+ENV DEFAULT_HF_MODULES_CACHE="/app/.cache/huggingface/modules/"
+ENV HUGGINGFACE_HUB_CACHE="/app/.cache/huggingface/hub/"
+ENV HUGGINGFACE_ASSETS_CACHE="/app/.cache/huggingface/assets/"
 
 # Faster transfer of models from the hub to the container
 ENV HF_HUB_ENABLE_HF_TRANSFER="1"
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN ldconfig /usr/local/cuda-12.1.1/compat/
 
-WORKDIR /
+WORKDIR /app
 
 # Copy and install Python dependencies
 COPY requirements.txt .
@@ -40,6 +40,12 @@ RUN pip install --upgrade -r requirements.txt --no-cache-dir
 # Apparently, this thing does in fact thinks it's special and needs to be here.
 # If this breaks in the future? No, we shant humor such a grim possibility.
 RUN FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn==2.7.3 --no-cache-dir --no-build-isolation
+
+# Pre-download the model and tokenizer into the image layers.
+# This makes the image large but ensures fast startup in serverless pods.
+RUN python3 -c "from transformers import AutoModel, AutoTokenizer; \
+    AutoModel.from_pretrained('openbmb/MiniCPM-o-2_6', trust_remote_code=True); \
+    AutoTokenizer.from_pretrained('openbmb/MiniCPM-o-2_6', trust_remote_code=True)"
 
 # Copy the application code and assets
 COPY handler.py .
