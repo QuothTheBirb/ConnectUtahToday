@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Logo } from "@/components/SiteHeader/Logo";
 import { MenuButton } from "@/components/SiteHeader/MenuButton";
 import { Nav } from "@/components/SiteHeader/Nav";
 import { User } from "@/payload-types";
@@ -37,6 +38,7 @@ export const SiteHeader = ({ user }: { user: User | null }) => {
 
 	return (
 		<header className={styles.siteHeader}>
+			<Logo />
 			<Nav
 				navOpen={navOpen}
 				smoothTransition={navSmoothTransition}
