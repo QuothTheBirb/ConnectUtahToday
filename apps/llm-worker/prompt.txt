@@ -17,7 +17,7 @@ Output must strictly conform to the following JSON structure with exactly these 
     "state": "",
     "city": "",
     "postalCode": "",
-    "address": "",
+    "street": "",
     "venue": ""
   },
   "time": {
@@ -38,8 +38,8 @@ Output must strictly conform to the following JSON structure with exactly these 
   - state: 2-letter state code (e.g. `"WA"`).
   - city: Name of the city.
   - postalCode: Postal code of the city.
-  - address: Street address / street line (e.g., `"120 E Main St", "774 E 2100 S", "1406 S W Temple St"`).
-    - Output only the street line of the address. Do not include the city, state, ZIP code, country, and any other location details.
+  - street: Street address / street line (e.g., `"120 E Main St", "774 E 2100 S", "1406 S W Temple St"`).
+    - Include only the street line of the address.
     - When addresses end in abbreviated suffixes such as "St.", "Ave.", "Blvf.", "Dr.", or "Ln.", drop the period to keep them consistent with each other (e.g. "St", "Ave", "Blvf", "Dr", "Ln").
   - venue: Name of the meeting location (e.g. `"County Building"`, `"Waterfront Park"` or `"The Coffee Shop"`).
     - Leave the venue field empty if it's the same as the address.
@@ -96,7 +96,7 @@ If, after analyzing all provided text and images, there is no clear indication o
     "state": "WA",
     "city": "Seattle",
     "postalCode": "98101",
-    "address": "720 Olive St",
+    "street": "720 Olive St",
     "venue": "Meet at the corner of 8th and Olive"
   },
   "date": {
@@ -127,7 +127,7 @@ If, after analyzing all provided text and images, there is no clear indication o
     "state": "",
     "city": "",
     "postalCode": "",
-    "address": "",
+    "street": "",
     "venue": ""
   },
   "date": {
