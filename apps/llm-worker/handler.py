@@ -137,32 +137,10 @@ def handle_inference(event):
 		logger.error(f"Error decoding images: {e}")
 		return {"error": f"Error decoding images: {e}"}
 
-	# Prepare the chat messages with few-shot examples and current prompt.
-	# For MiniCPM-V models, images are usually passed in the content list
-	msgs = []
-
-	# Add system prompt and first user message
-	# We'll put the instructions in the first user message for better attention
-	is_first = True
-
-	# Add few-shot examples
-	for ex in EXAMPLES:
-		content = []
-		if is_first:
-			content.append(SYSTEM_PROMPT)
-			is_first = False
-		content.extend(ex["images"])
-		content.append("Extract the event details from the poster above strictly following the provided schema.")
-		msgs.append({"role": "user", "content": content})
-		msgs.append({"role": "assistant", "content": [ex["answer"]]})
-
-	# Add current request
-	current_content = []
-	if is_first:
-		current_content.append(SYSTEM_PROMPT)
-	current_content.extend(images)
-	current_content.append("Extract the event details from the poster above strictly following the provided schema.")
-	msgs.append({"role": "user", "content": current_content})
+	msgs = [
+		*EXAMPLES,
+		{"role": "user", "content": [*images, SYSTEM_PROMPT]},
+	]
 
 	# Execute the chat and return the answer.
 	logger.info("Running model...")
