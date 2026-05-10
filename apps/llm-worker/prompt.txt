@@ -87,7 +87,6 @@ If, after analyzing all provided text and images, there is no clear indication o
 ### Example Outputs
 
 #### Successful Event Extraction
-```json
 {
   "title": "Protest for Equality",
   "description": "Show up to protest for solidarity and equality!",
@@ -113,12 +112,10 @@ If, after analyzing all provided text and images, there is no clear indication o
   ],
   "sponsors": ["ACLU", "Seattle City Council"],
   "status": "success",
-  "admin_notes": ""
+  "adminNotes": ""
 }
-```
 
 #### No Event Found
-```json
 {
   "title": "",
   "description": "",
@@ -141,7 +138,7 @@ If, after analyzing all provided text and images, there is no clear indication o
   "links": [],
   "sponsors": [],
   "status": "no_event_found",
-  "admin_notes": "No event-related data detected"
+  "adminNotes": "No event-related data detected"
 }
 
 ### Final Instruction

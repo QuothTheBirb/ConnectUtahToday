@@ -1,5 +1,6 @@
 import base64
 import io
+import json
 import os
 
 import runpod
@@ -29,6 +30,29 @@ def load_system_prompt():
 		return "You are a helpful assistant that extracts event details from posters."
 	with open(SYSTEM_PROMPT_PATH, "r") as f:
 		return f.read().strip()
+
+
+def load_few_shot_examples(system_prompt):
+	"""
+	Load few-shot examples from a JSON file. Each example includes images
+	and an answer. The examples are formatted into a conversation structure.
+	"""
+	with open(f"{EXAMPLES_PATH}/examples.json", "r") as f:
+		answers = json.load(f)
+
+	examples = []
+	for answer in answers:
+		# Load and convert images to RGB.
+		images = []
+		for image in answer["images"]:
+			image = Image.open(f"{EXAMPLES_PATH}/{image}").convert("RGB")
+			image.thumbnail((MAX_DIM, MAX_DIM))
+			images.append(image)
+		# User example with images and system prompt.
+		examples.append({"role": "user", "content": [*images, system_prompt]})
+		# Assistant's answer.
+		examples.append({"role": "assistant", "content": [answer["answer"]]})
+	return examples
 
 
 def initialize_model():
@@ -66,11 +90,13 @@ try:
 	MODEL = initialize_model()
 	TOKENIZER = initialize_tokenizer()
 	SYSTEM_PROMPT = load_system_prompt()
+	EXAMPLES = load_few_shot_examples(SYSTEM_PROMPT)
 except Exception as e:
 	logger.error(f"Failed to initialize model/tokenizer: {e}")
 	MODEL = None
 	TOKENIZER = None
 	SYSTEM_PROMPT = ""
+	EXAMPLES = []
 
 
 def handle_inference(event):
@@ -113,9 +139,30 @@ def handle_inference(event):
 
 	# Prepare the chat messages with few-shot examples and current prompt.
 	# For MiniCPM-V models, images are usually passed in the content list
-	msgs = [
-		{"role": "user", "content": [*images, SYSTEM_PROMPT]},
-	]
+	msgs = []
+
+	# Add system prompt and first user message
+	# We'll put the instructions in the first user message for better attention
+	is_first = True
+
+	# Add few-shot examples
+	for ex in EXAMPLES:
+		content = []
+		if is_first:
+			content.append(SYSTEM_PROMPT)
+			is_first = False
+		content.extend(ex["images"])
+		content.append("Extract the event details from the poster above strictly following the provided schema.")
+		msgs.append({"role": "user", "content": content})
+		msgs.append({"role": "assistant", "content": [ex["answer"]]})
+
+	# Add current request
+	current_content = []
+	if is_first:
+		current_content.append(SYSTEM_PROMPT)
+	current_content.extend(images)
+	current_content.append("Extract the event details from the poster above strictly following the provided schema.")
+	msgs.append({"role": "user", "content": current_content})
 
 	# Execute the chat and return the answer.
 	logger.info("Running model...")
