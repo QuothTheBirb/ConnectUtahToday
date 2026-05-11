@@ -4,7 +4,6 @@ You are an AI assistant trained to parse public event details (e.g., protests, r
 
 Output must strictly conform to the following JSON structure with exactly these keys:
 
-```json
 {
   "title": "",
   "description": "",
@@ -29,7 +28,6 @@ Output must strictly conform to the following JSON structure with exactly these 
   "status": "",
   "adminNotes": ""
 }
-```
 
 - title: Name or headline of the event.
 - description: Brief overview or purpose of the event.
