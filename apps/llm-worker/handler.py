@@ -65,7 +65,7 @@ def initialize_model():
 		MODEL_NAME,
 		trust_remote_code=True,
 		attn_implementation="sdpa",
-		torch_dtype=torch.float16,
+		torch_dtype=torch.bfloat16,
 		init_vision=True,
 		init_audio=False,
 		init_tts=False,
@@ -73,7 +73,7 @@ def initialize_model():
 		local_files_only=True,
 	)
 
-	model = model.eval().cuda()
+	model = model.eval()
 
 	return model
 
@@ -90,13 +90,15 @@ try:
 	MODEL = initialize_model()
 	TOKENIZER = initialize_tokenizer()
 	SYSTEM_PROMPT = load_system_prompt()
-	EXAMPLES = load_few_shot_examples(SYSTEM_PROMPT)
+# EXAMPLES = load_few_shot_examples(SYSTEM_PROMPT)
 except Exception as e:
 	logger.error(f"Failed to initialize model/tokenizer: {e}")
 	MODEL = None
 	TOKENIZER = None
 	SYSTEM_PROMPT = ""
-	EXAMPLES = []
+
+
+# EXAMPLES = []
 
 
 def handle_inference(event):
@@ -138,7 +140,7 @@ def handle_inference(event):
 		return {"error": f"Error decoding images: {e}"}
 
 	msgs = [
-		*EXAMPLES,
+		# *EXAMPLES,
 		{"role": "user", "content": [*images, SYSTEM_PROMPT]},
 	]
 
