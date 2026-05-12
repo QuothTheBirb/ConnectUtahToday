@@ -79,8 +79,7 @@ If, after analyzing all provided text and images, there is no clear indication o
 #### Strict Formatting Requirements
 
 - Return exactly one JSON object with the keys shown, no additional commentary or fields.
-- Do not include any extra text outside the JSON object (such as explanations or apologies).
-- Do not wrap the json code in JSON markers.
+- Do not include any extra text outside the JSON object (such as explanations or apologies). Do not wrap the json code in JSON markers.
 - If a field’s value is unknown or not applicable, use an empty string (`""`) for text fields or an empty array (`[]`) for list fields.
 
 ### Example Outputs

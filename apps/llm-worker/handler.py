@@ -2,6 +2,7 @@ import base64
 import io
 import json
 import os
+import re
 
 import runpod
 import torch
@@ -96,7 +97,14 @@ except Exception as e:
 	MODEL = None
 	TOKENIZER = None
 	SYSTEM_PROMPT = ""
+
+
 # EXAMPLES = []
+
+def clean_json_string(json_string):
+	pattern = r'^```json\s*(.*?)\s*```$'
+	cleaned_string = re.sub(pattern, r'\1', json_string, flags=re.DOTALL)
+	return cleaned_string.strip()
 
 
 def handle_inference(event):
@@ -148,7 +156,11 @@ def handle_inference(event):
 	try:
 		answer = MODEL.chat(msgs=msgs, tokenizer=TOKENIZER)
 		logger.info(f"Model response: {answer}")
-		return answer
+
+		parsed_answer = json.loads(clean_json_string(answer))
+		logger.info(f"Parsed model response: {parsed_answer}")
+
+		return parsed_answer
 	except Exception as e:
 		logger.error(f"Error running model: {e}")
 		return {"error": f"Error running model: {e}"}
