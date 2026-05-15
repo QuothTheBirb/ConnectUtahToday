@@ -35,8 +35,8 @@ Return exactly this JSON object with these keys in this order:
 
 ### Field Definitions
 
-- **title** (string): The event's headline or name as written. Keep it under ~80 characters. Do not invent a title if none is shown — leave empty.
-- **description** (string): A 1–2 sentence summary of the event's purpose, paraphrased from the flyer. Maximum 280 characters. Do not copy entire flyer text verbatim. Do not include date/time/location here (those have their own fields).
+- **title** (string): The event's headline or name. Keep it under ~80 characters.
+- **description** (string): A 1–2 sentence summary of the event's purpose, paraphrased from the flyer. Maximum 280 characters.
 - **location**:
   - **country**: 2-letter ISO code. Currently only `"US"` is supported. If the event is outside the US or country cannot be determined, leave empty.
   - **state**: 2-letter US state code (e.g., `"WA"`, `"UT"`, `"NY"`). Use `"DC"` for Washington, D.C. Leave empty if not explicitly determinable.
