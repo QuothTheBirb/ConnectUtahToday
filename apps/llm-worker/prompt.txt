@@ -47,8 +47,8 @@ Output must strictly conform to the following JSON structure with exactly these 
   - end: The event end date, if specified, in `YYYY-MM-DD` format (e.g., `"2026-02-25"`).
     - Current year is 2026. If the poster specifies an end date, but doesn't specify a year, assume 2026.
 - time: Object containing the following keys:
-  - start: The event start time in a local format (e.g., `"3:00pm"`).
-  - end: The event end time, if it exists, in a local format (e.g., `"5:00pm"`).
+  - start: The event start time in a local format (e.g., `"3:00 pm"`).
+  - end: The event end time, if it exists, in a local format (e.g., `"5:00 pm"`).
 - links: An array of any relevant URLs.
 - sponsors: An array of sponsor or hosting organization names.
 - status: Must be one of:
@@ -101,8 +101,8 @@ If, after analyzing all provided text and images, there is no clear indication o
     "end": ""
   },
   "time": {
-    "start": "3:00pm",
-    "end": "5:00pm"
+    "start": "3:00 pm",
+    "end": "5:00 pm"
   },
   "links": [
     "https://example.com/some/protest/url.html",
