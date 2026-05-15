@@ -25,7 +25,7 @@ Output must strictly conform to the following JSON structure with exactly these 
   },
   "links": [],
   "sponsors": [],
-  "imageClean": true | false,
+  "imageClean": false,
   "status": "",
   "adminNotes": ""
 }
@@ -50,7 +50,11 @@ Output must strictly conform to the following JSON structure with exactly these 
   - end: The event end time, if it exists, in a local format (e.g., `"5:00 PM"`).
 - links: An array of any relevant URLs.
 - sponsors: An array of sponsor or hosting organization names.
-- imageClean: Boolean indicating whether the image is fit to be set as the event image. Return true if the image "clean" to set as the event image (e.g., an event poster fit to print), and return false if the image would make for a low-quality event image (e.g., screenshots, low-quality, photo taken of a physical poster).
+- imageClean: Boolean. Set to `true` if the image is a high-quality digital original or a high-fidelity scan suitable for public display. Set to `false` if it is an "in-the-wild" capture or contains digital artifacts. Specific criteria for `false`:
+  - Physical Environment: The image shows a physical poster on a wall, a lawn sign, or has a visible background (e.g., fingers holding a flyer, street background).
+  - Screenshots: The image is a mobile/desktop screenshot (contains status bars, notch, app UI, or social media frames).
+  - Low Fidelity: The image is blurry, pixelated, or taken at an angle (keystone distortion) that makes it look like a photo rather than a source file.
+  - Distortions: Contains visible moiré patterns (rainbow lines) from taking a photo of a computer/TV screen.
 - status: Must be one of:
   - `"success"` if valid event data is identified.
   - `"no_event_found"` if the entire submission does not appear to describe a public event.
@@ -81,6 +85,7 @@ If, after analyzing all provided text and images, there is no clear indication o
 - Return exactly one JSON object with the keys shown, no additional commentary or fields.
 - Do not include any extra text outside the JSON object (such as explanations or apologies). Do not wrap the json code in JSON markers.
 - If a field’s value is unknown or not applicable, use an empty string (`""`) for text fields or an empty array (`[]`) for list fields.
+- Boolean fields must be true or false, not "yes"/"no".
 
 ### Example Outputs
 
