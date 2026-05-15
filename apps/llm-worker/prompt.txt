@@ -25,6 +25,7 @@ Output must strictly conform to the following JSON structure with exactly these 
   },
   "links": [],
   "sponsors": [],
+  "imageClean": true | false,
   "status": "",
   "adminNotes": ""
 }
@@ -49,6 +50,7 @@ Output must strictly conform to the following JSON structure with exactly these 
   - end: The event end time, if it exists, in a local format (e.g., `"5:00 PM"`).
 - links: An array of any relevant URLs.
 - sponsors: An array of sponsor or hosting organization names.
+- imageClean: Boolean indicating whether the image is fit to be set as the event image. Return true if the image "clean" to set as the event image (e.g., an event poster fit to print), and return false if the image would make for a low-quality event image (e.g., screenshots, low-quality, photo taken of a physical poster).
 - status: Must be one of:
   - `"success"` if valid event data is identified.
   - `"no_event_found"` if the entire submission does not appear to describe a public event.
@@ -107,6 +109,7 @@ If, after analyzing all provided text and images, there is no clear indication o
     "https://example2.com/"
   ],
   "sponsors": ["ACLU", "Seattle City Council"],
+  "imageClean": true,
   "status": "success",
   "adminNotes": ""
 }
@@ -133,6 +136,7 @@ If, after analyzing all provided text and images, there is no clear indication o
   },
   "links": [],
   "sponsors": [],
+  "imageClean": false,
   "status": "no_event_found",
   "adminNotes": "No event-related data detected"
 }
