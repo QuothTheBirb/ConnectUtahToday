@@ -73,7 +73,6 @@ type BaseCalendarEvent = {
 	description?: string;
 	date: string;
 	endDate?: string;
-	url: string;
 	location?: {
 		country?: string;
 		state?: string;
@@ -87,6 +86,7 @@ type BaseCalendarEvent = {
 export type LocalCalendarEvent = BaseCalendarEvent & {
 	source: "local";
 	image?: string; // Unsure on this type
+	url?: string;
 	organization: {
 		id: string;
 		name: string;
@@ -100,6 +100,7 @@ export type LocalCalendarEvent = BaseCalendarEvent & {
 export type MobilizeCalendarEvent = BaseCalendarEvent & {
 	source: "mobilize";
 	image?: string;
+	url: string;
 	organization: {
 		id: number;
 		name: string;
@@ -113,6 +114,7 @@ export type MobilizeCalendarEvent = BaseCalendarEvent & {
 export type GoogleCalendarEvent = BaseCalendarEvent & {
 	source: "googleCalendar";
 	image?: string;
+	url: string;
 	organization?: {
 		id: string;
 		name: string;

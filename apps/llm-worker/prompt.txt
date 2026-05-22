@@ -28,7 +28,6 @@ Return exactly this JSON object with these keys in this order:
   "time": { "start": "", "end": "" },
   "links": [],
   "sponsors": [],
-  "imageClean": true,
   "status": "",
   "adminNotes": ""
 }
@@ -64,20 +63,6 @@ Return exactly this JSON object with these keys in this order:
   - Do NOT include bare social handles (e.g., `@aclu_wa`) unless they appear as full URLs.
   - Do NOT include email addresses.
 - **sponsors** (array of strings): Names of hosting/organizing/sponsoring organizations as they appear (e.g., `"ACLU"`, `"Seattle DSA"`). Include both hosts and sponsors. Do not include individual people unless they are the sole organizer.
-- **imageClean** (boolean): Whether the image is publishable as-is on a public event listing.
-  - **Default to `true`.** Only set `imageClean` to `false` when you can point to a *specific, obvious* problem from the disqualifying list below. If you are uncertain, choose `true`.
-  - Set `imageClean: true` when ALL of the following are true:
-    - The flyer fills most of the frame and is not surrounded by an unrelated background.
-    - Text is sharp and readable; edges of the flyer are straight (not rotated or skewed).
-    - There is no visible phone/desktop UI (status bar, notch, browser chrome, app header, Instagram/X/Facebook frame, comment buttons, profile pictures of the poster, etc.).
-    - No hands, fingers, walls, floors, tables, or outdoor scenery are visible around or behind the flyer.
-  - Minor JPEG compression, slight color shift, or non-pristine resolution are acceptable and should still be `true`. The bar is "publishable," not "pixel-perfect."
-  - Set `imageClean: false` ONLY if one or more of these are *clearly and unambiguously* present:
-    - **Physical capture**: visible hand/fingers, wall texture, lawn, sidewalk, ground, table surface, or any environment behind/around the flyer.
-    - **Screenshot chrome**: visible phone status bar, notch, time/battery indicator, browser tabs, app navigation bar, social media UI elements (like/share/comment icons, username headers, post timestamps), or keyboard.
-    - **Severe distortion**: the flyer is rotated more than ~10°, has obvious keystone/perspective skew, is heavily blurred so text is hard to read, or is cropped so that key content is cut off.
-    - **Moiré**: rainbow interference patterns from photographing a screen.
-  - When in doubt, return `imageClean: true`.
 - **status**: Exactly one of:
   - `"success"` — valid event data was identified.
   - `"no_event_found"` — no clear public event in the submission.
@@ -121,7 +106,6 @@ Return exactly this JSON object with these keys in this order:
   "time": { "start": "3:00 PM", "end": "5:00 PM" },
   "links": ["https://example.com/protest", "https://example2.com/"],
   "sponsors": ["ACLU", "Seattle City Council"],
-  "imageClean": true,
   "status": "success",
   "adminNotes": ""
 }
@@ -139,7 +123,6 @@ Return exactly this JSON object with these keys in this order:
   "time": { "start": "", "end": "" },
   "links": [],
   "sponsors": [],
-  "imageClean": false,
   "status": "no_event_found",
   "adminNotes": "No event-related data detected"
 }

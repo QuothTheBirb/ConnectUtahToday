@@ -5,7 +5,7 @@ export const syncEvents: WorkflowConfig<"syncEvents"> = {
 	label: "Synchronize with all event sources and update calendar events.",
 	schedule: [
 		{
-			cron: "* * 0/4 * * *", // Every 4 hours, or 6 times a day
+			cron: "0 */4 * * *", // Every 4 hours, or 6 times a day
 			queue: "sync-events",
 		},
 	],

@@ -24,6 +24,7 @@
 		"graphql": "^16.12.0",
 		"lucide": "^1.7.0",
 		"lucide-react": "^0.563.0",
+		"luxon": "^3.7.2",
 		"next": "^16.1.6",
 		"payload": "^3.76.1",
 		"react": "^19.2.4",
@@ -35,6 +36,7 @@
 	"devDependencies": {
 		"@connect-utah-today/tsconfig": "*",
 		"@dotenvx/dotenvx": "^1.61.0",
+		"@types/luxon": "^3.7.1",
 		"@types/node": "25.2.3",
 		"@types/react": "^19.2.14",
 		"postcss": "^8.5.6",

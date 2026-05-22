@@ -1,24 +1,49 @@
-import type { RequiredDataFromCollectionSlug, TaskConfig } from "payload";
+import type {RequiredDataFromCollectionSlug, TaskConfig} from "payload";
 
 import fs from "fs/promises";
 import path from "path";
-import { scanPosterWithRunpod } from "@/lib/api/scanPoster";
+import {DateTime} from "luxon";
+import {scanPosterWithRunpod} from "@/lib/api/scanPoster";
+import {SUPPORTED_COUNTRIES} from "@/lib/supportedCountries";
+import {US_STATES} from "@/lib/usStates";
+
+const parseDateTimeStrings = (dateString?: string, timeString?: string) => {
+	if (!dateString) return undefined;
+
+	// TODO: Use value set in site settings for a timezone
+	const timezone = "America/Denver";
+
+	// Check if date string includes a year, if not, assume current year
+	const date = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+		? DateTime.fromFormat(dateString, "yyyy-MM-dd", {
+				zone: timezone,
+			})
+		: DateTime.fromFormat(dateString, "MM-dd", {
+				zone: timezone,
+			});
+	const time = timeString ? DateTime.fromFormat(timeString, "t") : undefined;
+
+	if (!date) return undefined;
+	if (!time) return date.toISO() || undefined;
+
+	return (
+		date
+			.set({
+				hour: time.hour ?? 0,
+				minute: time.minute ?? 0,
+			})
+			.toISO() || undefined
+	);
+};
 
 export const scanPosterTask: TaskConfig<"scanPoster"> = {
 	slug: "scanPoster",
-	label: "Scan poster and create events",
+	label: "Scan poster and upload events",
 	inputSchema: [
 		{
-			name: "imageIds",
-			type: "array",
+			name: "imageId",
+			type: "text",
 			required: true,
-			fields: [
-				{
-					name: "id",
-					type: "text",
-					required: true,
-				},
-			],
 		},
 		{
 			name: "userId",
@@ -27,130 +52,145 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 		},
 	],
 	handler: async ({ input, req }) => {
-		const { imageIds, userId } = input;
+		const { imageId, userId } = input;
 		const { payload } = req;
 
-		const ids = imageIds.map((item) => item.id);
-		const buffers: Buffer[] = [];
-
-		// 1. Fetch user to get roles and for creator field
+		// 1. Fetch user to get roles and for the creator field
 		const user = await payload.findByID({
 			collection: "users",
 			id: userId,
+			overrideAccess: true,
 		});
 
 		if (!user) {
 			throw new Error(`User with ID ${userId} not found`);
 		}
 
-		for (const imageId of ids) {
-			// 1. Fetch the image document
-			const imageDoc = await payload.findByID({
-				collection: "event-assets",
-				id: imageId,
-			});
-
-			if (!imageDoc || !imageDoc.filename) {
-				console.warn(
-					`Image with ID ${imageId} not found or missing filename`,
-				);
-				continue;
-			}
-
-			// 2. Resolve the file path
-			const filePath = path.join(
-				process.cwd(),
-				"apps/website/public/event-assets",
-				imageDoc.filename,
+		// 2. Use the collection config to get the correct absolute path to images
+		const eventAssetsConfig = payload.collections["event-assets"].config;
+		const staticDir = eventAssetsConfig.upload.staticDir;
+		if (!staticDir) {
+			throw new Error(
+				`Static directory for 'event-assets' collection is not set`,
 			);
-
-			// 3. Read the file
-			try {
-				const buffer = await fs.readFile(filePath);
-				buffers.push(buffer);
-			} catch (e) {
-				console.error(`Failed to read file at ${filePath}:`, e);
-			}
 		}
 
-		if (buffers.length === 0) {
-			throw new Error("No valid images found to scan");
+		// 3. Fetch the image document
+		const imageDoc = await payload.findByID({
+			collection: "event-assets",
+			id: imageId,
+			overrideAccess: true,
+		});
+		if (!imageDoc || !imageDoc.filename) {
+			throw new Error(
+				`Image with ID ${imageId} not found or missing filename`,
+			);
 		}
 
-		// 4. Call RunPod
-		const scanResult = await scanPosterWithRunpod(buffers);
-		if (!Array.isArray(scanResult)) {
-			throw new Error("Invalid scan result format");
+		// 4. Resolve the file path using the collection's staticDir
+		const filePath = path.join(staticDir, imageDoc.filename);
+		const buffer: Buffer = await fs.readFile(filePath);
+		if (!buffer) {
+			throw new Error(`Failed to read file at ${filePath}`);
 		}
 
-		const createdEvents = [];
+		// 5. Call RunPod
+		const scanResult = await scanPosterWithRunpod(buffer);
+		payload.logger.info({ imageId, scanResult }, "Poster scan completed");
 
-		for (let i = 0; i < scanResult.length; i++) {
-			const item = scanResult[i];
-			const imageId = ids[i];
+		if (!scanResult) {
+			throw new Error(
+				`Scan failed: RunPod returned no output for image ${imageId}`,
+			);
+		}
+		if (scanResult.status !== "success") {
+			throw new Error(
+				`Scan failed (status="${scanResult.status}"): ${scanResult.error || scanResult.adminNotes || "No error or adminNotes provided by the model."}`,
+			);
+		}
 
-			if (item.status !== "success") {
-				console.warn(`Scan failed for image ${imageId}:`, item.error);
-				continue;
-			}
-
-			// Find default organization for the user
-			let organizationId = null;
-			if (user.roles?.includes("organizer")) {
-				const orgs = await payload.find({
-					collection: "organizations",
-					where: {
-						organizers: {
-							contains: user.id,
-						},
+		// 6. Create the event
+		// Find the default organization for the user
+		let organizationId = null;
+		if (user.roles?.includes("organizer")) {
+			const orgs = await payload.find({
+				collection: "organizations",
+				where: {
+					organizers: {
+						contains: user.id,
 					},
-					limit: 1,
-				});
-				if (orgs.docs.length > 0) {
-					organizationId = orgs.docs[0].id;
-				}
-			}
-
-			const eventData: RequiredDataFromCollectionSlug<"events"> = {
-				title: item.title || "Untitled Event",
-				description: item.description || "",
-				url:
-					item.links && item.links.length > 0
-						? item.links[0]
-						: "https://example.com", // url is required
-				date: item.date?.start || new Date().toISOString(), // date is required
-				endDate: item.date?.end,
-				location: {
-					country: item.location?.country || "US",
-					state: item.location?.state || "UT",
-					city: item.location?.city,
-					address: item.location?.address,
-					postalCode: item.location?.postalCode,
-					venue: item.location?.venue,
 				},
-				source: "local",
-				local: {
-					images: [imageId],
-					organization: organizationId,
-					createdBy: user.id,
-				},
-			};
-
-			const event = await payload.create({
-				collection: "events",
-				data: eventData,
-				// We don't pass user here as we are in a background task
-				// and we already handled organization/createdBy
+				limit: 1,
+				overrideAccess: true,
 			});
 
-			createdEvents.push(event.id);
+			if (orgs.docs.length > 0) {
+				organizationId = orgs.docs[0].id;
+			}
 		}
+
+		const start = parseDateTimeStrings(
+			scanResult.date?.start,
+			scanResult.time?.start,
+		);
+		const end = parseDateTimeStrings(
+			scanResult.date?.end,
+			scanResult.time?.end,
+		);
+
+		if (!scanResult.title || !scanResult.description || !start) {
+			throw new Error("Scan result missing required date information");
+		}
+
+		const eventData: RequiredDataFromCollectionSlug<"events"> = {
+			title: scanResult.title,
+			description: scanResult.description,
+			// TODO: Switch url to links field which is an array
+			// url:
+			// 	scanResult.links && scanResult.links.length > 0
+			// 		? scanResult.links[0]
+			date: start,
+			endDate: end,
+			location: {
+				// TODO: Use default country/state values set in global site configuration
+				country: scanResult.location?.country
+					? SUPPORTED_COUNTRIES.find(
+							(country) =>
+								scanResult.location?.country === country.value,
+						)?.value
+					: undefined,
+				state: scanResult.location?.state
+					? US_STATES.find(
+							(state) =>
+								scanResult.location?.state === state.value,
+						)?.value
+					: undefined,
+				city: scanResult.location?.city,
+				address: scanResult.location?.street,
+				postalCode: scanResult.location?.postalCode,
+				venue: scanResult.location?.venue,
+			},
+			source: "local",
+			local: {
+				// Only set the event image if it is clean (i.e., not a screenshot)
+				// images: scanResult.imageClean ? [imageId] : undefined,
+				images: [imageId],
+				organization: organizationId,
+				createdBy: user.id,
+			},
+		};
+
+		const event = await payload.create({
+			collection: "events",
+			data: eventData,
+			overrideAccess: true,
+		});
 
 		return {
 			output: {
 				success: true,
-				count: createdEvents.length,
-				eventIds: createdEvents,
+				count: 1,
+				eventIds: [event.id],
 			},
 		};
 	},

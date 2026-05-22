@@ -341,7 +341,7 @@ export interface Event {
    * A brief description of this event.
    */
   description: string;
-  url: string;
+  url?: string | null;
   date: string;
   endDate?: string | null;
   location?: {
@@ -1236,9 +1236,7 @@ export interface TaskGoogleCalendarSync {
  */
 export interface TaskScanPoster {
   input: {
-    imageIds: {
-      id: string;
-    }[];
+    imageId: string;
     userId: string;
   };
   output?: unknown;

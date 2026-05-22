@@ -25,6 +25,7 @@ const dirname = path.dirname(filename);
 
 export default buildConfig({
 	admin: {
+		autoRefresh: true,
 		importMap: {
 			baseDir: path.resolve(dirname),
 		},
@@ -32,6 +33,13 @@ export default buildConfig({
 			providers: [
 				"@/payload/components/SyncEventsNotifier#SyncEventsNotifier",
 			],
+			views: {
+				"upload-poster": {
+					Component:
+						"@/payload/components/EventUpload/PosterUpload/PosterUploadView#PosterUploadView",
+					path: "/poster-upload",
+				},
+			},
 		},
 	},
 	editor: lexicalEditor(),

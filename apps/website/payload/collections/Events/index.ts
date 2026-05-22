@@ -17,7 +17,7 @@ export const Events: CollectionConfig = {
 		useAsTitle: "title",
 		components: {
 			beforeListTable: [
-				"@/payload/collections/Events/components/UploadPosterEvents#UploadPosterEvents",
+				"@/payload/components/EventUpload/EventUploads#EventUploads",
 			],
 		},
 	},
@@ -44,7 +44,7 @@ export const Events: CollectionConfig = {
 			name: "url",
 			label: "Event URL",
 			type: "text",
-			required: true,
+			// required: true,
 		},
 		{
 			name: "date",
