@@ -1,4 +1,5 @@
-FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+#FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+FROM nvidia/cuda:12.8.2-devel-ubuntu24.04
 
 # Set the Hugging Face cache directory to a local path within the image.
 ENV HF_HOME="/app/.cache/huggingface/"
