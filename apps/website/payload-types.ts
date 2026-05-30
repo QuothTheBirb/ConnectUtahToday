@@ -168,21 +168,6 @@ export interface UserAuthOperations {
 export interface User {
   id: string;
   roles: ('admin' | 'organizer')[];
-  inviteCode?: string | null;
-  organizationName?: string | null;
-  organizationDescription?: string | null;
-  organizationContactMethods?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  organizationContactEmail?: string | null;
-  organizationContactPhone?: string | null;
-  organizationContactPage?: string | null;
   invite?: (string | null) | OrganizationInvite;
   organizations?: {
     docs?: (string | Organization)[];
@@ -659,13 +644,6 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   roles?: T;
-  inviteCode?: T;
-  organizationName?: T;
-  organizationDescription?: T;
-  organizationContactMethods?: T;
-  organizationContactEmail?: T;
-  organizationContactPhone?: T;
-  organizationContactPage?: T;
   invite?: T;
   organizations?: T;
   updatedAt?: T;

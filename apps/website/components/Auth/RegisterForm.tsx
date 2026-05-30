@@ -37,8 +37,8 @@ const RegisterFormInner = () => {
 		string | null
 	>(null);
 	const [organizationDescription, setOrganizationDescription] = useState("");
+	const [createOrganization, setCreateOrganization] = useState(true);
 
-	const [name, setName] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
@@ -69,14 +69,17 @@ const RegisterFormInner = () => {
 				body: JSON.stringify({
 					username,
 					password,
-					name,
 					inviteCode,
-					organizationName,
-					organizationDescription,
-					organizationContactMethods,
-					organizationContactEmail,
-					organizationContactPhone,
-					organizationContactPage,
+					...(createOrganization
+						? {
+								organizationName,
+								organizationDescription,
+								organizationContactMethods,
+								organizationContactEmail,
+								organizationContactPhone,
+								organizationContactPage,
+							}
+						: {}),
 				}),
 			});
 
@@ -135,123 +138,143 @@ const RegisterFormInner = () => {
 					onChange={(event) => setConfirmPassword(event.target.value)}
 					required
 				/>
-				<FormInput
-					type={"text"}
-					id={"name"}
-					label={"Full name (optional)"}
-					value={name}
-					onChange={(event) => setName(event.target.value)}
-				/>
 			</FormSection>
 			{/* Organization details */}
 			<FormSection label={"Organization"}>
 				<FormInput
-					type={"text"}
-					id={"organizationName"}
-					label={"Organization name"}
-					value={organizationName}
+					type={"checkbox"}
+					id={"createOrganization"}
+					label={"I want to create an organization"}
+					checked={createOrganization}
 					onChange={(event) =>
-						setOrganizationName(event.target.value)
+						setCreateOrganization(event.target.checked)
 					}
-					required
 				/>
-				<FormTextarea
-					id={"organizationDescription"}
-					label={"Organization description (optional)"}
-					value={organizationDescription}
-					onChange={(event) =>
-						setOrganizationDescription(event.target.value)
-					}
-					placeholder="Describe your organization's mission and activities…"
-				/>
-				<FormFieldset
-					legend={"Public contact methods for organization page"}
-					description={
-						"Contact methods listed on the public organization page."
-					}
-				>
-					<FormInput
-						type={"checkbox"}
-						id={"enableContactEmail"}
-						label={"Email"}
-						checked={organizationContactMethods.email}
-						onChange={(event) =>
-							setOrganizationContactMethods((prevState) => ({
-								...prevState,
-								email: event.target.checked,
-							}))
-						}
-					/>
-					{organizationContactMethods.email && (
-						<div className={styles.nested}>
+				{createOrganization && (
+					<>
+						<FormInput
+							type={"text"}
+							id={"organizationName"}
+							label={"Organization name"}
+							value={organizationName}
+							onChange={(event) =>
+								setOrganizationName(event.target.value)
+							}
+							required
+						/>
+						<FormTextarea
+							id={"organizationDescription"}
+							label={"Organization description (optional)"}
+							value={organizationDescription}
+							onChange={(event) =>
+								setOrganizationDescription(event.target.value)
+							}
+							placeholder="Describe your organization's mission and activities…"
+						/>
+						<FormFieldset
+							legend={
+								"Public contact methods for organization page"
+							}
+							description={
+								"Contact methods listed on the public organization page."
+							}
+						>
 							<FormInput
-								type={"email"}
-								id={"organizationContactEmail"}
-								label={"Contact Email"}
-								value={organizationContactEmail || ""}
-								onChange={(e) =>
-									setOrganizationContactEmail(e.target.value)
+								type={"checkbox"}
+								id={"enableContactEmail"}
+								label={"Email"}
+								checked={organizationContactMethods.email}
+								onChange={(event) =>
+									setOrganizationContactMethods(
+										(prevState) => ({
+											...prevState,
+											email: event.target.checked,
+										}),
+									)
 								}
-								required
-								placeholder="email@example.org"
 							/>
-						</div>
-					)}
-					<FormInput
-						type={"checkbox"}
-						id={"enableContactPhone"}
-						label={"Phone"}
-						checked={organizationContactMethods.phone}
-						onChange={(event) =>
-							setOrganizationContactMethods((prevState) => ({
-								...prevState,
-								phone: event.target.checked,
-							}))
-						}
-					/>
-					{organizationContactMethods.phone && (
-						<div className={styles.nested}>
+							{organizationContactMethods.email && (
+								<div className={styles.nested}>
+									<FormInput
+										type={"email"}
+										id={"organizationContactEmail"}
+										label={"Contact Email"}
+										value={organizationContactEmail || ""}
+										onChange={(e) =>
+											setOrganizationContactEmail(
+												e.target.value,
+											)
+										}
+										required
+										placeholder="email@example.org"
+									/>
+								</div>
+							)}
 							<FormInput
-								type={"tel"}
-								id={"organizationContactPhone"}
-								label={"Contact Phone"}
-								value={organizationContactPhone || ""}
-								onChange={(e) =>
-									setOrganizationContactPhone(e.target.value)
+								type={"checkbox"}
+								id={"enableContactPhone"}
+								label={"Phone"}
+								checked={organizationContactMethods.phone}
+								onChange={(event) =>
+									setOrganizationContactMethods(
+										(prevState) => ({
+											...prevState,
+											phone: event.target.checked,
+										}),
+									)
 								}
-								required
-								placeholder="555-555-5555"
 							/>
-						</div>
-					)}
-					<FormInput
-						type={"checkbox"}
-						id={"enableContactWebpage"}
-						label={"Webpage"}
-						checked={organizationContactMethods.website}
-						onChange={(event) =>
-							setOrganizationContactMethods((prevState) => ({
-								...prevState,
-								website: event.target.checked,
-							}))
-						}
-					/>
-					{organizationContactMethods.website && (
-						<div className={styles.nested}>
+							{organizationContactMethods.phone && (
+								<div className={styles.nested}>
+									<FormInput
+										type={"tel"}
+										id={"organizationContactPhone"}
+										label={"Contact Phone"}
+										value={organizationContactPhone || ""}
+										onChange={(e) =>
+											setOrganizationContactPhone(
+												e.target.value,
+											)
+										}
+										required
+										placeholder="555-555-5555"
+									/>
+								</div>
+							)}
 							<FormInput
-								type={"url"}
-								id={"organizationContactPage"}
-								label={"Website URL"}
-								value={organizationContactPage || ""}
-								onChange={(e) =>
-									setOrganizationContactPage(e.target.value)
+								type={"checkbox"}
+								id={"enableContactWebpage"}
+								label={"Webpage"}
+								checked={organizationContactMethods.website}
+								onChange={(event) =>
+									setOrganizationContactMethods(
+										(prevState) => ({
+											...prevState,
+											website: event.target.checked,
+										}),
+									)
 								}
-								required
-								placeholder="https://example.org"
 							/>
-						</div>
-					)}
-				</FormFieldset>
+							{organizationContactMethods.website && (
+								<div className={styles.nested}>
+									<FormInput
+										type={"url"}
+										id={"organizationContactPage"}
+										label={"Website URL"}
+										value={organizationContactPage || ""}
+										onChange={(e) =>
+											setOrganizationContactPage(
+												e.target.value,
+											)
+										}
+										required
+										placeholder="https://example.org"
+									/>
+								</div>
+							)}
+						</FormFieldset>
+					</>
+				)}
 			</FormSection>
 			<FormButton type="submit" disabled={loading}>
 				{loading ? "Registering..." : "Register"}

@@ -33,6 +33,7 @@ export const Users: CollectionConfig = {
 		afterChange: [markInviteUsed, createOrganizationOnRegister],
 	},
 	auth: {
+		tokenExpiration: 1209600,
 		loginWithUsername: {
 			allowEmailLogin: true,
 			requireEmail: false,
@@ -74,55 +75,6 @@ export const Users: CollectionConfig = {
 					value: "organizer",
 				},
 			],
-		},
-		{
-			name: "inviteCode",
-			type: "text",
-			admin: {
-				hidden: true,
-			},
-		},
-		{
-			name: "organizationName",
-			type: "text",
-			admin: {
-				hidden: true,
-			},
-		},
-		{
-			name: "organizationDescription",
-			type: "textarea",
-			admin: {
-				hidden: true,
-			},
-		},
-		{
-			name: "organizationContactMethods",
-			type: "json",
-			admin: {
-				hidden: true,
-			},
-		},
-		{
-			name: "organizationContactEmail",
-			type: "email",
-			admin: {
-				hidden: true,
-			},
-		},
-		{
-			name: "organizationContactPhone",
-			type: "text",
-			admin: {
-				hidden: true,
-			},
-		},
-		{
-			name: "organizationContactPage",
-			type: "text",
-			admin: {
-				hidden: true,
-			},
 		},
 		{
 			name: "invite",
