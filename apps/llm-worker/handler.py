@@ -74,7 +74,7 @@ def initialize_model():
 		local_files_only=True,
 	)
 
-	model = model.eval()
+	model = model.eval().cuda()
 
 	return model
 
