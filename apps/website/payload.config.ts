@@ -34,10 +34,15 @@ export default buildConfig({
 				"@/payload/components/SyncEventsNotifier#SyncEventsNotifier",
 			],
 			views: {
-				"upload-poster": {
+				"poster-upload": {
 					Component:
 						"@/payload/components/EventUpload/PosterUpload/PosterUploadView#PosterUploadView",
 					path: "/poster-upload",
+				},
+				"instagram-upload": {
+					Component:
+						"@/payload/components/EventUpload/InstagramUpload/InstagramUploadView#InstagramUploadView",
+					path: "/instagram-upload",
 				},
 			},
 		},

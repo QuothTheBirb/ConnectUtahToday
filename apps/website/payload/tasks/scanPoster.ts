@@ -1,11 +1,11 @@
-import type {RequiredDataFromCollectionSlug, TaskConfig} from "payload";
+import type { RequiredDataFromCollectionSlug, TaskConfig } from "payload";
 
 import fs from "fs/promises";
 import path from "path";
-import {DateTime} from "luxon";
-import {scanPosterWithRunpod} from "@/lib/api/scanPoster";
-import {SUPPORTED_COUNTRIES} from "@/lib/supportedCountries";
-import {US_STATES} from "@/lib/usStates";
+import { DateTime } from "luxon";
+import { scanPosterWithRunpod } from "@/lib/api/scanPoster";
+import { SUPPORTED_COUNTRIES } from "@/lib/supportedCountries";
+import { US_STATES } from "@/lib/usStates";
 
 const parseDateTimeStrings = (dateString?: string, timeString?: string) => {
 	if (!dateString) return undefined;
@@ -41,9 +41,20 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 	label: "Scan poster and upload events",
 	inputSchema: [
 		{
-			name: "imageId",
-			type: "text",
+			name: "imageIds",
+			type: "array",
 			required: true,
+			fields: [
+				{
+					name: "imageId",
+					type: "text",
+					required: true,
+				},
+			],
+		},
+		{
+			name: "eventImageId",
+			type: "text",
 		},
 		{
 			name: "userId",
@@ -52,7 +63,7 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 		},
 	],
 	handler: async ({ input, req }) => {
-		const { imageId, userId } = input;
+		const { imageIds, eventImageId = null, userId } = input;
 		const { payload } = req;
 
 		// 1. Fetch user to get roles and for the creator field
@@ -75,32 +86,36 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 			);
 		}
 
-		// 3. Fetch the image document
-		const imageDoc = await payload.findByID({
-			collection: "event-assets",
-			id: imageId,
-			overrideAccess: true,
-		});
-		if (!imageDoc || !imageDoc.filename) {
-			throw new Error(
-				`Image with ID ${imageId} not found or missing filename`,
-			);
-		}
+		// 3. Fetch all image documents and read their buffers
+		const ids = imageIds.map((entry: { imageId: string }) => entry.imageId);
+		const buffers: Buffer[] = await Promise.all(
+			ids.map(async (imageId: string) => {
+				const imageDoc = await payload.findByID({
+					collection: "event-assets",
+					id: imageId,
+					overrideAccess: true,
+				});
+				if (!imageDoc || !imageDoc.filename) {
+					throw new Error(
+						`Image with ID ${imageId} not found or missing filename`,
+					);
+				}
+				const filePath = path.join(staticDir, imageDoc.filename);
+				const buffer = await fs.readFile(filePath);
+				if (!buffer) {
+					throw new Error(`Failed to read file at ${filePath}`);
+				}
+				return buffer;
+			}),
+		);
 
-		// 4. Resolve the file path using the collection's staticDir
-		const filePath = path.join(staticDir, imageDoc.filename);
-		const buffer: Buffer = await fs.readFile(filePath);
-		if (!buffer) {
-			throw new Error(`Failed to read file at ${filePath}`);
-		}
-
-		// 5. Call RunPod
-		const scanResult = await scanPosterWithRunpod(buffer);
-		payload.logger.info({ imageId, scanResult }, "Poster scan completed");
+		// 4. Call RunPod with all images
+		const scanResult = await scanPosterWithRunpod(buffers);
+		payload.logger.info({ imageIds: ids, scanResult }, "Poster scan completed");
 
 		if (!scanResult) {
 			throw new Error(
-				`Scan failed: RunPod returned no output for image ${imageId}`,
+				`Scan failed: RunPod returned no output for images ${ids.join(", ")}`,
 			);
 		}
 		if (scanResult.status !== "success") {
@@ -172,11 +187,11 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 			},
 			source: "local",
 			local: {
-				// Only set the event image if it is clean (i.e., not a screenshot)
-				// images: scanResult.imageClean ? [imageId] : undefined,
-				images: [imageId],
+				images: eventImageId ? [eventImageId] : undefined,
 				organization: organizationId,
 				createdBy: user.id,
+				isPosterUpload: true,
+				posterImage: eventImageId || ids[0],
 			},
 		};
 

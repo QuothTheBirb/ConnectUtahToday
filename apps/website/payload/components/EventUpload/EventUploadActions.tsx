@@ -21,13 +21,13 @@ export const EventUploadActions = () => {
 				<CalendarPlus size={16} />
 				<span>Poster Upload</span>
 			</Link>
-			<div
+			<button
 				// href={instagramUploadHref}
 				className={`${styles.uploadAction} btn btn--style-primary btn--no-margin btn--size-medium btn--icon-style-without-border btn--disabled`}
 			>
 				<Instagram size={16} />
 				<span>Instagram Link</span>
-			</div>
+			</button>
 		</div>
 	);
 };

@@ -13,6 +13,7 @@
 	.uploadActions {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: calc(var(--base) / 4);
 
 		.uploadAction {
@@ -21,4 +22,424 @@
 			gap: calc(var(--base) / 4);
 		}
 	}
+}
+
+.instagramUpload {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--base) / 2);
+
+	.instagramUploadButton {
+		width: fit-content;
+		display: flex;
+		align-items: center;
+		gap: calc(var(--base) / 4);
+	}
+}
+
+.posterUpload {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--base));
+	margin-bottom: 2rem;
+
+	// "Add Event" section with background
+	.addEventSection {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		position: relative;
+		gap: 1.5rem;
+		background: var(--theme-elevation-50);
+		border-radius: var(--style-radius-m);
+		padding: 1rem;
+
+		// Disabled state while an upload is in flight
+		&.uploading {
+			.uploadFiles {
+				.addTile {
+					cursor: not-allowed;
+					opacity: 0.5;
+					pointer-events: none;
+				}
+
+				.checkbox,
+				.checkboxLabel {
+					cursor: not-allowed;
+				}
+			}
+		}
+
+		.uploadFiles {
+			display: flex;
+			gap: 1.5rem;
+			width: 100%;
+
+			// "Add poster" dropzone tile
+			.addTile {
+				width: 300px;
+				height: 300px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 1.25rem;
+				border: 1px solid var(--theme-elevation-200);
+				background: var(--theme-elevation-100);
+				color: var(--theme-elevation-500);
+				cursor: pointer;
+				transition: all 0.2s ease;
+				aspect-ratio: 1 / 1;
+				border-radius: var(--style-radius-s);
+
+				&:hover {
+					border-color: var(--theme-elevation-300);
+					color: var(--theme-elevation-700);
+				}
+
+				.addLabel {
+					font-size: 1.125rem;
+				}
+			}
+
+			.selectedFiles {
+				display: flex;
+				flex-wrap: wrap;
+				position: relative;
+				width: 100%;
+				gap: 1rem;
+
+				.selectedFile {
+					width: auto;
+					height: 150px;
+					position: relative;
+					aspect-ratio: 1 / 1;
+					border: 1px solid var(--theme-elevation-200);
+					border-radius: var(--style-radius-m);
+
+					.imageWrapper {
+						width: 100%;
+						height: 100%;
+						object-fit: cover;
+						border-radius: var(--style-radius-m);
+						overflow: hidden;
+						position: relative;
+
+						.image {
+
+						}
+					}
+
+					.options {
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						gap: 0.5rem;
+						position: absolute;
+						bottom: 0.5rem;
+						left: 0;
+						right: 0;
+						margin-right: auto;
+						margin-left: auto;
+						width: fit-content;
+						padding: 0.5rem 0.25rem;
+						background: var(--theme-elevation-800);
+						color: var(--theme-elevation-0);
+						border-radius: var(--style-radius-m);
+						font-size: 0.825rem;
+					}
+
+					.actions {
+						position: absolute;
+						top: calc(var(--base) / 4);
+						right: calc(var(--base) / 4);
+
+						.remove {
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							width: 1.75rem;
+							height: 1.75rem;
+							padding: 0;
+							border-radius: var(--style-radius-m);
+							background: var(--theme-elevation-800);
+							color: var(--theme-elevation-100);
+							border: none;
+							cursor: pointer;
+							transition: background-color 0.2s ease-in-out;
+
+							&:hover:not(:disabled) {
+								background: var(--theme-elevation-700);
+							}
+
+							&:disabled {
+								cursor: not-allowed;
+								opacity: 0.6;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.addEventUploadBar {
+			.uploadButtonInner {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: calc(var(--base) / 2);
+			}
+		}
+
+	}
+
+	// Shared square container for every poster cell
+	.tile {
+		position: relative;
+		width: 100%;
+		height: fit-content;
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--style-radius-m);
+		//border: 1px solid var(--theme-elevation-150);
+		border: none;
+		background: var(--theme-elevation-100);
+		overflow: hidden;
+
+		&.clickable {
+			display: block;
+			text-decoration: none;
+			cursor: pointer;
+			transition: outline-color 0.2s ease;
+			outline: 1px solid transparent;
+
+			&:hover {
+				outline: 1px solid var(--theme-elevation-400);
+			}
+
+			&.success {
+				.tileFooter {
+					background: var(--theme-success-300);
+
+					.statusIcon {
+						color: var(--theme-success-700);
+					}
+				}
+
+				&:hover {
+					outline: 1px solid var(--theme-success-500);
+				}
+			}
+
+			&.failed {
+				.tileFooter {
+					background: var(--theme-error-300);
+
+					.statusIcon {
+						color: var(--theme-error-700);
+					}
+				}
+
+				&:hover {
+					outline: 1px solid var(--theme-error-500);
+				}
+			}
+		}
+
+		.tileImageWrapper {
+			width: 100%;
+			height: auto;
+			object-fit: cover;
+			object-position: center top;
+			aspect-ratio: 1 / 1;
+			position: relative;
+			overflow: hidden;
+
+			.tileImage {
+				&.pending {
+					opacity: 0.4;
+				}
+
+				&.placeholder {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					width: 100%;
+					height: 100%;
+					background: var(--theme-elevation-150);
+					color: var(--theme-elevation-400);
+				}
+			}
+		}
+
+		.tilePlaceholder {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+			background: var(--theme-elevation-150);
+			color: var(--theme-elevation-400);
+			aspect-ratio: 1 / 1;
+		}
+
+		.tileActions {
+			position: absolute;
+			top: calc(var(--base) / 4);
+			right: calc(var(--base) / 4);
+			display: flex;
+			gap: calc(var(--base) / 4);
+
+			// Circular overlay buttons (remove / retry / dismiss)
+			.iconCircleButton {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 28px;
+				height: 28px;
+				padding: 0;
+				border-radius: 50%;
+				background: var(--theme-elevation-50);
+				border: 1px solid var(--theme-elevation-200);
+				color: white;
+				cursor: pointer;
+				transition: background-color 0.2s ease-in-out;
+
+				&:hover:not(:disabled) {
+					background: var(--theme-elevation-200);
+				}
+
+				&:disabled {
+					cursor: not-allowed;
+					opacity: 0.6;
+				}
+			}
+		}
+
+		.tileFooter {
+			display: flex;
+			width: 100%;
+			align-items: center;
+			gap: calc(var(--base) / 4);
+			padding: calc(var(--base) / 2.5) calc(var(--base) / 4);
+			background: var(--theme-elevation-250);
+			color: white;
+			font-size: 0.825rem;
+			transition: background-color 0.2s ease-in-out;
+
+			.statusText {
+				color: var(--theme-elevation-900);
+			}
+
+			.statusIcon {
+				color: var(--theme-elevation-700);
+			}
+
+			.checkbox,
+			.checkboxLabel {
+				cursor: pointer;
+			}
+
+			.checkboxLabel {
+				user-select: none;
+			}
+
+			&.centered {
+				justify-content: center;
+			}
+		}
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		//grid-template-columns: repeat(auto-fill, auto);
+		//grid-auto-flow: row;
+		gap: var(--base);
+	}
+
+	.addEventUploadBar {
+		grid-column: 1 / -1;
+		display: flex;
+		justify-content: center;
+	}
+
+	// Section rows for processing / failed / completed categories
+	.sectionRow {
+		display: flex;
+		flex-direction: column;
+		gap: calc(var(--base) / 2);
+	}
+
+	.sectionLabel {
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--theme-elevation-500);
+	}
+
+	.hiddenInput {
+		display: none;
+	}
+
+	.alert {
+		padding: var(--base);
+		border-radius: var(--style-radius-s);
+	}
+
+	.alertError {
+		border: 1px solid var(--theme-error-500);
+		color: var(--theme-error-500);
+		background: var(--theme-error-50, transparent);
+	}
+
+	.alertSuccess {
+		border: 1px solid var(--theme-success-500);
+		color: var(--theme-success-500);
+		background: var(--theme-success-50, transparent);
+	}
+}
+
+@media (max-width: 600px) {
+	.posterUpload {
+		.addEventSection {
+			padding: 0.75rem;
+			gap: 1rem;
+
+			.uploadFiles {
+				flex-direction: column;
+				gap: 1rem;
+
+				.addTile {
+					width: 100%;
+					height: auto;
+					min-height: 160px;
+				}
+
+				.selectedFiles {
+					.selectedFile {
+						height: 120px;
+					}
+				}
+			}
+		}
+
+		.grid {
+			grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+		}
+	}
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.spin {
+	animation: spin 2s linear infinite;
 }

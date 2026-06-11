@@ -28,6 +28,7 @@ import { OrganizationSelect as OrganizationSelect_7e3e0640ea1be80de11683336492ab
 import { SyncEvents as SyncEvents_48892358d935fc873f03c0c608fa105e } from '../../../payload/fields/syncEvents/component'
 import { SyncEventsNotifier as SyncEventsNotifier_c9ea33c8fbd476ad7a4e287dad4a4d31 } from '@/payload/components/SyncEventsNotifier'
 import { PosterUploadView as PosterUploadView_0d322dab4f33b413b337c748d9bb022a } from '@/payload/components/EventUpload/PosterUpload/PosterUploadView'
+import { InstagramUploadView as InstagramUploadView_0f0028bdf97df1db02332c3e9c908898 } from '@/payload/components/EventUpload/InstagramUpload/InstagramUploadView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -61,5 +62,6 @@ export const importMap = {
   "/payload/fields/syncEvents/component#SyncEvents": SyncEvents_48892358d935fc873f03c0c608fa105e,
   "@/payload/components/SyncEventsNotifier#SyncEventsNotifier": SyncEventsNotifier_c9ea33c8fbd476ad7a4e287dad4a4d31,
   "@/payload/components/EventUpload/PosterUpload/PosterUploadView#PosterUploadView": PosterUploadView_0d322dab4f33b413b337c748d9bb022a,
+  "@/payload/components/EventUpload/InstagramUpload/InstagramUploadView#InstagramUploadView": InstagramUploadView_0f0028bdf97df1db02332c3e9c908898,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

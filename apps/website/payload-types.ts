@@ -400,6 +400,8 @@ export interface Event {
      * The user who created this event. This is only visible to site administrators.
      */
     createdBy: string | User;
+    isPosterUpload?: boolean | null;
+    posterImage?: (string | null) | EventAsset;
   };
   googleCalendar?: {
     eventId: string;
@@ -736,6 +738,8 @@ export interface EventsSelect<T extends boolean = true> {
         images?: T;
         organization?: T;
         createdBy?: T;
+        isPosterUpload?: T;
+        posterImage?: T;
       };
   googleCalendar?:
     | T
@@ -1214,7 +1218,10 @@ export interface TaskGoogleCalendarSync {
  */
 export interface TaskScanPoster {
   input: {
-    imageId: string;
+    imageIds: {
+      imageId: string;
+    }[];
+    eventImageId?: string | null;
     userId: string;
   };
   output?: unknown;

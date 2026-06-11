@@ -66,7 +66,7 @@ const normalizeOutput = (raw: unknown): ParsedPosterEvent => {
 };
 
 export const scanPosterWithRunpod = async (
-	image: Buffer,
+	images: Buffer[],
 ): Promise<ParsedPosterEvent> => {
 	const RUNPOD_ID = process.env.RUNPOD_ENDPOINT_ID;
 	const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY;
@@ -76,8 +76,6 @@ export const scanPosterWithRunpod = async (
 			"RunPod configuration is missing (RUNPOD_ENDPOINT_ID or RUNPOD_API_KEY).",
 		);
 	}
-
-	const imageB64 = image.toString("base64");
 
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
@@ -89,7 +87,7 @@ export const scanPosterWithRunpod = async (
 
 	const body = JSON.stringify({
 		input: {
-			images: [imageB64],
+			images: images.map((buf) => buf.toString("base64")),
 		},
 		policy: {
 			executionTimeout: TOTAL_TIMEOUT_MS,

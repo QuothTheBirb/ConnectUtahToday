@@ -1,10 +1,9 @@
 import { DefaultTemplate } from "@payloadcms/next/templates";
 import { Gutter, SetStepNav } from "@payloadcms/ui";
 import { AdminViewServerProps } from "payload";
+import { InstagramUpload } from "@/payload/components/EventUpload/InstagramUpload/InstagramUpload";
 
-import { PosterUpload } from "./PosterUpload";
-
-export const PosterUploadView = ({
+export const InstagramUploadView = ({
 	initPageResult,
 	params,
 	searchParams,
@@ -37,13 +36,12 @@ export const PosterUploadView = ({
 					<div className={"list-header__content"}>
 						<div className="list-header__title-and-actions">
 							<h1 className={"list-header__title"}>
-								Poster Event Upload
+								Instagram Event Upload
 							</h1>
 							<p
 								style={{
 									color: "var(--theme-elevation-500)",
 									marginTop: 0,
-									marginBottom: "1.5rem",
 								}}
 							>
 								Upload one or more event posters. Each poster
@@ -55,7 +53,7 @@ export const PosterUploadView = ({
 						</div>
 					</div>
 				</header>
-				<PosterUpload />
+				<InstagramUpload />
 			</Gutter>
 		</DefaultTemplate>
 	);

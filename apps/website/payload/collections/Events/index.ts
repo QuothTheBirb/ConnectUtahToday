@@ -171,6 +171,21 @@ export const Events: CollectionConfig = {
 					},
 					required: true,
 				},
+				{
+					name: "isPosterUpload",
+					type: "checkbox",
+					admin: {
+						hidden: true,
+					},
+				},
+				{
+					name: "posterImage",
+					type: "relationship",
+					relationTo: "event-assets",
+					admin: {
+						hidden: true,
+					},
+				},
 			],
 		},
 		// Google Calendar
