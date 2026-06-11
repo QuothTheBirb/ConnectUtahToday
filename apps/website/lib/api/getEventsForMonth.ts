@@ -49,15 +49,13 @@ export const getEventsForMonth = async ({
 
 		const calendarEvents: LocalCalendarEvent[] = localEvents.docs.flatMap(
 			(event) => {
-				const organization = event.local?.organization;
+				if (event.source !== "local" || !event.local) return [];
 
-				if (
-					event.source !== "local" ||
-					!event.local ||
-					!organization ||
-					typeof organization !== "object"
-				)
-					return [];
+				const organization = event.local?.organization;
+				const resolvedOrganization =
+					organization && typeof organization === "object"
+						? organization
+						: undefined;
 
 				const images = event.local.images;
 				const firstImage =
@@ -70,11 +68,10 @@ export const getEventsForMonth = async ({
 						: firstImage
 					: undefined;
 				const defaultImageAsset =
-					organization &&
-					typeof organization === "object" &&
-					"defaultEventImage" in organization
+					resolvedOrganization &&
+					"defaultEventImage" in resolvedOrganization
 						? (
-								organization as {
+								resolvedOrganization as {
 									defaultEventImage?:
 										| { url?: string }
 										| string;
@@ -93,7 +90,7 @@ export const getEventsForMonth = async ({
 					description: event.description,
 					date: event.date,
 					endDate: event.endDate || undefined,
-					url: event.url,
+					url: event.url || undefined,
 					source: "local",
 					image: image || defaultImage || undefined,
 					location: event.location
@@ -107,14 +104,16 @@ export const getEventsForMonth = async ({
 								venue: event.location.venue || undefined,
 							}
 						: undefined,
-					organization: {
-						id: organization.id,
-						name: organization.name,
-						slug: organization.slug,
-						url:
-							organization.publicContactMethods?.contactWebsite ||
-							undefined,
-					},
+					organization: resolvedOrganization
+						? {
+								id: resolvedOrganization.id,
+								name: resolvedOrganization.name,
+								slug: resolvedOrganization.slug,
+								url:
+									resolvedOrganization.publicContactMethods
+										?.contactWebsite || undefined,
+							}
+						: undefined,
 				};
 			},
 		);
@@ -145,7 +144,12 @@ export const getEventsForMonth = async ({
 
 		const calendarEvents: MobilizeCalendarEvent[] =
 			mobilizeEvents.docs.flatMap((event) => {
-				if (event.source !== "mobilize" || !event.mobilize) return [];
+				if (
+					event.source !== "mobilize" ||
+					!event.mobilize ||
+					!event.url
+				)
+					return [];
 
 				const organization = event.mobilize.organization;
 
@@ -212,7 +216,11 @@ export const getEventsForMonth = async ({
 
 		const calendarEvents: GoogleCalendarEvent[] = googleEvents.docs.flatMap(
 			(event) => {
-				if (event.source !== "googleCalendar" || !event.googleCalendar)
+				if (
+					event.source !== "googleCalendar" ||
+					!event.googleCalendar ||
+					!event.url
+				)
 					return [];
 
 				const organization =

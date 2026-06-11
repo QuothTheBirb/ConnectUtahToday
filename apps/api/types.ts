@@ -87,7 +87,7 @@ export type LocalCalendarEvent = BaseCalendarEvent & {
 	source: "local";
 	image?: string; // Unsure on this type
 	url?: string;
-	organization: {
+	organization?: {
 		id: string;
 		name: string;
 		url?: string; // TODO: Unsure on this one, is it url for the site or for the contact page (as currently implemented)?
