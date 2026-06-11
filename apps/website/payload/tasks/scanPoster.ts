@@ -21,7 +21,7 @@ const parseDateTimeStrings = (dateString?: string, timeString?: string) => {
 		: DateTime.fromFormat(dateString, "MM-dd", {
 				zone: timezone,
 			});
-	const time = timeString ? DateTime.fromFormat(timeString, "t") : undefined;
+	const time = timeString ? DateTime.fromFormat(timeString, "t", { zone: timezone }) : undefined;
 
 	if (!date) return undefined;
 	if (!time) return date.toISO() || undefined;
