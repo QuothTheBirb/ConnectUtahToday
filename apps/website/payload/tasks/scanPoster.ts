@@ -168,7 +168,7 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 			scanResult.time?.start,
 		);
 		const end = parseDateTimeStrings(
-			scanResult.date?.end ?? scanResult.date?.start,
+			scanResult.date?.end || scanResult.date?.start,
 			scanResult.time?.end,
 		);
 
