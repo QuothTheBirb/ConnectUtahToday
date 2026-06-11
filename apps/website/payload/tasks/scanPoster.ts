@@ -21,16 +21,32 @@ const parseDateTimeStrings = (dateString?: string, timeString?: string) => {
 		: DateTime.fromFormat(dateString, "MM-dd", {
 				zone: timezone,
 			});
-	const time = timeString ? DateTime.fromFormat(timeString, "t", { zone: timezone }) : undefined;
 
-	if (!date) return undefined;
+	if (!date.isValid) return undefined;
+
+	if (!timeString) return date.toISO() || undefined;
+
+	// Try multiple common time formats the AI may return (e.g. "9:00 PM", "21:00", "9 PM")
+	const timeFormats = ["h:mm a", "H:mm", "h a", "h:mm"];
+	let time: DateTime | undefined;
+	for (const format of timeFormats) {
+		const parsed = DateTime.fromFormat(timeString, format, {
+			zone: timezone,
+		});
+
+		if (parsed.isValid) {
+			time = parsed;
+			break;
+		}
+	}
+
 	if (!time) return date.toISO() || undefined;
 
 	return (
 		date
 			.set({
-				hour: time.hour ?? 0,
-				minute: time.minute ?? 0,
+				hour: time.hour,
+				minute: time.minute,
 			})
 			.toISO() || undefined
 	);
@@ -111,7 +127,10 @@ export const scanPosterTask: TaskConfig<"scanPoster"> = {
 
 		// 4. Call RunPod with all images
 		const scanResult = await scanPosterWithRunpod(buffers);
-		payload.logger.info({ imageIds: ids, scanResult }, "Poster scan completed");
+		payload.logger.info(
+			{ imageIds: ids, scanResult },
+			"Poster scan completed",
+		);
 
 		if (!scanResult) {
 			throw new Error(
