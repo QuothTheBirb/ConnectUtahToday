@@ -45,6 +45,7 @@ RUN pip install -U torch torchvision torchaudio --index-url https://download.pyt
 
 # Apparently, this thing does in fact thinks it's special and needs to be here.
 # If this breaks in the future? No, we shant humor such a grim possibility.
+RUN FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn --no-cache-dir --no-build-isolation
 # RUN FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn==2.7.3 --no-cache-dir --no-build-isolation
 
 # Pre-download the model and tokenizer into the image layers.
