@@ -38,6 +38,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --upgrade -r requirements.txt --no-cache-dir
 
+# Install nightly pytorch to be compatible with 5090 blackwell gpus and CUDA 12.8
+RUN pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+
 # Apparently, this thing does in fact thinks it's special and needs to be here.
 # If this breaks in the future? No, we shant humor such a grim possibility.
 RUN FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn==2.7.3 --no-cache-dir --no-build-isolation
