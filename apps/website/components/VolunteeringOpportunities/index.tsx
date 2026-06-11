@@ -78,6 +78,24 @@ export const VolunteeringOpportunities = ({
 		appliedFilters.orgs.length > 0 ||
 		appliedFilters.activities.length > 0;
 
+	if (organizations.length === 0)
+		return (
+			<div className={styles.volunteeringOpportunities}>
+				<p
+					style={{
+						fontSize: "1.1rem",
+						fontWeight: "bold",
+						color: "#335",
+						padding: "1rem",
+						background: "#f0f0fa",
+					}}
+				>
+					There are no registered organizations to volunteer for just
+					yet. Check back later and we might just have some!
+				</p>
+			</div>
+		);
+
 	return (
 		<div className={styles.volunteeringOpportunities}>
 			<FiltersForm

@@ -74,9 +74,18 @@ export const Organizations: CollectionConfig = {
 					label: "Organization Page",
 					fields: [
 						{
+							name: "publicOrganizationPage",
+							label: "Create a public organization page",
+							type: "checkbox",
+						},
+						{
 							name: "logo",
 							type: "upload",
 							relationTo: "organization-assets",
+							admin: {
+								condition: (data, siblingData) =>
+									data?.publicOrganizationPage,
+							},
 						},
 						{
 							name: "publicContactMethods",
@@ -162,6 +171,10 @@ export const Organizations: CollectionConfig = {
 									},
 								},
 							],
+							admin: {
+								condition: (data, siblingData) =>
+									data?.publicOrganizationPage,
+							},
 						},
 						// {
 						//   name: 'shortDescription',
@@ -172,6 +185,10 @@ export const Organizations: CollectionConfig = {
 							name: "description",
 							label: "Page Content",
 							type: "richText",
+							admin: {
+								condition: (data, siblingData) =>
+									data?.publicOrganizationPage,
+							},
 						},
 						{
 							name: "opportunities",
@@ -181,6 +198,8 @@ export const Organizations: CollectionConfig = {
 							hasMany: true,
 							admin: {
 								sortOptions: "name",
+								condition: (data, siblingData) =>
+									data?.publicOrganizationPage,
 							},
 						},
 					],
@@ -231,6 +250,8 @@ export const Organizations: CollectionConfig = {
 							admin: {
 								description:
 									"A default image used for calendar events from this organization when no event-specific image is available.",
+								condition: (data, siblingData) =>
+									data?.enableGoogleCalendarSync,
 							},
 						},
 					],

@@ -237,6 +237,7 @@ export interface Organization {
    */
   mobilizeSlug?: string | null;
   organizers: (string | User)[];
+  publicOrganizationPage?: boolean | null;
   logo?: (string | null) | OrganizationAsset;
   publicContactMethods?: {
     showEmail?: boolean | null;
@@ -676,6 +677,7 @@ export interface OrganizationsSelect<T extends boolean = true> {
   slug?: T;
   mobilizeSlug?: T;
   organizers?: T;
+  publicOrganizationPage?: T;
   logo?: T;
   publicContactMethods?:
     | T

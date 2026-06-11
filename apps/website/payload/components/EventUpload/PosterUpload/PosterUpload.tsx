@@ -1,16 +1,31 @@
 "use client";
 
 import { Button, useConfig } from "@payloadcms/ui";
-import { AlertCircle, CheckCircle2, ImageUp, Loader2, RotateCcw, Upload, X } from "lucide-react";
+import {
+	AlertCircle,
+	CheckCircle2,
+	ImageUp,
+	Loader2,
+	RotateCcw,
+	Upload,
+	X,
+} from "lucide-react";
 import Link from "next/link";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 import {
 	dismissPosterUploadJob,
 	getUserEventUploads,
 	retryPosterUploadJob,
 	uploadPosterEventsAction,
-	UserEventUpload
+	UserEventUpload,
 } from "../actions";
 import styles from "../EventUploads.module.scss";
 

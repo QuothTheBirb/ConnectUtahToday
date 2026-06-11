@@ -3,7 +3,7 @@ import { DisclaimerButton, DisclaimerPopup } from "@/components/Disclaimer";
 import { PageCard } from "@/components/PageCard";
 import { PageHeading } from "@/components/PageHeading";
 import { VolunteeringOpportunities } from "@/components/VolunteeringOpportunities";
-import { getOrganizations } from "@/lib/api/getOrganizations";
+import { getPublicOrganizations } from "@/lib/api/getPublicOrganizations";
 
 export const metadata: Metadata = {
 	title: "Volunteering",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const VolunteerPage = async () => {
-	const organizations = await getOrganizations();
+	const organizations = await getPublicOrganizations();
 
 	return (
 		<PageCard>
