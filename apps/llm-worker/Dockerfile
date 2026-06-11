@@ -39,7 +39,9 @@ COPY requirements.txt .
 RUN pip install --upgrade -r requirements.txt --no-cache-dir
 
 # Install nightly pytorch to be compatible with 5090 blackwell gpus and CUDA 12.8
-RUN pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+# RUN pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128 --no-cache-dir
+
+RUN pip install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 --no-cache-dir
 
 # Apparently, this thing does in fact thinks it's special and needs to be here.
 # If this breaks in the future? No, we shant humor such a grim possibility.
