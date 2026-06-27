@@ -11,7 +11,6 @@ export const EventTypesTab: Tab = {
 			type: "array",
 			admin: {
 				isSortable: true,
-				initCollapsed: true,
 				components: {
 					RowLabel: {
 						path: "@/payload/components/ArrayRowLabel#ArrayRowLabel",
