@@ -327,6 +327,7 @@ export interface Event {
    * A brief description of this event.
    */
   description: string;
+  eventType?: string | null;
   url?: string | null;
   date: string;
   endDate?: string | null;
@@ -392,7 +393,6 @@ export interface Event {
     postalCode?: string | null;
     venue?: string | null;
   };
-  eventType?: string | null;
   source?: ('local' | 'googleCalendar' | 'mobilize') | null;
   local?: {
     images?: (string | EventAsset)[] | null;
@@ -412,6 +412,7 @@ export interface Event {
   mobilize?: {
     eventId: number;
     image?: string | null;
+    eventType?: string | null;
     organization: {
       orgId: number;
       name: string;
@@ -719,6 +720,7 @@ export interface OpportunitiesSelect<T extends boolean = true> {
 export interface EventsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  eventType?: T;
   url?: T;
   date?: T;
   endDate?: T;
@@ -732,7 +734,6 @@ export interface EventsSelect<T extends boolean = true> {
         postalCode?: T;
         venue?: T;
       };
-  eventType?: T;
   source?: T;
   local?:
     | T
@@ -755,6 +756,7 @@ export interface EventsSelect<T extends boolean = true> {
     | {
         eventId?: T;
         image?: T;
+        eventType?: T;
         organization?:
           | T
           | {
@@ -1004,6 +1006,44 @@ export interface EventSetting {
       };
     };
   };
+  eventTypes?:
+    | {
+        title: string;
+        description?: string | null;
+        mobilizeEventTypes?:
+          | (
+              | 'CANVASS'
+              | 'PHONE_BANK'
+              | 'TEXT_BANK'
+              | 'MEETING'
+              | 'COMMUNITY'
+              | 'FUNDRAISER'
+              | 'MEET_GREET'
+              | 'HOUSE_PARTY'
+              | 'VOTER_REG'
+              | 'TRAINING'
+              | 'FRIEND_TO_FRIEND_OUTREACH'
+              | 'DEBATE_WATCH_PARTY'
+              | 'ADVOCACY_CALL'
+              | 'RALLY'
+              | 'TOWN_HALL'
+              | 'OFFICE_OPENING'
+              | 'BARNSTORM'
+              | 'SOLIDARITY_EVENT'
+              | 'COMMUNITY_CANVASS'
+              | 'SIGNATURE_GATHERING'
+              | 'CARPOOL'
+              | 'WORKSHOP'
+              | 'PETITION'
+              | 'AUTOMATED_PHONE_BANK'
+              | 'LETTER_WRITING'
+              | 'LITERATURE_DROP_OFF'
+              | 'VISIBILITY_EVENT'
+            )[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   calendar: {
     /**
      * The range of how many past and future months are displayed in the calendar view. Max 12 months. For example, a months range of 6 months will display the current month, the past 6 months, and the next 6 months.
@@ -1154,6 +1194,14 @@ export interface EventSettingsSelect<T extends boolean = true> {
                     list?: T;
                   };
             };
+      };
+  eventTypes?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        mobilizeEventTypes?: T;
+        id?: T;
       };
   calendar?:
     | T

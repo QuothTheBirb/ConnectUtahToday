@@ -1,9 +1,9 @@
 import { Tab } from "payload";
 import { US_STATES } from "@/lib/usStates";
 
-export const EventsTab: Tab = {
+export const EventSourcesTab: Tab = {
 	name: "events",
-	label: "Event Sources",
+	label: "Sources",
 	fields: [
 		{
 			name: "localEvents",

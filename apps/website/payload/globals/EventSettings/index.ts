@@ -1,7 +1,8 @@
 import { GlobalConfig } from "payload";
 import { adminOnly } from "@/payload/access/adminOnly";
 import { CalendarTab } from "@/payload/globals/EventSettings/tabs/Calendar";
-import { EventsTab } from "@/payload/globals/EventSettings/tabs/Events";
+import { EventSourcesTab } from "@/payload/globals/EventSettings/tabs/EventSources";
+import { EventTypesTab } from "@/payload/globals/EventSettings/tabs/EventTypes";
 
 export const EventSettings: GlobalConfig = {
 	slug: "event-settings",
@@ -16,7 +17,7 @@ export const EventSettings: GlobalConfig = {
 	fields: [
 		{
 			type: "tabs",
-			tabs: [EventsTab, CalendarTab],
+			tabs: [EventSourcesTab, EventTypesTab, CalendarTab],
 		},
 	],
 };

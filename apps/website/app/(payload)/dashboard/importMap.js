@@ -22,9 +22,12 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { SelectEventTypeComponent as SelectEventTypeComponent_28f44dbd6fac0facf2bc065dd36aa1d8 } from '../../../payload/fields/EventTypeSelect'
 import { EventUploads as EventUploads_a15678bc63e1aee67af1fa4a963e4aba } from '@/payload/components/EventUpload/EventUploads'
 import { InviteLinkField as InviteLinkField_78b3dca25bffc6c0e441b51de8cd3c0c } from '@/payload/collections/OrganizationInvites/components/InviteLink'
 import { OrganizationSelect as OrganizationSelect_7e3e0640ea1be80de11683336492abe8 } from '../../../payload/fields/OrganizationSelect'
+import { ArrayRowLabel as ArrayRowLabel_c0b1aab59d96f6cda9c3e09e2c0428cb } from '@/payload/components/ArrayRowLabel'
+import { ResetEventTypes as ResetEventTypes_8832dfc77f88e59c4b4c94f245ca7813 } from '@/payload/globals/EventSettings/components/ResetEventTypes/ResetEventTypes'
 import { SyncEvents as SyncEvents_48892358d935fc873f03c0c608fa105e } from '../../../payload/fields/syncEvents/component'
 import { SyncEventsNotifier as SyncEventsNotifier_c9ea33c8fbd476ad7a4e287dad4a4d31 } from '@/payload/components/SyncEventsNotifier'
 import { PosterUploadView as PosterUploadView_0d322dab4f33b413b337c748d9bb022a } from '@/payload/components/EventUpload/PosterUpload/PosterUploadView'
@@ -56,9 +59,12 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/payload/fields/EventTypeSelect#SelectEventTypeComponent": SelectEventTypeComponent_28f44dbd6fac0facf2bc065dd36aa1d8,
   "@/payload/components/EventUpload/EventUploads#EventUploads": EventUploads_a15678bc63e1aee67af1fa4a963e4aba,
   "@/payload/collections/OrganizationInvites/components/InviteLink#InviteLinkField": InviteLinkField_78b3dca25bffc6c0e441b51de8cd3c0c,
   "/payload/fields/OrganizationSelect#OrganizationSelect": OrganizationSelect_7e3e0640ea1be80de11683336492abe8,
+  "@/payload/components/ArrayRowLabel#ArrayRowLabel": ArrayRowLabel_c0b1aab59d96f6cda9c3e09e2c0428cb,
+  "@/payload/globals/EventSettings/components/ResetEventTypes/ResetEventTypes#ResetEventTypes": ResetEventTypes_8832dfc77f88e59c4b4c94f245ca7813,
   "/payload/fields/syncEvents/component#SyncEvents": SyncEvents_48892358d935fc873f03c0c608fa105e,
   "@/payload/components/SyncEventsNotifier#SyncEventsNotifier": SyncEventsNotifier_c9ea33c8fbd476ad7a4e287dad4a4d31,
   "@/payload/components/EventUpload/PosterUpload/PosterUploadView#PosterUploadView": PosterUploadView_0d322dab4f33b413b337c748d9bb022a,

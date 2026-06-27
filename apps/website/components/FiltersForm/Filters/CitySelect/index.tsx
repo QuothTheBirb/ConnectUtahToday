@@ -1,34 +1,32 @@
 import { Dispatch, SetStateAction } from "react";
-import { FormSelect } from "@/components/form/inputs/FormSelect";
+import { FormSelect, SelectOption } from "@/components/form/inputs/FormSelect";
 
 export const CityFilter = ({
 	cityOptions,
-	selectedCity,
-	setSelectedCity,
+	selectedCities,
+	setSelectedCities,
 	className,
 }: {
-	cityOptions: { label: string; value: string }[];
-	selectedCity: string;
-	setSelectedCity: Dispatch<SetStateAction<string>>;
+	cityOptions: SelectOption[];
+	selectedCities: SelectOption[];
+	setSelectedCities: Dispatch<SetStateAction<SelectOption[]>>;
 	className?: string;
 }) => {
 	return (
 		<FormSelect
-			label={"City"}
-			id={"locationSearch"}
+			label={"Cities"}
+			id={"cities"}
 			options={cityOptions}
-			value={
-				selectedCity
-					? {
-							label: selectedCity,
-							value: selectedCity,
-						}
-					: null
+			isMulti={true}
+			value={selectedCities}
+			onChange={(value) =>
+				setSelectedCities(Array.isArray(value) ? value : [value])
 			}
-			onChange={(val: any) => setSelectedCity(val?.value || "")}
 			placeholder={"All Cities"}
 			isClearable={true}
-			instanceId={"city-select"}
+			isSearchable={true}
+			aria-label={"Search for events by city…"}
+			instanceId={"cities"}
 			className={className}
 		/>
 	);

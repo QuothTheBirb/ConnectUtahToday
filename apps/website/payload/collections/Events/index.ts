@@ -41,6 +41,19 @@ export const Events: CollectionConfig = {
 			},
 		},
 		{
+			name: "eventType",
+			type: "text",
+			admin: {
+				components: {
+					Field: {
+						path: "/payload/fields/EventTypeSelect#SelectEventTypeComponent",
+						clientProps: {},
+					},
+				},
+				condition: (_, siblingData) => siblingData?.source === "local",
+			},
+		},
+		{
 			name: "url",
 			label: "Event URL",
 			type: "text",
@@ -106,16 +119,6 @@ export const Events: CollectionConfig = {
 					type: "text",
 				},
 			],
-		},
-		{
-			name: "eventType",
-			label: "Event Type",
-			type: "text",
-			admin: {
-				condition: (_, siblingData) =>
-					siblingData?.source !== "local" &&
-					siblingData?.source !== "googleCalendar", // Add this back later when the event type is better implemented
-			},
 		},
 		{
 			name: "source",
@@ -240,6 +243,11 @@ export const Events: CollectionConfig = {
 				{
 					name: "image",
 					label: "Event Image URL",
+					type: "text",
+				},
+				{
+					name: "eventType",
+					label: "Event Type",
 					type: "text",
 				},
 				{

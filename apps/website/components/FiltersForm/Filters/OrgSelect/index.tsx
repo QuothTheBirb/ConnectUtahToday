@@ -1,23 +1,22 @@
 import { Dispatch, SetStateAction } from "react";
-import { FormSelect } from "@/components/form/inputs/FormSelect";
-
-type OrgOption = { label: string; value: string };
+import { FormSelect, SelectOption } from "@/components/form/inputs/FormSelect";
 
 type OrganizationFilterProps = {
-	orgOptions: (string | OrgOption)[];
+	orgOptions: SelectOption[];
 	className?: string;
 } & (
 	| {
-			selectedOrg: string | null;
-			setSelectedOrg: Dispatch<SetStateAction<string | null>>;
 			selectMany?: false;
+			selectedOrg: SelectOption | null;
+			setSelectedOrg: Dispatch<SetStateAction<SelectOption | null>>;
 	  }
 	| {
-			selectedOrgs: string[];
-			setSelectedOrgs: Dispatch<SetStateAction<string[]>>;
 			selectMany: true;
+			selectedOrgs: SelectOption[];
+			setSelectedOrgs: Dispatch<SetStateAction<SelectOption[]>>;
 	  }
 );
+
 export const OrganizationFilter = (props: OrganizationFilterProps) => {
 	const { orgOptions, selectMany, className } = props;
 
@@ -41,17 +40,9 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
 				id={"organizations"}
 				options={selectOptions}
 				isMulti={true}
-				value={selectedOrgs.map((org) => {
-					const option = selectOptions.find((o) => o.value === org);
-
-					return option || { value: org, label: org };
-				})}
+				value={selectedOrgs}
 				onChange={(value) =>
-					setSelectedOrgs(
-						Array.isArray(value)
-							? value.map((org) => org.value)
-							: [value],
-					)
+					setSelectedOrgs(Array.isArray(value) ? value : [value])
 				}
 				placeholder={"Any"}
 				isClearable={true}
@@ -73,16 +64,10 @@ export const OrganizationFilter = (props: OrganizationFilterProps) => {
 			name={"organization"}
 			options={selectOptions}
 			isMulti={false}
-			value={
-				selectedOrg
-					? selectOptions.find((o) => o.value === selectedOrg) || {
-							value: selectedOrg,
-							label: selectedOrg,
-						}
-					: null
+			value={selectedOrg}
+			onChange={(value) =>
+				setSelectedOrg(Array.isArray(value) ? value[0] : value)
 			}
-			// @ts-ignore
-			onChange={(value) => setSelectedOrg(value ? value.value : null)}
 			placeholder={"Any"}
 			isClearable={true}
 			isSearchable={true}

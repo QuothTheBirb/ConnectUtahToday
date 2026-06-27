@@ -5,6 +5,7 @@ import { Events } from "@/components/Events";
 import { PageCard } from "@/components/PageCard";
 import { PageHeading } from "@/components/PageHeading";
 import { getEventsForMonth } from "@/lib/api/getEventsForMonth";
+import { getEventTypes } from "@/lib/api/getEventTypes";
 
 import styles from "./EventsPage.module.scss";
 
@@ -24,12 +25,17 @@ const EventsPage = async ({
 	const month = params.month ? Number(params.month) - 1 : now.getMonth();
 
 	const events = await getEventsForMonth({ year, month });
+	const eventTypes = await getEventTypes();
 
 	return (
 		<PageCard>
 			<PageHeading heading={"h1"}>Events</PageHeading>
 			<DisclaimerButton className={styles.disclaimerButton} />
-			<Events monthEvents={events} date={{ year, month }} />
+			<Events
+				eventTypes={eventTypes}
+				monthEvents={events}
+				date={{ year, month }}
+			/>
 			<DisclaimerPopup>
 				<p>
 					<strong>Disclaimer:</strong> Connect Utah Today provides a

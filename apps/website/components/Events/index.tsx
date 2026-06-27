@@ -8,45 +8,82 @@ import { EventsViews } from "@/components/Events/Views";
 import { FiltersForm } from "@/components/FiltersForm";
 import { CityFilter } from "@/components/FiltersForm/Filters/CitySelect";
 import { DateRangeFilter } from "@/components/FiltersForm/Filters/DateRange";
+import { EventTypeFilter } from "@/components/FiltersForm/Filters/EventType";
 import { OrganizationFilter } from "@/components/FiltersForm/Filters/OrgSelect";
 import FormInput from "@/components/form/inputs/FormInput";
-import { FormSelect } from "@/components/form/inputs/FormSelect";
+import { FormSelect, SelectOption } from "@/components/form/inputs/FormSelect";
+import { EventSetting } from "@/payload-types";
 
 import styles from "./Events.module.scss";
 
 export const Events = ({
+	eventTypes,
 	monthEvents,
 	date: { year, month },
 }: {
+	eventTypes: NonNullable<EventSetting["eventTypes"]> | [];
 	monthEvents: CalendarEvent[];
 	date: {
 		year: number;
 		month: number;
 	};
 }) => {
-	const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
+	const [selectedOrgs, setSelectedOrgs] = useState<SelectOption[]>([]);
 	const [orgFilterType, setOrgFilterType] = useState<"include" | "exclude">(
 		"include",
 	);
-	const [locationSearch, setLocationSearch] = useState("");
+	const [selectedCities, setSelectedCities] = useState<SelectOption[]>([]);
 	const [upcomingOnly, setUpcomingOnly] = useState(true);
 	const [dateRange, setDateRange] = useState({
 		start: "",
 		end: "",
 	});
+	const [selectedEventTypes, setSelectedEventTypes] = useState<
+		SelectOption[]
+	>([]);
+
 	const [appliedFilters, setAppliedFilters] = useState<{
-		orgs: string[];
+		orgs: SelectOption[];
 		orgFilterType: "include" | "exclude";
-		location: string;
+		cities: SelectOption[];
 		upcomingOnly: boolean;
 		dateRange: { start: string; end: string };
+		eventTypes: SelectOption[];
 	}>({
 		orgs: [],
 		orgFilterType: "include",
-		location: "",
+		cities: [],
 		upcomingOnly: true,
 		dateRange: { start: "", end: "" },
+		eventTypes: [],
 	});
+
+	const isClearable = useMemo(() => {
+		return (
+			!upcomingOnly ||
+			selectedOrgs.length > 0 ||
+			orgFilterType !== "include" ||
+			selectedCities.length > 0 ||
+			dateRange.start !== "" ||
+			dateRange.end !== "" ||
+			selectedEventTypes.length > 0 ||
+			!appliedFilters.upcomingOnly ||
+			appliedFilters.orgs.length > 0 ||
+			appliedFilters.orgFilterType !== "include" ||
+			appliedFilters.cities.length > 0 ||
+			appliedFilters.dateRange.start !== "" ||
+			appliedFilters.dateRange.end !== "" ||
+			appliedFilters.eventTypes.length > 0
+		);
+	}, [
+		selectedOrgs,
+		dateRange,
+		orgFilterType,
+		selectedCities,
+		upcomingOnly,
+		selectedEventTypes,
+		appliedFilters,
+	]);
 
 	const orgOptions = useMemo(() => {
 		if (!monthEvents) return [];
@@ -73,11 +110,14 @@ export const Events = ({
 	const cityOptions = useMemo(() => {
 		if (!monthEvents) return [];
 
-		const citySet = new Set<string>();
+		const cityMap = new Map<string, string>();
 
 		monthEvents.forEach((event) => {
 			if (event.location?.city) {
-				citySet.add(event.location.city.trim());
+				cityMap.set(
+					event.location.city.trim().toLowerCase(),
+					event.location.city.trim(),
+				);
 			} else {
 				const venue = event.location?.venue;
 				const address = event.location?.address;
@@ -90,119 +130,195 @@ export const Events = ({
 				// TODO: Use dynamic state instead of hardcoded one
 				const match = searchString.match(/([^,]+),\s*UT/i);
 				if (match && match[1]) {
-					citySet.add(match[1].trim());
+					cityMap.set(match[1].trim(), match[1].trim().toLowerCase());
 				}
 			}
 		});
 
-		return Array.from(citySet)
-			.map((city) => ({
-				value: city,
-				label: city,
+		return Array.from(cityMap.entries())
+			.map(([slug, name]) => ({
+				value: slug,
+				label: name,
+			}))
+			.sort((a, b) => a.label.localeCompare(b.label));
+	}, [monthEvents]);
+
+	const eventTypeOptions = useMemo(() => {
+		if (eventTypes.length === 0) return [];
+
+		const eventTypeMap = new Map<string, string>();
+
+		monthEvents.forEach((event) => {
+			if (event.eventType) {
+				const eventType = eventTypes.find(
+					(type) => type.id === event.eventType,
+				);
+
+				if (eventType?.id && eventType?.title) {
+					eventTypeMap.set(
+						eventType.id.trim(),
+						eventType.title.trim(),
+					);
+				}
+			}
+
+			if (event.mobilizeEventType) {
+				const matchingEventTypes = eventTypes.filter(
+					(type) =>
+						event.mobilizeEventType &&
+						event.mobilizeEventType !== "OTHER" &&
+						type.mobilizeEventTypes?.includes(
+							event.mobilizeEventType,
+						),
+				);
+
+				matchingEventTypes.forEach((eventType) => {
+					if (eventType.id && eventType.title) {
+						eventTypeMap.set(
+							eventType.id.trim(),
+							eventType.title.trim(),
+						);
+					}
+				});
+			}
+		});
+
+		return Array.from(eventTypeMap.entries())
+			.map(([id, name]) => ({
+				value: id,
+				label: name,
 			}))
 			.sort((a, b) => a.label.localeCompare(b.label));
 	}, [monthEvents]);
 
 	const events = useMemo(() => {
-		const now = new Date();
-		now.setHours(0, 0, 0, 0);
+		const hasOrgFilter = appliedFilters.orgs.length > 0;
+		const hasLocationFilter = appliedFilters.cities.length > 0;
+		const hasEventTypeFilter = appliedFilters.eventTypes.length > 0;
+
+		const orgSlugsSet = new Set(
+			appliedFilters.orgs.map((org) => org.value),
+		);
+
+		const citySet = new Set(
+			appliedFilters.cities.map((city) => city.value),
+		);
+
+		const start = appliedFilters.dateRange.start
+			? new Date(appliedFilters.dateRange.start)
+			: undefined;
+		const end = appliedFilters.dateRange.end
+			? new Date(appliedFilters.dateRange.end)
+			: undefined;
+		if (end) end.setHours(23, 59, 59, 999);
+
+		// Build a map of eventType ID -> mobilizeEventTypes for quick lookup
+		const eventTypeIdSet = new Set(
+			appliedFilters.eventTypes.map((et) => et.value),
+		);
+		const mobilizeTypeToEventTypeIds = new Map<string, boolean>();
+		if (hasEventTypeFilter) {
+			for (const fullEventType of eventTypes) {
+				if (
+					fullEventType.id &&
+					eventTypeIdSet.has(fullEventType.id) &&
+					fullEventType.mobilizeEventTypes
+				) {
+					for (const mobilizeType of fullEventType.mobilizeEventTypes) {
+						mobilizeTypeToEventTypeIds.set(mobilizeType, true);
+					}
+				}
+			}
+		}
 
 		return monthEvents.filter((event) => {
-			// Filter by applied org
-			let matchesOrg = true;
-			if (appliedFilters.orgs.length > 0) {
-				const hasOrg =
-					!!event.organization?.slug &&
-					appliedFilters.orgs.includes(event.organization.slug);
-				matchesOrg =
+			// Filter by organization
+			if (hasOrgFilter) {
+				const eventOrgSlug = event.organization?.slug;
+				const isInSet = !!(
+					eventOrgSlug && orgSlugsSet.has(eventOrgSlug)
+				);
+				const matchesOrg =
 					appliedFilters.orgFilterType === "include"
-						? hasOrg
-						: !hasOrg;
+						? isInSet
+						: !isInSet;
+
+				if (!matchesOrg) return false;
 			}
 
 			// Filter by location
-			const matchesLocation =
-				!appliedFilters.location ||
-				(!!event.location?.city &&
-					event.location.city.trim() === appliedFilters.location) ||
-				(!!event.location?.venue &&
-					event.location.venue
-						.toLowerCase()
-						.includes(appliedFilters.location.toLowerCase())) ||
-				(!!event.location?.address &&
-					event.location.address
-						.toLowerCase()
-						.includes(appliedFilters.location.toLowerCase()));
+			if (hasLocationFilter) {
+				const city = event.location?.city?.trim().toLowerCase();
+				const matchesCity = !!(city && citySet.has(city));
 
-			// Filter by applied date range
-			const start = appliedFilters.dateRange.start
-				? new Date(appliedFilters.dateRange.start)
-				: undefined;
-			const end = appliedFilters.dateRange.end
-				? new Date(appliedFilters.dateRange.end)
-				: undefined;
-			if (end) end.setHours(23, 59, 59, 999);
+				if (!matchesCity) return false;
+			}
 
-			const eventDate = new Date(event.date);
-			const withinDateRange =
-				(!start || eventDate >= start) && (!end || eventDate <= end);
+			// Filter by date range
+			if (start || end) {
+				const eventDate = new Date(event.date);
+				if (start && eventDate < start) return false;
+				if (end && eventDate > end) return false;
+			}
 
-			return matchesOrg && matchesLocation && withinDateRange;
+			// Filter by event type
+			if (hasEventTypeFilter) {
+				const matchesLocalType =
+					event.eventType && eventTypeIdSet.has(event.eventType);
+				const matchesMobilizeType =
+					event.mobilizeEventType &&
+					event.mobilizeEventType !== "OTHER" &&
+					mobilizeTypeToEventTypeIds.has(event.mobilizeEventType);
+				if (!matchesLocalType && !matchesMobilizeType) return false;
+			}
+
+			return true;
 		});
-	}, [monthEvents, appliedFilters]);
-
-	useEffect(() => {
-		console.log(monthEvents);
-	}, [monthEvents]);
+	}, [monthEvents, appliedFilters, eventTypes]);
 
 	const applyFilters = useCallback(() => {
 		setAppliedFilters({
 			orgs: selectedOrgs,
 			orgFilterType: orgFilterType,
-			location: locationSearch,
+			cities: selectedCities,
 			upcomingOnly: upcomingOnly,
 			dateRange: dateRange,
+			eventTypes: selectedEventTypes,
 		});
-	}, [selectedOrgs, orgFilterType, locationSearch, upcomingOnly, dateRange]);
-
+	}, [
+		selectedOrgs,
+		orgFilterType,
+		selectedCities,
+		upcomingOnly,
+		dateRange,
+		selectedEventTypes,
+	]);
 	const clearFilters = useCallback(() => {
 		setSelectedOrgs([]);
 		setOrgFilterType("include");
-		setLocationSearch("");
+		setSelectedCities([]);
 		setUpcomingOnly(true);
 		setDateRange({ start: "", end: "" });
+		setSelectedEventTypes([]);
 		setAppliedFilters({
 			orgs: [],
 			orgFilterType: "include",
-			location: "",
+			cities: [],
 			upcomingOnly: true,
 			dateRange: { start: "", end: "" },
+			eventTypes: [],
 		});
 	}, []);
 
-	const isClearable = useMemo(() => {
-		return (
-			selectedOrgs.length > 0 ||
-			orgFilterType !== "include" ||
-			locationSearch !== "" ||
-			!upcomingOnly ||
-			dateRange.start !== "" ||
-			dateRange.end !== "" ||
-			appliedFilters.orgs.length > 0 ||
-			appliedFilters.orgFilterType !== "include" ||
-			appliedFilters.location !== "" ||
-			!appliedFilters.upcomingOnly ||
-			appliedFilters.dateRange.start !== "" ||
-			appliedFilters.dateRange.end !== ""
-		);
-	}, [
-		appliedFilters,
-		dateRange,
-		selectedOrgs,
-		orgFilterType,
-		locationSearch,
-		upcomingOnly,
-	]);
+	useEffect(() => {
+		process.env.NODE_ENV === "development" &&
+			console.log("Fetched Month Events: ", monthEvents);
+	}, [monthEvents]);
+
+	useEffect(() => {
+		process.env.NODE_ENV === "development" &&
+			console.log("Filtered Month Events: ", events);
+	}, [events]);
 
 	return (
 		<div className={styles.events}>
@@ -212,6 +328,11 @@ export const Events = ({
 				clearFilters={clearFilters}
 				showClearButton={isClearable}
 			>
+				<EventTypeFilter
+					eventTypeOptions={eventTypeOptions}
+					selectedEventTypes={selectedEventTypes}
+					setSelectedEventTypes={setSelectedEventTypes}
+				/>
 				<div className={styles.orgFilter}>
 					<OrganizationFilter
 						orgOptions={orgOptions}
@@ -241,15 +362,15 @@ export const Events = ({
 									: "Exclude Selected",
 							value: orgFilterType,
 						}}
-						onChange={(
-							val: any, // TODO: No.
-						) => setOrgFilterType(val?.value || "include")}
+						onChange={(value: any) =>
+							setOrgFilterType(value?.value || "include")
+						}
 					/>
 				</div>
 				<CityFilter
 					cityOptions={cityOptions}
-					selectedCity={locationSearch}
-					setSelectedCity={setLocationSearch}
+					selectedCities={selectedCities}
+					setSelectedCities={setSelectedCities}
 					className={styles.citySelect}
 				/>
 				<DateRangeFilter

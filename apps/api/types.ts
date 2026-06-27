@@ -2,6 +2,36 @@ import { calendar_v3 } from "googleapis"; // Mobilize API Event Types
 
 // Mobilize API Event Types
 // Reference: https://github.com/mobilizeamerica/api?tab=readme-ov-file#events
+export const mobilizeEventTypes = [
+	"CANVASS",
+	"PHONE_BANK",
+	"TEXT_BANK",
+	"MEETING",
+	"COMMUNITY",
+	"FUNDRAISER",
+	"MEET_GREET",
+	"HOUSE_PARTY",
+	"VOTER_REG",
+	"TRAINING",
+	"FRIEND_TO_FRIEND_OUTREACH",
+	"DEBATE_WATCH_PARTY",
+	"ADVOCACY_CALL",
+	"RALLY",
+	"TOWN_HALL",
+	"OFFICE_OPENING",
+	"BARNSTORM",
+	"SOLIDARITY_EVENT",
+	"COMMUNITY_CANVASS",
+	"SIGNATURE_GATHERING",
+	"CARPOOL",
+	"WORKSHOP",
+	"PETITION",
+	"AUTOMATED_PHONE_BANK",
+	"LETTER_WRITING",
+	"LITERATURE_DROP_OFF",
+	"VISIBILITY_EVENT",
+	"OTHER",
+] as const;
 export type MobilizeEventType =
 	| "CANVASS"
 	| "PHONE_BANK"
@@ -31,6 +61,12 @@ export type MobilizeEventType =
 	| "LITERATURE_DROP_OFF"
 	| "VISIBILITY_EVENT"
 	| "OTHER";
+export const isMobilizeEventType = (
+	value: string | null | undefined,
+): value is MobilizeEventType => {
+	return !!value && mobilizeEventTypes.includes(value as MobilizeEventType);
+};
+
 export type MobilizeApiEvent = {
 	id: number;
 	title: string;
@@ -93,8 +129,9 @@ export type LocalCalendarEvent = BaseCalendarEvent & {
 		url?: string; // TODO: Unsure on this one, is it url for the site or for the contact page (as currently implemented)?
 		slug: string;
 	};
-	eventType?: never;
+	eventType?: string;
 	mobilizeId?: never;
+	mobilizeEventType?: never;
 	googleCalendarId?: never;
 };
 export type MobilizeCalendarEvent = BaseCalendarEvent & {
@@ -107,7 +144,8 @@ export type MobilizeCalendarEvent = BaseCalendarEvent & {
 		url: string;
 		slug: string;
 	};
-	eventType?: MobilizeEventType;
+	eventType?: never;
+	mobilizeEventType?: MobilizeEventType;
 	googleCalendarId?: never;
 	mobilizeId: number;
 };
@@ -121,9 +159,10 @@ export type GoogleCalendarEvent = BaseCalendarEvent & {
 		url?: string;
 		slug: string;
 	};
-	mobilizeId?: never;
-	googleCalendarId: string;
 	eventType?: never;
+	mobilizeId?: never;
+	mobilizeEventType?: never;
+	googleCalendarId: string;
 };
 
 export type CalendarEvent =
