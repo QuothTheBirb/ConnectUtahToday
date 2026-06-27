@@ -1,7 +1,4 @@
-import {
-	MobilizeApiEventsResponse,
-	MobilizeCalendarEvent,
-} from "@connect-utah-today/api/types";
+import { MobilizeApiEventsResponse, MobilizeCalendarEvent } from "@connect-utah-today/api/types";
 import { mobilizeTimestampToUtcIso } from "@connect-utah-today/utils/toUtcIsoString";
 
 export interface GetMobilizeEventsOptions {
@@ -121,7 +118,7 @@ export async function fetchMobilizeEvents(
 								slug: organization.slug,
 							},
 							mobilizeId: event.id,
-							eventType: event.event_type,
+							mobilizeEventType: event.event_type,
 							source: "mobilize",
 						};
 

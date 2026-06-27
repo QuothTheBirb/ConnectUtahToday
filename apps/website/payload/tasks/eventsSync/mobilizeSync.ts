@@ -114,7 +114,6 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 					url: event.url,
 					date: event.date,
 					endDate: event.endDate,
-					eventType: event.eventType,
 					location: {
 						country: event.location?.country
 							? SUPPORTED_COUNTRIES.find(
@@ -137,6 +136,7 @@ export const mobilizeSync: TaskConfig<"mobilizeSync"> = {
 					source: event.source,
 					mobilize: {
 						eventId: event.mobilizeId,
+						eventType: event.mobilizeEventType,
 						image: event.image,
 						organization: {
 							orgId: event.organization.id,
