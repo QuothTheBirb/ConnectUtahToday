@@ -1,4 +1,7 @@
-import { MobilizeApiEventsResponse, MobilizeCalendarEvent } from "@connect-utah-today/api/types";
+import {
+	MobilizeApiEventsResponse,
+	MobilizeCalendarEvent,
+} from "@connect-utah-today/api/types";
 import { mobilizeTimestampToUtcIso } from "@connect-utah-today/utils/toUtcIsoString";
 
 export interface GetMobilizeEventsOptions {

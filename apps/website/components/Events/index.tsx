@@ -62,14 +62,12 @@ export const Events = ({
 		return (
 			!upcomingOnly ||
 			selectedOrgs.length > 0 ||
-			orgFilterType !== "include" ||
 			selectedCities.length > 0 ||
 			dateRange.start !== "" ||
 			dateRange.end !== "" ||
 			selectedEventTypes.length > 0 ||
 			!appliedFilters.upcomingOnly ||
 			appliedFilters.orgs.length > 0 ||
-			appliedFilters.orgFilterType !== "include" ||
 			appliedFilters.cities.length > 0 ||
 			appliedFilters.dateRange.start !== "" ||
 			appliedFilters.dateRange.end !== "" ||
