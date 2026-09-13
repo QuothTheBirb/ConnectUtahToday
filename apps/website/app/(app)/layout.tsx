@@ -44,6 +44,7 @@ export default async function RootLayout({
 							"I understand."
 						}
 					/>
+					<NextTopLoader color={"#296d75"} showSpinner={false} />
 					<SiteHeader user={user} />
 					<div
 						style={{
