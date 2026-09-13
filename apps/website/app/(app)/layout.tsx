@@ -6,6 +6,7 @@ import configPromise from "@/payload.config";
 
 import "./globals.scss";
 
+import NextTopLoader from "nextjs-toploader";
 import { Providers } from "@/components/Providers";
 import { SiteDisclaimer } from "@/components/SiteDisclaimer";
 import { SiteHeader } from "@/components/SiteHeader";
